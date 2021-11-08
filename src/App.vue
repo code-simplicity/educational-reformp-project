@@ -1,5 +1,5 @@
 <template>
-  <div class="app"></div>
+  <div class="app">毕业设计测试</div>
 </template>
 
 <script>
