@@ -1,13 +1,13 @@
 <template>
-  <div class="main-left border">
+  <div class="main-right border">
     <slot />
   </div>
 </template>
 
 <script>
-// 左边内容，抽取成一个插槽
+// 右边内容插槽
 export default {
-  name: 'MainLeft',
+  name: 'MainRight',
   data() {
     return {
 
@@ -26,7 +26,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.main-left {
+.main-right {
   height: 100%;
 }
 </style>

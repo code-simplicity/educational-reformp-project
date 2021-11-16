@@ -5,7 +5,7 @@ import {
 
 import {
     routes
-} from './router'
+} from './router.js'
 const router = createRouter({
     history: createWebHashHistory(),
     routes

@@ -1,13 +1,10 @@
 <template>
-  <div class="main-left border">
-    <slot />
-  </div>
+  <div>登录</div>
 </template>
 
 <script>
-// 左边内容，抽取成一个插槽
 export default {
-  name: 'MainLeft',
+  name: 'Login',
   data() {
     return {
 
@@ -26,7 +23,4 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.main-left {
-  height: 100%;
-}
 </style>

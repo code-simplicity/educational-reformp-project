@@ -9,6 +9,7 @@ import App from './App.vue'
 import api from './api/index'
 
 import '../src/assets/style/reset.scss'
+import '../src/assets/style/common.css'
 
 import router from './router/index'
 

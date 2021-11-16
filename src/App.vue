@@ -1,13 +1,13 @@
 <template>
   <div class="app">
-    <MainFooter></MainFooter>
     <MainHeader></MainHeader>
     <router-view></router-view>
+    <!-- <MainFooter></MainFooter> -->
   </div>
 </template>
 
 <script>
-import MainFooter from '@/components/main-footer/index.vue'
+// import MainFooter from '@/components/main-footer/index.vue'
 import MainHeader from '@/components/main-header/index.vue'
 export default {
   name: 'App',
@@ -18,7 +18,7 @@ export default {
   },
 
   components: {
-    MainFooter,
+    // MainFooter,
     MainHeader
   },
 
@@ -36,7 +36,8 @@ export default {
 .app {
   width: 100vw;
   height: 100vh;
-  background-color: #020308;
+  background-color: #ffffff;
   overflow: hidden;
+  padding: 16px;
 }
 </style>
