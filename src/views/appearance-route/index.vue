@@ -1,11 +1,11 @@
 <template>
-  <div class="home">首页</div>
+  <div></div>
 </template>
 
 <script>
-// 首页
+// 现象观察
 export default {
-  name: 'Home',
+  name: 'AppearanceRoute',
   data() {
     return {
 

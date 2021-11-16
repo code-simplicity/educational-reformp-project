@@ -52,6 +52,13 @@ module.exports = {
         overlay: {
             warnings: true,
             errors: true
-        }
+        },
+        proxy: 'http://localhost:5000'
+
+        // '/api': {
+        //     target: 'https://stg.sznai.com',
+        //     ws: true, // 是否启用 websockets
+        //     changeOrigin: true // 主机头的起源保持默认进行代理时，可以设置changeOrigin以true覆盖此行为。
+        //   },
     }
 }

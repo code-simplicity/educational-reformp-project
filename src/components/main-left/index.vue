@@ -1,11 +1,10 @@
 <template>
-  <div class="home">首页</div>
+  <div></div>
 </template>
 
 <script>
-// 首页
 export default {
-  name: 'Home',
+  name: 'main-left',
   data() {
     return {
 

@@ -1,11 +1,11 @@
 <template>
-  <div class="home">首页</div>
+  <div></div>
 </template>
 
 <script>
-// 首页
+// 工程路由页面
 export default {
-  name: 'Home',
+  name: 'ProjectRoute',
   data() {
     return {
 

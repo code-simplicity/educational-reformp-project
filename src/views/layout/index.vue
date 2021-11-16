@@ -1,11 +1,13 @@
 <template>
-  <div class="home">首页</div>
+  <div class="layout">
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-// 首页
+// 分发路由
 export default {
-  name: 'Home',
+  name: 'Layout',
   data() {
     return {
 

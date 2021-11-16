@@ -1,19 +1,42 @@
 <template>
-  <div class="app">毕业设计测试</div>
+  <div class="app">
+    <MainFooter></MainFooter>
+    <MainHeader></MainHeader>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
-
-
+import MainFooter from '@/components/main-footer/index.vue'
+import MainHeader from '@/components/main-header/index.vue'
 export default {
   name: 'App',
-  components: {
+  data() {
+    return {
 
-  }
+    }
+  },
+
+  components: {
+    MainFooter,
+    MainHeader
+  },
+
+  mounted() {
+
+  },
+
+  methods: {
+
+  },
 }
 </script>
 
-<style lang="scss" scoped>
+<style>
 .app {
+  width: 100vw;
+  height: 100vh;
+  background-color: #020308;
+  overflow: hidden;
 }
 </style>

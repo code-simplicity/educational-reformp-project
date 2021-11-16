@@ -1,11 +1,11 @@
 <template>
-  <div class="home">首页</div>
+  <div></div>
 </template>
 
 <script>
-// 首页
+// 港区漫游
 export default {
-  name: 'Home',
+  name: 'MinatoRoute',
   data() {
     return {
 
@@ -23,5 +23,5 @@ export default {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang='less' scoped>
 </style>

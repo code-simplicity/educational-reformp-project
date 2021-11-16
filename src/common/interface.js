@@ -53,13 +53,12 @@ instance.interceptors.request.use(
 // 添加响应拦截器,做登录响应的拦截
 instance.interceptors.response.use((response) => {
     let data = response.data
-    // let status = response.status
-    return Promise.resolve(data)
-    // if (status === 200) {
-    //     return Promise.resolve(data)
-    // } else {
-    //     return Promise.reject(response)
-    // }
+    let status = response.status
+    if (status === 200) {
+        return Promise.resolve(data)
+    } else {
+        return Promise.reject(response)
+    }
 }, function (error) {
     return Promise.reject(error)
 })
