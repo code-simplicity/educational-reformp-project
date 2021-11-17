@@ -1,5 +1,5 @@
 <template>
-  <div>港区漫游</div>
+  <div class="minato-route">111</div>
 </template>
 
 <script>

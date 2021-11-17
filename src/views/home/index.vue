@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <el-row :gutter="12">
+    <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
       <el-col :span="7">
         <MianLeft>
           <div class="legend">操作说明</div>
@@ -8,15 +8,23 @@
       </el-col>
       <el-col :span="10">
         <MainCenter>
-          <div class="image">
-            <el-image :src="url" fit="contain"></el-image>
+          <div class="image" :style="{ height: clientHeight + 'px' }">
+            <el-image
+              style="height: 100%; width: 100%"
+              :src="imageUrl"
+              fit="fill"
+            ></el-image>
           </div>
         </MainCenter>
       </el-col>
       <el-col :span="7">
         <MianRight>
           <div class="content">
-            <span>{{ content }}</span>
+            <div class="content-list border">
+              <el-scrollbar :noresize="true" :always="true" height="200px">
+                <p class="item">{{ content }}</p>
+              </el-scrollbar>
+            </div>
           </div>
         </MianRight>
       </el-col>
@@ -33,9 +41,9 @@ export default {
   name: 'Home',
   data() {
     return {
-      fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
-      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
-      content: ''
+      imageUrl: '',
+      content: '',
+      clientHeight: document.body.clientHeight - 170,
     }
   },
   components: {
@@ -45,10 +53,42 @@ export default {
   },
   mounted() {
     this.getContentSearch()
+    this.getImageSearchOne()
+    const that = this
+    window.onresize = () => {
+      return (() => {
+        that.clientHeight = document.body.clientHeight
+      })()
+    }
   },
+  watch: {
+    clientHeight(val) {
+      if (!this.timer) {
+        this.clientHeight = val - 170
+        this.timer = true
+        let that = this
+        setTimeout(() => {
+          console.log('this.clientHeight', this.clientHeight)
+          that.timer = false
+        }, 400)
+      }
+    }
+  },
+
   methods: {
+    // 获取港口图片
+    async getImageSearchOne() {
+      const name = "port.png"
+      await this.$api.getImageSearchOne(name).then(res => {
+        if (res) {
+          this.imageUrl = this.$Constants.baseURL + res.data.path
+        }
+      })
+    },
+
+    // 获取内容介绍
     async getContentSearch() {
-      const id = '1637070559966'
+      const id = '1637108800537'
       await this.$api.getContentSearch(id).then((res) => {
         if (res) {
           this.content = res.data.content
@@ -64,12 +104,24 @@ export default {
 <style lang='scss' scoped>
 .home {
   .legend {
-    margin: 16px 0 0 16px;
+    padding: 6px;
     font-size: 18px;
     font-weight: 600;
   }
   .image {
     background-size: 100%;
+  }
+  .content {
+    .content-list {
+      flex: 1;
+      padding: 6px;
+      .item {
+        padding: 0 16px 0 0;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 20px;
+      }
+    }
   }
 }
 </style>

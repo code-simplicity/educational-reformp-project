@@ -2,7 +2,9 @@
   <div class="layout">
     <!-- <MainDisplay></MainDisplay> -->
     <router-view></router-view>
-    <MainFooter></MainFooter>
+    <div class="footer">
+      <MainFooter></MainFooter>
+    </div>
   </div>
 </template>
 
@@ -35,5 +37,8 @@ export default {
 .layout {
   width: 100%;
   min-width: 1080px;
+  .footer {
+    margin-top: 16px;
+  }
 }
 </style>

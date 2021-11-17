@@ -29,12 +29,11 @@ export default {
 
 <style lang='scss' scoped>
 .main-footer {
-  position: absolute;
-  bottom: 10px;
+  /* position: absolute; */
+  /* bottom: 10px;
   left: 16px;
-  right: 16px;
-  /* margin-top: 20px;
-  min-height: calc(170px); */
+  right: 16px; */
+  /* margin-top: 16px; */
   .container {
     padding: 10px;
     .version {
