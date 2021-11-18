@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <MainHeader></MainHeader>
+    <MainHeader v-if="loginStatus"></MainHeader>
     <router-view></router-view>
     <div class="footer">
       <MainFooter></MainFooter>
@@ -11,6 +11,8 @@
 <script>
 import MainFooter from '@/components/main-footer/index.vue'
 import MainHeader from '@/components/main-header/index.vue'
+
+import { mapGetters } from 'vuex'
 export default {
   name: 'App',
   data() {
@@ -22,6 +24,10 @@ export default {
   components: {
     MainFooter,
     MainHeader
+  },
+
+  computed: {
+    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
   },
 
   mounted() {
