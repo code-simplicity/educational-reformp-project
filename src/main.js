@@ -16,6 +16,13 @@ import '../src/assets/style/common.css'
 
 import router from './router/index'
 
+import store from './store/index'
+
+// 注册全局组件
+import MianLeft from './components/main-left/index.vue'
+import MainCenter from './components/main-center/index.vue'
+import MianRight from './components/main-right/index.vue'
+
 // 创建app实例，vue3的写法
 const app = createApp(App)
 
@@ -26,5 +33,17 @@ app.config.globalProperties.$Constants = Constants
 app.use(ElementPlus)
 
 app.use(router)
+
+app.use(store)
+
+app.component(
+    "MianLeft", MianLeft
+)
+app.component(
+    "MainCenter", MainCenter
+)
+app.component(
+    "MianRight", MianRight
+)
 
 app.mount('#app')

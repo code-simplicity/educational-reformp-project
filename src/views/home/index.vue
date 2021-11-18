@@ -2,31 +2,37 @@
   <div class="home">
     <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
       <el-col :span="7">
-        <MianLeft>
-          <div class="legend">操作说明</div>
-        </MianLeft>
+        <keep-alive>
+          <MianLeft>
+            <div class="legend">操作说明</div>
+          </MianLeft>
+        </keep-alive>
       </el-col>
       <el-col :span="10">
-        <MainCenter>
-          <div class="image" :style="{ height: clientHeight + 'px' }">
-            <el-image
-              style="height: 100%; width: 100%"
-              :src="imageUrl"
-              fit="fill"
-            ></el-image>
-          </div>
-        </MainCenter>
+        <keep-alive>
+          <MainCenter>
+            <div class="image">
+              <el-image
+                style="height: 100%; width: 100%"
+                :src="imageUrl"
+                fit="fill"
+              ></el-image>
+            </div>
+          </MainCenter>
+        </keep-alive>
       </el-col>
       <el-col :span="7">
-        <MianRight>
-          <div class="content">
-            <div class="content-list border">
-              <el-scrollbar :noresize="true" :always="true" height="200px">
-                <p class="item">{{ content }}</p>
-              </el-scrollbar>
+        <keep-alive>
+          <MianRight>
+            <div class="content">
+              <div class="content-list border">
+                <el-scrollbar :noresize="true" :always="true" height="200px">
+                  <p class="item">{{ content }}</p>
+                </el-scrollbar>
+              </div>
             </div>
-          </div>
-        </MianRight>
+          </MianRight>
+        </keep-alive>
       </el-col>
     </el-row>
   </div>
@@ -34,9 +40,9 @@
 
 <script>
 // 首页
-import MianLeft from '../../components/main-left/index.vue'
-import MainCenter from '../../components/main-center/index.vue'
-import MianRight from '../../components/main-right/index.vue'
+// import MianLeft from '../../components/main-left/index.vue'
+// import MainCenter from '../../components/main-center/index.vue'
+// import MianRight from '../../components/main-right/index.vue'
 export default {
   name: 'Home',
   data() {
@@ -47,9 +53,9 @@ export default {
     }
   },
   components: {
-    MianLeft,
-    MainCenter,
-    MianRight
+    // MianLeft,
+    // MainCenter,
+    // MianRight
   },
   mounted() {
     this.getContentSearch()
@@ -109,6 +115,8 @@ export default {
     font-weight: 600;
   }
   .image {
+    width: 100%;
+    height: 100%;
     background-size: 100%;
   }
   .content {

@@ -2,12 +2,14 @@
   <div class="app">
     <MainHeader></MainHeader>
     <router-view></router-view>
-    <!-- <MainFooter></MainFooter> -->
+    <div class="footer">
+      <MainFooter></MainFooter>
+    </div>
   </div>
 </template>
 
 <script>
-// import MainFooter from '@/components/main-footer/index.vue'
+import MainFooter from '@/components/main-footer/index.vue'
 import MainHeader from '@/components/main-header/index.vue'
 export default {
   name: 'App',
@@ -18,7 +20,7 @@ export default {
   },
 
   components: {
-    // MainFooter,
+    MainFooter,
     MainHeader
   },
 
@@ -39,5 +41,12 @@ export default {
   background-color: #ffffff;
   overflow: hidden;
   padding: 16px;
+}
+.footer {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  /* margin-top: 16px; */
 }
 </style>

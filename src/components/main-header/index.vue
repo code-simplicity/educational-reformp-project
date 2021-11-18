@@ -4,7 +4,7 @@
       <el-col :span="7"
         ><div class="left border">
           <div class="title">
-            <router-link class="active-class" :to="{ path: 'Home' }"
+            <router-link class="active-class" :to="{ path: 'home' }"
               >水运工程仿真实验系统</router-link
             >
           </div>
@@ -14,28 +14,28 @@
         ><div class="center flex-between border">
           <el-col :span="6"
             ><div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'MinatoRoute' }"
+              <router-link class="active-class" :to="{ path: 'minato-route' }"
                 >港区漫游</router-link
               >
             </div></el-col
           >
           <el-col :span="6">
             <div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'MinatoRoute' }"
+              <router-link class="active-class" :to="{ path: 'project-route' }"
                 >工况选配</router-link
               >
             </div></el-col
           >
           <el-col :span="6">
             <div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'MinatoRoute' }"
+              <router-link class="active-class" :to="{ path: 'minato-route' }"
                 >现象观察</router-link
               >
             </div></el-col
           >
           <el-col :span="6">
             <div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'MinatoRoute' }"
+              <router-link class="active-class" :to="{ path: 'minato-route' }"
                 >测点数据</router-link
               >
             </div></el-col
@@ -43,13 +43,13 @@
         </div></el-col
       >
       <el-col :span="7"
-        ><div class="right flex-between border">
+        ><div class="right flex border">
           <div class="time">2021年11月17日20:15:06</div>
-          <div class="user-info flex">
-            <div class="id">1807010210</div>
-            <div class="user-name">dpy</div>
+          <div class="user-info flex" v-if="loginStatus">
+            <div class="id">{{ userInfo.id }}</div>
+            <div class="user-name">{{ userInfo.user_name }}</div>
           </div>
-          <div class="container flex">
+          <div class="container flex" v-if="loginStatus">
             <el-dropdown @command="handleCommand">
               <div class="botton">
                 模块功能<el-icon class="el-icon-right"><CaretBottom /></el-icon>
@@ -64,7 +64,9 @@
               </template>
             </el-dropdown>
           </div>
-          <div class="no-login">登录</div>
+          <div class="no-login flex" v-else @click="doLogin">
+            <el-icon class="el-icon"><Coordinate /></el-icon> 登录
+          </div>
         </div></el-col
       >
     </el-row>
@@ -72,8 +74,9 @@
 </template>
 
 <script>
-import { CaretBottom } from '@element-plus/icons'
+import { CaretBottom, Coordinate } from '@element-plus/icons'
 import { ElMessage } from 'element-plus'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'main-header',
   data() {
@@ -83,7 +86,12 @@ export default {
   },
   components: {
     CaretBottom,
+    Coordinate
   },
+  computed: {
+    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+  },
+
   mounted() {
 
   },
@@ -93,14 +101,20 @@ export default {
       switch (command) {
         case "logout": {
           await this.$api.logout().then((res) => {
-            this.$router.push({
-              name: 'Login'
-            })
             if (res.status === 200) {
+              this.$router.push({
+                name: 'Login'
+              })
               ElMessage({
                 message: res.msg,
                 type: 'success',
               })
+              // 清除token以及登录状态
+              window.localStorage.setItem('_token_', null)
+              window.localStorage.setItem('_login_status_', null)
+              window.localStorage.setItem('_user_Info_', null)
+              this.setLogin_Status(null)
+              this.setUserInfo()
             }
           }).catch((err) => {
             console.log(`err`, err)
@@ -111,7 +125,17 @@ export default {
           break
         }
       }
-    }
+    },
+
+    // 去登录页面
+    doLogin() {
+      this.$router.replace({
+        name: 'login'
+      })
+    },
+
+    // 提交状态
+    ...mapMutations('user', { setLogin_Status: 'LOGIN_STATUS', setUserInfo: 'USER_INFO' })
   }
 }
 </script>
@@ -170,9 +194,11 @@ export default {
   .right {
     height: 50px;
     padding: 6px 16px;
+    position: relative;
     .time {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
+      margin-right: 10px;
     }
     .user-info {
       .id {
@@ -207,6 +233,11 @@ export default {
     .no-login {
       font-size: 14px;
       cursor: pointer;
+      position: absolute;
+      right: 10px;
+      .el-icon {
+        margin-right: 4px;
+      }
       &:hover {
         color: $hover-color;
       }

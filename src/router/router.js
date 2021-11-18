@@ -4,10 +4,11 @@ import Layout from '@/views/layout/index'
 const Login = () => import('../views/login')
 const Home = () => import('../views/home')
 const MinatoRoute = () => import('../views/minato-route')
+const ProjectRoute = () => import('../views/project-route')
 // 登录路由
 export const loginRouter = [{
     path: '/login',
-    name: 'Login',
+    name: 'login',
     meta: {
         title: '登录'
     },
@@ -35,13 +36,22 @@ export const mainRouter = [{
             component: Home
         },
         {
-            path: 'MinatoRoute',
-            name: 'MinatoRoute',
+            path: 'minato-route',
+            name: 'minato-route',
             meta: {
                 title: '港区漫游',
                 keepAlive: true
             },
             component: MinatoRoute
+        },
+        {
+            path: 'project-route',
+            name: 'project-route',
+            meta: {
+                title: '工况选配',
+                keepAlive: true
+            },
+            component: ProjectRoute
         }
 
     ]
