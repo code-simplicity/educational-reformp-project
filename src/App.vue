@@ -25,11 +25,23 @@ export default {
   },
 
   mounted() {
+    // this.onresize()
+    // this.setRem()
 
   },
 
   methods: {
+    // onresize() {
+    //   window.onresize = () => {
+    //     this.setRem()
+    //   }
+    // },
 
+    // setRem() {
+    //   const baseSize = 16
+    //   const scale = document.documentElement.clientWidth / 1920
+    //   document.documentElement.style.fontSize = baseSize * Math.min(scale, 2) + 'px'
+    // }
   },
 }
 </script>

@@ -5,6 +5,7 @@ const Login = () => import('../views/login')
 const Home = () => import('../views/home')
 const MinatoRoute = () => import('../views/minato-route')
 const ProjectRoute = () => import('../views/project-route')
+const AppearanceRoute = () => import('../views/appearance-route')
 // 登录路由
 export const loginRouter = [{
     path: '/login',
@@ -52,6 +53,15 @@ export const mainRouter = [{
                 keepAlive: true
             },
             component: ProjectRoute
+        },
+        {
+            path: 'appearance-route',
+            name: 'appearance-route',
+            meta: {
+                title: '现象观察',
+                keepAlive: true
+            },
+            component: AppearanceRoute
         }
 
     ]

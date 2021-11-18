@@ -37,7 +37,7 @@ export default {
   /* margin-top: 16px; */
   /* min-width: 1080px; */
   .container {
-    padding: 10px;
+    padding: 6px 0;
     .version {
       font-size: 16px;
       cursor: pointer;

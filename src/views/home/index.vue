@@ -110,7 +110,7 @@ export default {
 <style lang='scss' scoped>
 .home {
   .legend {
-    padding: 6px;
+    padding: 20px 26px;
     font-size: 18px;
     font-weight: 600;
   }

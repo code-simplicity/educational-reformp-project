@@ -28,7 +28,9 @@
           >
           <el-col :span="6">
             <div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'minato-route' }"
+              <router-link
+                class="active-class"
+                :to="{ path: 'appearance-route' }"
                 >现象观察</router-link
               >
             </div></el-col
@@ -44,7 +46,7 @@
       >
       <el-col :span="7"
         ><div class="right flex border">
-          <div class="time">2021年11月17日20:15:06</div>
+          <div class="time">{{ dateTime }}</div>
           <div class="user-info flex" v-if="loginStatus">
             <div class="id">{{ userInfo.id }}</div>
             <div class="user-name">{{ userInfo.user_name }}</div>
@@ -81,7 +83,7 @@ export default {
   name: 'main-header',
   data() {
     return {
-
+      dateTime: ''
     }
   },
   components: {
@@ -93,9 +95,18 @@ export default {
   },
 
   mounted() {
-
+    this.dealWithTime()
+    this.timer = setInterval(() => {
+      this.dealWithTime()
+    }, 200);
   },
   methods: {
+    // 实时刷新时间
+    dealWithTime() {
+      let timestamp = new Date().valueOf()
+      this.dateTime = this.$utils.dateFormat(timestamp, "YYYY-MM-DD HH-MM-SS")
+    },
+
     // 控制下拉菜单功能
     async handleCommand(command) {
       switch (command) {
@@ -103,7 +114,7 @@ export default {
           await this.$api.logout().then((res) => {
             if (res.status === 200) {
               this.$router.push({
-                name: 'Login'
+                name: 'login'
               })
               ElMessage({
                 message: res.msg,
@@ -136,22 +147,30 @@ export default {
 
     // 提交状态
     ...mapMutations('user', { setLogin_Status: 'LOGIN_STATUS', setUserInfo: 'USER_INFO' })
+  },
+
+  unmounted() {
+    if (this.timer) {  // 注意在vue实例销毁前，清除我们的定时器
+      clearInterval(this.timer);
+    }
   }
 }
 </script>
 
 <style lang='scss' scoped>
 .main-header {
-  min-width: 1080px;
+  /* min-width: 1080px; */
   margin-bottom: 10px;
   .left {
     padding: 6px 16px;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     height: 50px;
     .title {
-      font-size: 24px;
+      font-size: 1.4rem;
       .active-class {
-        color: #000000;
+        color: $black;
         text-decoration: none;
         cursor: pointer;
         &.router-link-active {
@@ -167,7 +186,7 @@ export default {
     padding: 6px 16px;
     height: 50px;
     .menu-list {
-      font-size: 22px;
+      font-size: 1.4rem;
       text-align: center;
       padding: 2px 0;
       box-shadow: -1px 1px 5px rgb(0, 0, 0);
@@ -196,23 +215,23 @@ export default {
     padding: 6px 16px;
     position: relative;
     .time {
-      font-size: 14px;
+      font-size: 0.8rem;
       font-weight: 500;
       margin-right: 10px;
     }
     .user-info {
       .id {
-        font-size: 14px;
+        font-size: 0.8rem;
         font-weight: 600;
       }
       .user-name {
-        font-size: 14px;
+        font-size: 0.8rem;
         font-weight: 600;
         margin-left: 16px;
       }
     }
     .container {
-      font-size: 14px;
+      font-size: 0.8rem;
       font-weight: 600;
       margin-left: 16px;
       .botton {
@@ -231,7 +250,7 @@ export default {
       }
     }
     .no-login {
-      font-size: 14px;
+      font-size: 0.8rem;
       cursor: pointer;
       position: absolute;
       right: 10px;

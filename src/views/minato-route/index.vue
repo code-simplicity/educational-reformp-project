@@ -8,7 +8,7 @@
       </el-col>
       <el-col :span="10">
         <MainCenter>
-          <div class="video" :style="{ height: clientHeight + 'px' }">
+          <div class="video">
             <div class="video-location">
               <video class="video-style" :src="videoSrc" autoplay="tr"></video>
             </div>
@@ -85,7 +85,7 @@ export default {
 <style lang='scss' scoped>
 .minato-route {
   .legend {
-    padding: 6px;
+    padding: 20px 26px;
     font-size: 18px;
     font-weight: 600;
   }
@@ -96,10 +96,12 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
     .video-location {
       width: 100%;
       .video-style {
         width: 100%;
+        height: 100%;
       }
     }
   }

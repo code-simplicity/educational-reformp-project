@@ -5,44 +5,50 @@
         <keep-alive>
           <MianLeft>
             <div class="legend">
-              <div class="top">
-                <div class="title">设计水位</div>
-                <div class="radio-check">
-                  <el-radio-group
-                    v-for="item in radioList1"
-                    :key="item.id"
-                    v-model="radioValue1"
-                    @change="changeRadio1"
-                  >
-                    <el-radio :label="item.label">{{ item.label }}</el-radio>
-                  </el-radio-group>
+              <el-scrollbar>
+                <div class="top">
+                  <div class="title">设计水位</div>
+                  <div class="radio-check">
+                    <el-radio-group
+                      v-for="item in radioList1"
+                      :key="item.id"
+                      v-model="water_level"
+                      @change="changeRadio1"
+                    >
+                      <el-radio :label="item.label">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                  </div>
                 </div>
-              </div>
-              <div class="center">
-                <div class="title">波浪来向</div>
-                <div class="radio-check">
-                  <el-radio-group
-                    v-for="item in radioList2"
-                    :key="item.id"
-                    v-model="radioValue2"
-                    @change="changeRadio2"
-                  >
-                    <el-radio :label="item.label">{{ item.label }}</el-radio>
-                  </el-radio-group>
+                <div class="center">
+                  <div class="title">波浪来向</div>
+                  <div class="radio-check">
+                    <el-radio-group
+                      v-for="item in radioList2"
+                      :key="item.id"
+                      v-model="wave_direction"
+                      @change="changeRadio2"
+                    >
+                      <el-radio :label="item.label">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                  </div>
                 </div>
-              </div>
-              <div class="bottom">
-                <div class="title">外堤布置</div>
-                <div class="radio-check">
-                  <el-radio-group
-                    v-for="item in radioList3"
-                    :key="item.id"
-                    v-model="radioValue3"
-                    @change="changeRadio3"
-                  >
-                    <el-radio :label="item.label">{{ item.label }}</el-radio>
-                  </el-radio-group>
+                <div class="bottom">
+                  <div class="title">外堤布置</div>
+                  <div class="radio-check">
+                    <el-radio-group
+                      v-for="item in radioList3"
+                      :key="item.id"
+                      v-model="embank_ment"
+                      @change="changeRadio3"
+                    >
+                      <el-radio :label="item.label">{{ item.label }}</el-radio>
+                    </el-radio-group>
+                  </div>
                 </div>
+              </el-scrollbar>
+
+              <div class="botton-click">
+                <div class="botton" @click="toAppearance">现象观察</div>
               </div>
             </div>
           </MianLeft>
@@ -66,7 +72,7 @@
           <MianRight>
             <div class="content">
               <div class="content-list border">
-                <el-scrollbar :noresize="true" :always="true" height="200px">
+                <el-scrollbar height="200px">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
               </div>
@@ -127,13 +133,13 @@ const radioList3 = [
   },
   {
     id: 2,
-    value: "南堤",
-    label: "南堤",
+    value: "仅南堤",
+    label: "仅南堤",
   },
   {
     id: 3,
-    value: "北堤",
-    label: "北堤",
+    value: "仅北堤",
+    label: "仅北堤",
   },
   {
     id: 5,
@@ -151,10 +157,10 @@ export default {
       radioList1: radioList1,
       radioList2: radioList2,
       radioList3: radioList3,
-      // 选择框的值
-      radioValue1: '',
-      radioValue2: '',
-      radioValue3: '',
+      // 选择框的值,分别是水位，波浪方向，堤坝布置
+      water_level: '',
+      wave_direction: '',
+      embank_ment: '',
     }
   },
   components: {
@@ -163,12 +169,11 @@ export default {
   watch: {
     clientHeight(val) {
       if (!this.timer) {
-        this.clientHeight = val - 170
+        this.clientHeight = val
         this.timer = true
-        let that = this
         setTimeout(() => {
           console.log('this.clientHeight', this.clientHeight)
-          that.timer = false
+          this.timer = false
         }, 400)
       }
     }
@@ -176,17 +181,28 @@ export default {
   mounted() {
     this.getContentSearch()
     this.getImageSearchOne()
-    const that = this
-    window.onresize = () => {
-      return (() => {
-        that.clientHeight = document.body.clientHeight
-      })()
-    }
+    this.onresize()
   },
   methods: {
-    // 单选框的值
-    changeRadio(val) {
-      console.log(`val`, val)
+    // 调整视图大小
+    onresize() {
+      window.onresize = () => {
+        return (() => {
+          this.clientHeight = document.body.clientHeight - 170
+        })()
+      }
+    },
+
+    // 去现象观察
+    toAppearance() {
+      this.$router.push({
+        name: 'appearance-route',
+        query: {
+          water_level: this.water_level,
+          wave_direction: this.wave_direction,
+          embank_ment: this.embank_ment
+        }
+      })
     },
 
     // 获取港口图片
@@ -210,6 +226,11 @@ export default {
         console.log('err', err)
       });
     }
+  },
+  unmounted() {
+    if (this.timer) {  // 注意在vue实例销毁前，清除我们的定时器
+      clearTimeout(this.timer);
+    }
   }
 }
 </script>
@@ -217,8 +238,12 @@ export default {
 <style lang='scss' scoped>
 .project-route {
   .legend {
-    padding: 20px;
+    padding: 20px 26px;
+    position: relative;
+    height: 70vh;
     /* height: 100%; */
+    display: flex;
+    flex-direction: column;
     .top {
     }
     .center {
@@ -234,6 +259,26 @@ export default {
       display: flex;
       flex-direction: column;
       margin-left: 40px;
+    }
+    .botton-click {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      .botton {
+        padding: 4px 8px;
+        text-align: center;
+        box-shadow: -1px 1px 5px rgb(0, 0, 0);
+        background: #f3f3f3;
+        cursor: pointer;
+        font-weight: 600;
+        &:active {
+          color: $active-color;
+        }
+        &:hover {
+          background: $hover-background-color;
+          color: $hover-color;
+        }
+      }
     }
   }
   .image {
