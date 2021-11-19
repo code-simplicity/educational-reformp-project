@@ -39,11 +39,11 @@ export default {
   .container {
     padding: 6px 0;
     .version {
-      font-size: 16px;
+      font-size: 0.8rem;
       cursor: pointer;
     }
     .maintain {
-      font-size: 16px;
+      font-size: 0.8rem;
       cursor: pointer;
     }
   }

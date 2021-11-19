@@ -110,8 +110,9 @@ export default {
 <style lang='scss' scoped>
 .home {
   .legend {
-    padding: 20px 26px;
-    font-size: 18px;
+    padding: 20px 0;
+    margin-left: 20px;
+    font-size: 1rem;
     font-weight: 600;
   }
   .image {
@@ -125,7 +126,7 @@ export default {
       padding: 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 16px;
+        font-size: 0.8rem;
         font-weight: 500;
         line-height: 20px;
       }

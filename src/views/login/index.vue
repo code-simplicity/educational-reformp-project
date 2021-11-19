@@ -149,10 +149,10 @@ export default {
   width: 100%;
   min-height: 76vh;
   .title {
-    font-size: 30px;
+    font-size: 2rem;
     margin-bottom: 30px;
   }
-  .login-box {  
+  .login-box {
     padding: 16px;
     box-shadow: -1px 1px 10px rgb(0, 0, 0, 0.6);
     width: 20%;
@@ -161,7 +161,7 @@ export default {
     flex-direction: column;
     .login-title {
       margin-bottom: 16px;
-      font-size: 18px;
+      font-size: 1rem;
       text-align: center;
     }
   }

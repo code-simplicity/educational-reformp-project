@@ -57,12 +57,7 @@ export default {
     }
   },
   mounted() {
-    const that = this
-    window.onresize = () => {
-      return (() => {
-        that.clientHeight = document.body.clientHeight
-      })()
-    }
+    this.onresize()
     this.getContentSearch()
   },
 
@@ -77,7 +72,15 @@ export default {
       }).catch((err) => {
         console.log('err', err)
       });
-    }
+    },
+
+    onresize() {
+      window.onresize = () => {
+        return (() => {
+          this.clientHeight = document.body.clientHeight - 170
+        })()
+      }
+    },
   }
 }
 </script>
@@ -85,8 +88,9 @@ export default {
 <style lang='scss' scoped>
 .minato-route {
   .legend {
-    padding: 20px 26px;
-    font-size: 18px;
+    padding: 20px 0;
+    margin-left: 20px;
+    font-size: 1rem;
     font-weight: 600;
   }
   .video {
@@ -111,7 +115,7 @@ export default {
       padding: 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 16px;
+        font-size: 0.8rem;
         font-weight: 500;
         line-height: 20px;
       }

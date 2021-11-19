@@ -170,7 +170,7 @@ export default {
     flex-direction: column;
     height: 50px;
     .title {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       .active-class {
         color: $black;
         text-decoration: none;
@@ -188,7 +188,7 @@ export default {
     padding: 6px 16px;
     height: 50px;
     .menu-list {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       text-align: center;
       padding: 2px 0;
       box-shadow: -1px 1px 5px rgb(0, 0, 0);
@@ -224,11 +224,11 @@ export default {
     .user-info {
       .id {
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 500;
       }
       .user-name {
         font-size: 0.8rem;
-        font-weight: 600;
+        font-weight: 500;
         margin-left: 16px;
       }
     }
@@ -237,6 +237,7 @@ export default {
       font-weight: 600;
       margin-left: 16px;
       .botton {
+        font-size: 0.8rem;
         cursor: pointer;
         .el-icon-right {
           color: $active-color;
