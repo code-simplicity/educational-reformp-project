@@ -6,6 +6,7 @@ const Home = () => import('../views/home')
 const MinatoRoute = () => import('../views/minato-route')
 const ProjectRoute = () => import('../views/project-route')
 const AppearanceRoute = () => import('../views/appearance-route')
+const MeasurePointRoute = () => import('../views/measure-point-route')
 // 登录路由
 export const loginRouter = [{
     path: '/login',
@@ -23,7 +24,7 @@ export const mainRouter = [{
         name: 'home'
     },
     meta: {
-        title: '首页',
+        title: '登录',
         keepAlive: true
     },
     component: Layout,
@@ -62,6 +63,15 @@ export const mainRouter = [{
                 keepAlive: true
             },
             component: AppearanceRoute
+        },
+        {
+            path: 'measure-point-route',
+            name: 'measure-point-route',
+            meta: {
+                title: '测点数据',
+                keepAlive: true
+            },
+            component: MeasurePointRoute
         }
 
     ]

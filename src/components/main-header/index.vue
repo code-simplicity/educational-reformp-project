@@ -37,7 +37,9 @@
           >
           <el-col :span="6">
             <div class="menu-list">
-              <router-link class="active-class" :to="{ path: 'minato-route' }"
+              <router-link
+                class="active-class"
+                :to="{ path: 'measure-point-route' }"
                 >测点数据</router-link
               >
             </div></el-col
@@ -113,7 +115,7 @@ export default {
         case "logout": {
           await this.$api.logout().then((res) => {
             if (res.status === 200) {
-              this.$router.push({
+              this.$router.replace({
                 name: 'login'
               })
               ElMessage({

@@ -1,8 +1,8 @@
 <template>
   <div class="main-footer border">
     <div class="container flex-column">
-      <div class="version">版本所有：天津城建大学</div>
-      <div class="maintain">制作维护：计算机与信息工程学院</div>
+      <div class="version">版权所有：天津城建大学</div>
+      <div class="maintain">制作维护：土木工程学院 计算机与信息工程学院</div>
     </div>
   </div>
 </template>

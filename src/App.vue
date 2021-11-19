@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <MainHeader v-if="loginStatus"></MainHeader>
+    <MainHeader v-show="loginStatus"></MainHeader>
     <router-view></router-view>
     <div class="footer">
       <MainFooter></MainFooter>

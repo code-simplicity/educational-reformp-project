@@ -45,7 +45,7 @@
               </el-scrollbar>
 
               <div class="botton-click">
-                <div class="botton" @click="toAppearance">现象观察</div>
+                <div class="botton" @click="toMeasurePoint">测点数据</div>
               </div>
             </div>
           </MianLeft>
@@ -196,12 +196,7 @@ export default {
   mounted() {
     this.getContentSearch()
     this.getImageSearchOne()
-    const that = this
-    window.onresize = () => {
-      return (() => {
-        that.clientHeight = document.body.clientHeight
-      })()
-    }
+    this.onresize()
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
@@ -211,14 +206,17 @@ export default {
   },
   methods: {
     // 去现象观察
-    toAppearance() {
+    toMeasurePoint() {
       this.$router.push({
-        name: '',
-        params: {
-
+        name: 'measure-point-route',
+        query: {
+          water_level: this.water_level,
+          wave_direction: this.wave_direction,
+          embank_ment: this.embank_ment
         }
       })
     },
+
     // 获取演示视频
     async getVideoSearch(params) {
       await this.$api.getVideoSearch(params).then(res => {
@@ -250,7 +248,15 @@ export default {
       }).catch((err) => {
         console.log('err', err)
       });
-    }
+    },
+
+    onresize() {
+      window.onresize = () => {
+        return (() => {
+          this.clientHeight = document.body.clientHeight - 170
+        })()
+      }
+    },
   }
 }
 </script>
