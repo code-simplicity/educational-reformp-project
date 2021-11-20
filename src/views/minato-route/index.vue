@@ -1,6 +1,6 @@
 <template>
   <div class="minato-route">
-    <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
+    <el-row :gutter="12">
       <el-col :span="7">
         <MianLeft>
           <div class="legend">操作说明</div>
@@ -19,7 +19,7 @@
         <MianRight>
           <div class="content">
             <div class="content-list border">
-              <el-scrollbar :noresize="true" :always="true" height="200px">
+              <el-scrollbar height="12rem">
                 <p class="item">{{ content }}</p>
               </el-scrollbar>
             </div>
@@ -36,7 +36,6 @@ export default {
   name: 'MinatoRoute',
   data() {
     return {
-      clientHeight: document.body.clientHeight - 170,
       content: '',
       videoSrc: 'https://media.w3.org/2010/05/sintel/trailer.mp4'
     }
@@ -45,19 +44,8 @@ export default {
 
   },
   watch: {
-    clientHeight(val) {
-      if (!this.timer) {
-        this.clientHeight = val - 170
-        this.timer = true
-        let that = this
-        setTimeout(() => {
-          that.timer = false
-        }, 400)
-      }
-    }
   },
   mounted() {
-    this.onresize()
     this.getContentSearch()
   },
 
@@ -73,14 +61,6 @@ export default {
         console.log('err', err)
       });
     },
-
-    onresize() {
-      window.onresize = () => {
-        return (() => {
-          this.clientHeight = document.body.clientHeight - 170
-        })()
-      }
-    },
   }
 }
 </script>
@@ -88,6 +68,7 @@ export default {
 <style lang='scss' scoped>
 .minato-route {
   .legend {
+    height: 80vh;
     padding: 20px 0;
     margin-left: 20px;
     font-size: 1rem;
@@ -111,11 +92,10 @@ export default {
   }
   .content {
     .content-list {
-      flex: 1;
-      padding: 6px;
+      padding: 6px 0 0 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         line-height: 20px;
       }

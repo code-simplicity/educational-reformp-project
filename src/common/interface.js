@@ -54,18 +54,19 @@ instance.interceptors.request.use(
 instance.interceptors.response.use((response) => {
     let data = response.data
     let status = response.status
-    const loginStatus = window.localStorage.getItem('_login_status_')
-    console.log(`loginStatus`, loginStatus)
-    if (loginStatus == null) {
-        this.$router.replace({
-            name: 'login'
-        })
-        ElMessage({
-            message: '未登陆，请登录！',
-            type: "error"
-        })
-        return
-    } else if (status === 200) {
+    // const loginStatus = window.localStorage.getItem('_login_status_')
+    // console.log(`loginStatus`, loginStatus)
+    // if (loginStatus == null) {
+    //     this.$router.replace({
+    //         name: 'login'
+    //     })
+    //     ElMessage({
+    //         message: '未登陆，请登录！',
+    //         type: "error"
+    //     })
+    //     return
+    // } else 
+    if (status === 200) {
         return Promise.resolve(data)
     } else {
         return Promise.reject(response)

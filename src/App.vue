@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <MainHeader v-show="loginStatus"></MainHeader>
+    <MainHeader></MainHeader>
     <router-view></router-view>
     <div class="footer">
       <MainFooter></MainFooter>
@@ -61,10 +61,10 @@ export default {
   padding: 16px;
 }
 .footer {
-  position: absolute;
-  bottom: 16px;
+  /* position: absolute; */
+  /* bottom: 16px;
   left: 16px;
-  right: 16px;
-  /* margin-top: 16px; */
+  right: 16px; */
+  margin-top: 10px;
 }
 </style>

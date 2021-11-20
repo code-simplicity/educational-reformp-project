@@ -1,6 +1,6 @@
 <template>
   <div class="appearance-route">
-    <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
+    <el-row :gutter="12">
       <el-col :span="7">
         <keep-alive>
           <MianLeft>
@@ -49,7 +49,6 @@
                   </div>
                 </div>
               </el-scrollbar>
-
               <div class="botton-click">
                 <div class="botton" @click="toMeasurePoint">测点数据</div>
               </div>
@@ -77,7 +76,7 @@
           <MianRight>
             <div class="content">
               <div class="content-list border">
-                <el-scrollbar :noresize="true" :always="true" height="200px">
+                <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
               </div>
@@ -95,7 +94,6 @@ export default {
   name: 'AppearanceRoute',
   data() {
     return {
-      clientHeight: document.body.clientHeight - 170,
       content: '',
       imageUrl: '',
       radioList: [],
@@ -113,18 +111,6 @@ export default {
 
   },
   watch: {
-    clientHeight(val) {
-      if (!this.timer) {
-        this.clientHeight = val - 170
-        this.timer = true
-        let that = this
-        setTimeout(() => {
-          console.log('this.clientHeight', this.clientHeight)
-          that.timer = false
-        }, 400)
-      }
-    },
-
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
         this.queryObj = newVal.query
@@ -137,13 +123,11 @@ export default {
     this.getContentSearch()
     this.getImageSearchOne()
     this.getChooseFindlist()
-    this.onresize()
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
       this.getVideoSearch(queryObj)
     }
-    console.log(`queryObj`, this.queryObj)
   },
   methods: {
     // 获取左边选择
@@ -204,14 +188,6 @@ export default {
         console.log('err', err)
       });
     },
-
-    onresize() {
-      window.onresize = () => {
-        return (() => {
-          this.clientHeight = document.body.clientHeight - 170
-        })()
-      }
-    },
   }
 }
 </script>
@@ -220,9 +196,9 @@ export default {
 .appearance-route {
   .legend {
     padding: 20px 0;
+    height: 80vh;
     margin-left: 20px;
     position: relative;
-    height: 70vh;
     display: flex;
     flex-direction: column;
     .top {
@@ -281,11 +257,10 @@ export default {
   }
   .content {
     .content-list {
-      flex: 1;
-      padding: 6px;
+      padding: 6px 0 0 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         line-height: 20px;
       }

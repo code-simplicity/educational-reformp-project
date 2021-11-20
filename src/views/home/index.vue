@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
+    <el-row :gutter="12">
       <el-col :span="7">
         <keep-alive>
           <MianLeft>
@@ -26,7 +26,7 @@
           <MianRight>
             <div class="content">
               <div class="content-list border">
-                <el-scrollbar :noresize="true" :always="true" height="200px">
+                <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
               </div>
@@ -40,45 +40,26 @@
 
 <script>
 // 首页
-// import MianLeft from '../../components/main-left/index.vue'
-// import MainCenter from '../../components/main-center/index.vue'
-// import MianRight from '../../components/main-right/index.vue'
+
 export default {
   name: 'Home',
   data() {
     return {
       imageUrl: '',
       content: '',
-      clientHeight: document.body.clientHeight - 170,
+
     }
   },
   components: {
-    // MianLeft,
-    // MainCenter,
-    // MianRight
+
   },
+  watch: {
+
+  },
+
   mounted() {
     this.getContentSearch()
     this.getImageSearchOne()
-    const that = this
-    window.onresize = () => {
-      return (() => {
-        that.clientHeight = document.body.clientHeight
-      })()
-    }
-  },
-  watch: {
-    clientHeight(val) {
-      if (!this.timer) {
-        this.clientHeight = val - 170
-        this.timer = true
-        let that = this
-        setTimeout(() => {
-          console.log('this.clientHeight', this.clientHeight)
-          that.timer = false
-        }, 400)
-      }
-    }
   },
 
   methods: {
@@ -111,6 +92,7 @@ export default {
 .home {
   .legend {
     padding: 20px 0;
+    height: 80vh;
     margin-left: 20px;
     font-size: 1rem;
     font-weight: 600;
@@ -122,11 +104,10 @@ export default {
   }
   .content {
     .content-list {
-      flex: 1;
-      padding: 6px;
+      padding: 6px 0 0 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         line-height: 20px;
       }

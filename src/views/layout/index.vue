@@ -36,6 +36,7 @@ export default {
 <style lang='scss' scoped>
 .layout {
   width: 100%;
+  height: 80vh;
   /* min-width: 1080px; */
   .footer {
     margin-top: 16px;

@@ -1,6 +1,6 @@
 <template>
   <div class="project-route">
-    <el-row :gutter="12" :style="{ height: clientHeight + 'px' }">
+    <el-row :gutter="12">
       <el-col :span="7">
         <keep-alive>
           <MianLeft>
@@ -75,7 +75,7 @@
           <MianRight>
             <div class="content">
               <div class="content-list border">
-                <el-scrollbar height="200px">
+                <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
               </div>
@@ -94,7 +94,6 @@ export default {
   name: 'ProjectRoute',
   data() {
     return {
-      clientHeight: document.body.clientHeight - 170,
       content: '',
       imageUrl: '',
       radioList: [],
@@ -108,22 +107,12 @@ export default {
 
   },
   watch: {
-    clientHeight(val) {
-      if (!this.timer) {
-        this.clientHeight = val
-        this.timer = true
-        setTimeout(() => {
-          console.log('this.clientHeight', this.clientHeight)
-          this.timer = false
-        }, 400)
-      }
-    }
+
   },
   mounted() {
     this.getContentSearch()
     this.getImageSearchOne()
     this.getChooseFindlist()
-    this.onresize()
   },
   methods: {
     // 获取左边选择
@@ -135,15 +124,6 @@ export default {
       }).catch((err) => {
         console.log(`err`, err)
       });
-    },
-
-    // 调整视图大小
-    onresize() {
-      window.onresize = () => {
-        return (() => {
-          this.clientHeight = document.body.clientHeight - 170
-        })()
-      }
     },
 
     // 去现象观察
@@ -180,11 +160,6 @@ export default {
       });
     }
   },
-  unmounted() {
-    if (this.timer) {  // 注意在vue实例销毁前，清除我们的定时器
-      clearTimeout(this.timer);
-    }
-  }
 }
 </script>
 
@@ -194,8 +169,7 @@ export default {
     padding: 20px 0;
     margin-left: 20px;
     position: relative;
-    height: 70vh;
-    /* height: 100%; */
+    height: 80vh;
     display: flex;
     flex-direction: column;
     .top {
@@ -243,11 +217,10 @@ export default {
   }
   .content {
     .content-list {
-      flex: 1;
-      padding: 6px;
+      padding: 6px 0 0 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         line-height: 20px;
       }

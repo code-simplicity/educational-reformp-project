@@ -1,5 +1,5 @@
 <template>
-  <div class="measure-point-route" :style="{ height: clientHeight + 'px' }">
+  <div class="measure-point-route">
     <el-row :gutter="12">
       <el-col :span="7">
         <keep-alive>
@@ -60,7 +60,7 @@
       <el-col :span="10">
         <keep-alive>
           <MainCenter>
-            <div class="image" :style="{ height: clientHeight + 'px' }">
+            <div class="image">
               <div class="left">
                 <el-image
                   style="height: 100%; width: 100%"
@@ -78,7 +78,7 @@
           <MianRight>
             <div class="content">
               <div class="content-list border">
-                <el-scrollbar height="200px">
+                <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
               </div>
@@ -97,7 +97,6 @@ export default {
   name: 'MeasurePointRoute',
   data() {
     return {
-      clientHeight: document.body.clientHeight - 170,
       content: '',
       imageUrl: '',
       radioList: [],
@@ -111,16 +110,6 @@ export default {
 
   },
   watch: {
-    clientHeight(val) {
-      if (!this.timer) {
-        this.clientHeight = val
-        this.timer = true
-        setTimeout(() => {
-          console.log('this.clientHeight', this.clientHeight)
-          this.timer = false
-        }, 400)
-      }
-    },
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
         this.queryObj = newVal.query
@@ -131,7 +120,6 @@ export default {
   mounted() {
     this.getContentSearch()
     this.getChooseFindlist()
-    this.onresize()
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
@@ -176,13 +164,6 @@ export default {
         console.log('err', err)
       });
     },
-    onresize() {
-      window.onresize = () => {
-        return (() => {
-          this.clientHeight = document.body.clientHeight - 170
-        })()
-      }
-    },
   }
 }
 </script>
@@ -193,7 +174,7 @@ export default {
     padding: 20px 0;
     margin-left: 20px;
     position: relative;
-    height: 70vh;
+    height: 80vh;
     /* height: 100%; */
     display: flex;
     flex-direction: column;
@@ -252,11 +233,10 @@ export default {
   }
   .content {
     .content-list {
-      flex: 1;
-      padding: 6px;
+      padding: 6px 0 0 6px;
       .item {
         padding: 0 16px 0 0;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         font-weight: 500;
         line-height: 20px;
       }

@@ -4,7 +4,7 @@
       <el-col :span="7"
         ><div class="left border">
           <div class="title">
-            <router-link class="active-class" :to="{ path: 'home' }"
+            <router-link class="active-class flex-nowrap" :to="{ path: 'home' }"
               >水运工程仿真实验系统</router-link
             >
           </div>
@@ -47,13 +47,13 @@
         </div></el-col
       >
       <el-col :span="7"
-        ><div class="right flex border">
-          <div class="time">{{ dateTime }}</div>
-          <div class="user-info flex" v-if="loginStatus">
+        ><div class="right flex-between border">
+          <div class="time flex-nowrap">{{ dateTime }}</div>
+          <div class="user-info flex-nowrap flex" v-if="loginStatus">
             <div class="id">{{ userInfo.id }}</div>
             <div class="user-name">{{ userInfo.user_name }}</div>
           </div>
-          <div class="container flex" v-if="loginStatus">
+          <div class="container flex-nowrap flex" v-if="loginStatus">
             <el-dropdown @command="handleCommand">
               <div class="botton">
                 模块功能<el-icon class="el-icon-right"><CaretBottom /></el-icon>
@@ -164,13 +164,13 @@ export default {
   /* min-width: 1080px; */
   margin-bottom: 10px;
   .left {
-    padding: 6px 16px;
     display: flex;
     align-items: center;
-    flex-direction: column;
+    justify-content: center;
     height: 50px;
     .title {
       font-size: 1.3rem;
+      text-align: center;
       .active-class {
         color: $black;
         text-decoration: none;
@@ -185,7 +185,7 @@ export default {
     }
   }
   .center {
-    padding: 6px 16px;
+    padding: 0 16px;
     height: 50px;
     .menu-list {
       font-size: 1.2rem;
@@ -214,7 +214,7 @@ export default {
   }
   .right {
     height: 50px;
-    padding: 6px 16px;
+    padding: 0 16px;
     position: relative;
     .time {
       font-size: 0.8rem;
@@ -235,7 +235,7 @@ export default {
     .container {
       font-size: 0.8rem;
       font-weight: 600;
-      margin-left: 16px;
+      margin-left: 10px;
       .botton {
         font-size: 0.8rem;
         cursor: pointer;

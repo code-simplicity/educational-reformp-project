@@ -41,6 +41,13 @@
     align-items: center;
 }
 
+.flex-nowrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    white-space: nowrap;
+}
+
 .border {
     border: 1px solid #727272;
 }
