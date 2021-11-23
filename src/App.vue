@@ -65,6 +65,6 @@ export default {
   /* bottom: 16px;
   left: 16px;
   right: 16px; */
-  margin-top: 10px;
+  margin-top: 12px;
 }
 </style>

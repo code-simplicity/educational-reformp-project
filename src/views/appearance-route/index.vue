@@ -13,6 +13,7 @@
                       v-for="item in radioList.slice(0, 4)"
                       :key="item.id"
                       v-model="water_level"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -27,6 +28,7 @@
                       v-for="item in radioList.slice(4, 7)"
                       :key="item.id"
                       v-model="wave_direction"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -41,6 +43,7 @@
                       v-for="item in radioList.slice(7, 11)"
                       :key="item.id"
                       v-model="embank_ment"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -98,9 +101,9 @@ export default {
       imageUrl: '',
       radioList: [],
       // 选择框的值   
-      water_level: '',
-      wave_direction: '',
-      embank_ment: '',
+      water_level: '极端高水位',
+      wave_direction: 'NW',
+      embank_ment: '无堤',
       // 路由返回的参数接收
       queryObj: {},
       // 视频地址
@@ -120,24 +123,27 @@ export default {
   },
 
   mounted() {
-    this.getContentSearch()
     this.getImageSearchOne()
-    this.getChooseFindlist()
+    this.getChooseFindAll()
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
+      this.water_level = queryObj.water_level
+      this.wave_direction = queryObj.wave_direction
+      this.embank_ment = queryObj.embank_ment
       this.getVideoSearch(queryObj)
     }
   },
   methods: {
     // 获取左边选择
-    async getChooseFindlist() {
+    async getChooseFindAll() {
       // const category = '设计水位'
       // const category1 = '波浪来向'
       // const category2 = '外堤布置'
-      await this.$api.getChooseFindlist().then((res) => {
+      await this.$api.getChooseFindAll().then((res) => {
         if (res.status === 200) {
           this.radioList = res.data
+          this.getContentSearchChooseId(res.data[0].id)
         }
       }).catch((err) => {
         console.log(`err`, err)
@@ -178,9 +184,8 @@ export default {
     },
 
     // 获取内容介绍
-    async getContentSearch() {
-      const id = '1637108800537'
-      await this.$api.getContentSearch(id).then((res) => {
+    async getContentSearchChooseId(choose_id) {
+      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
         if (res) {
           this.content = res.data.content
         }
@@ -197,7 +202,8 @@ export default {
   .legend {
     padding: 20px 0;
     height: 80vh;
-    margin-left: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
     position: relative;
     display: flex;
     flex-direction: column;

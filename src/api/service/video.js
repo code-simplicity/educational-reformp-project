@@ -6,3 +6,10 @@ import api from "../../common/interface"
  * @returns 
  */
 export const getVideoSearch = params => api.post(`/video/serach`, params)
+
+/**
+ * 获取一个视频
+ * @param {*} name 
+ * @returns 
+ */
+export const getVideoSearchOne = name => api.get(`/video/search/one?name=${name}`, {})

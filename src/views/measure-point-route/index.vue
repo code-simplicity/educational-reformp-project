@@ -13,6 +13,7 @@
                       v-for="item in radioList.slice(0, 4)"
                       :key="item.id"
                       v-model="water_level"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -27,6 +28,7 @@
                       v-for="item in radioList.slice(4, 7)"
                       :key="item.id"
                       v-model="wave_direction"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -41,6 +43,7 @@
                       v-for="item in radioList.slice(7, 11)"
                       :key="item.id"
                       v-model="embank_ment"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -101,9 +104,10 @@ export default {
       imageUrl: '',
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
-      water_level: '',
-      wave_direction: '',
-      embank_ment: '',
+      water_level: '极端高水位',
+      wave_direction: 'NW',
+      embank_ment: '无堤',
+      queryObj: {}
     }
   },
   components: {
@@ -113,38 +117,55 @@ export default {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
         this.queryObj = newVal.query
-        this.postImageSearch(this.queryObj)
+        this.getPortPointMapSearch(this.queryObj)
       }
     }
   },
   mounted() {
-    this.getContentSearch()
-    this.getChooseFindlist()
+    this.getChooseFindAll()
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
-      this.postImageSearch(queryObj)
+      this.water_level = queryObj.water_level
+      this.wave_direction = queryObj.wave_direction
+      this.embank_ment = queryObj.embank_ment
+      this.getPortPointMapSearch(queryObj)
     }
   },
   methods: {
-    // 获取左边选择
-    async getChooseFindlist() {
-      await this.$api.getChooseFindlist().then((res) => {
+    // 获取测点数据
+    async toMeasurePoint() {
+      const params = {
+        water_level: this.water_level,
+        wave_direction: this.wave_direction,
+        embank_ment: this.embank_ment
+      }
+      await this.$api.getPortPointMapSearch(params).then((res) => {
         if (res.status === 200) {
-          this.radioList = res.data
+          this.imageUrl = this.$Constants.baseURL + res.data.path
         }
       }).catch((err) => {
         console.log(`err`, err)
       });
     },
 
-    async postImageSearch(val) {
-      const name = 'wb_map.png'
+    // 获取左边选择
+    async getChooseFindAll() {
+      await this.$api.getChooseFindAll().then((res) => {
+        if (res.status === 200) {
+          this.radioList = res.data
+          this.getContentSearchChooseId(res.data[0].id)
+        }
+      }).catch((err) => {
+        console.log(`err`, err)
+      });
+    },
+
+    async getPortPointMapSearch(val) {
       const params = {
-        name: name,
         ...val
       }
-      await this.$api.postImageSearch(params).then((res) => {
+      await this.$api.getPortPointMapSearch(params).then((res) => {
         if (res.status === 200) {
           this.imageUrl = this.$Constants.baseURL + res.data.path
         }
@@ -154,9 +175,8 @@ export default {
     },
 
     // 获取内容介绍
-    async getContentSearch() {
-      const id = '1637108800537'
-      await this.$api.getContentSearch(id).then((res) => {
+    async getContentSearchChooseId(choose_id) {
+      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
         if (res) {
           this.content = res.data.content
         }
@@ -172,10 +192,10 @@ export default {
 .measure-point-route {
   .legend {
     padding: 20px 0;
-    margin-left: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
     position: relative;
     height: 80vh;
-    /* height: 100%; */
     display: flex;
     flex-direction: column;
     .top {
@@ -220,10 +240,10 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 80vh;
     .left {
       width: 80%;
       height: 100%;
-      background-size: 100%;
     }
     .right {
       width: 20%;

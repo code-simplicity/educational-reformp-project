@@ -162,7 +162,7 @@ export default {
 <style lang='scss' scoped>
 .main-header {
   /* min-width: 1080px; */
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   .left {
     display: flex;
     align-items: center;
@@ -190,7 +190,6 @@ export default {
     .menu-list {
       font-size: 1.2rem;
       text-align: center;
-      padding: 2px 0;
       box-shadow: -1px 1px 5px rgb(0, 0, 0);
       cursor: pointer;
       .active-class {

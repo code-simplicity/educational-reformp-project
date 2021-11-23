@@ -13,6 +13,7 @@
                       v-for="item in radioList.slice(0, 4)"
                       :key="item.id"
                       v-model="water_level"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -27,6 +28,7 @@
                       v-for="item in radioList.slice(4, 7)"
                       :key="item.id"
                       v-model="wave_direction"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -41,6 +43,7 @@
                       v-for="item in radioList.slice(7, 11)"
                       :key="item.id"
                       v-model="embank_ment"
+                      @change="getContentSearchChooseId(item.id)"
                     >
                       <el-radio :label="item.content">{{
                         item.content
@@ -98,9 +101,9 @@ export default {
       imageUrl: '',
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
-      water_level: '',
-      wave_direction: '',
-      embank_ment: '',
+      water_level: '极端高水位',
+      wave_direction: 'NW',
+      embank_ment: '无堤',
     }
   },
   components: {
@@ -110,16 +113,17 @@ export default {
 
   },
   mounted() {
-    this.getContentSearch()
-    this.getImageSearchOne()
-    this.getChooseFindlist()
+    // this.getContentSearch()
+    this.getPortMapFind()
+    this.getChooseFindAll()
   },
   methods: {
     // 获取左边选择
-    async getChooseFindlist() {
-      await this.$api.getChooseFindlist().then((res) => {
+    async getChooseFindAll() {
+      await this.$api.getChooseFindAll().then((res) => {
         if (res.status === 200) {
           this.radioList = res.data
+          this.getContentSearchChooseId(res.data[0].id)
         }
       }).catch((err) => {
         console.log(`err`, err)
@@ -139,9 +143,8 @@ export default {
     },
 
     // 获取港口图片
-    async getImageSearchOne() {
-      const name = "port.png"
-      await this.$api.getImageSearchOne(name).then(res => {
+    async getPortMapFind() {
+      await this.$api.getPortMapFind().then(res => {
         if (res) {
           this.imageUrl = this.$Constants.baseURL + res.data.path
         }
@@ -149,9 +152,9 @@ export default {
     },
 
     // 获取内容介绍
-    async getContentSearch() {
-      const id = '1637108800537'
-      await this.$api.getContentSearch(id).then((res) => {
+    async getContentSearchChooseId(choose_id) {
+      console.log(`choose_id`, choose_id)
+      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
         if (res) {
           this.content = res.data.content
         }
@@ -167,7 +170,8 @@ export default {
 .project-route {
   .legend {
     padding: 20px 0;
-    margin-left: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
     position: relative;
     height: 80vh;
     display: flex;

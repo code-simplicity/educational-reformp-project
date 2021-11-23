@@ -6,5 +6,5 @@ import api from "../../common/interface";
  * @param {*} category 
  * @returns 
  */
-export const getChooseFindlist = () => api.get(`/choose/findlist`, {})
+export const getChooseFindAll = () => api.get(`/choose/findAll`, {})
 // export const getChooseFindlist = (category) => api.get(`/choose/findlist?category=${category}`, {})

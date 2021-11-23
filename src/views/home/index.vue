@@ -4,7 +4,10 @@
       <el-col :span="7">
         <keep-alive>
           <MianLeft>
-            <div class="legend">操作说明</div>
+            <div class="legend">
+              操作说明
+              <div class="content">{{ legend }}</div>
+            </div>
           </MianLeft>
         </keep-alive>
       </el-col>
@@ -47,7 +50,7 @@ export default {
     return {
       imageUrl: '',
       content: '',
-
+      legend: ''
     }
   },
   components: {
@@ -59,14 +62,26 @@ export default {
 
   mounted() {
     this.getContentSearch()
-    this.getImageSearchOne()
+    this.getContent()
+    this.getPortMapFind()
   },
 
   methods: {
+    // 获取操作说明的内容
+    async getContent() {
+      const id = '3267144c-3a6f-4dca-99de-916a413969d9'
+      await this.$api.getContentSearch(id).then((res) => {
+        if (res) {
+          this.legend = res.data.content
+        }
+      }).catch((err) => {
+        console.log('err', err)
+      });
+    },
+
     // 获取港口图片
-    async getImageSearchOne() {
-      const name = "port.png"
-      await this.$api.getImageSearchOne(name).then(res => {
+    async getPortMapFind() {
+      await this.$api.getPortMapFind().then(res => {
         if (res) {
           this.imageUrl = this.$Constants.baseURL + res.data.path
         }
@@ -75,7 +90,7 @@ export default {
 
     // 获取内容介绍
     async getContentSearch() {
-      const id = '1637108800537'
+      const id = '86e5023b-d6b8-4374-9037-30b142f8d87f'
       await this.$api.getContentSearch(id).then((res) => {
         if (res) {
           this.content = res.data.content
@@ -93,9 +108,15 @@ export default {
   .legend {
     padding: 20px 0;
     height: 80vh;
-    margin-left: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
     font-size: 1rem;
     font-weight: 600;
+    .content {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 6px;
+    }
   }
   .image {
     width: 100%;

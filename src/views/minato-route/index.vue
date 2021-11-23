@@ -3,14 +3,21 @@
     <el-row :gutter="12">
       <el-col :span="7">
         <MianLeft>
-          <div class="legend">操作说明</div>
+          <div class="legend">
+            操作说明
+            <div class="content">{{ legend }}</div>
+          </div>
         </MianLeft>
       </el-col>
       <el-col :span="10">
         <MainCenter>
           <div class="video">
             <div class="video-location">
-              <video class="video-style" :src="videoSrc" autoplay="tr"></video>
+              <video
+                class="video-style"
+                :src="videoSrc"
+                :autoplay="true"
+              ></video>
             </div>
           </div>
         </MainCenter>
@@ -37,7 +44,8 @@ export default {
   data() {
     return {
       content: '',
-      videoSrc: 'https://media.w3.org/2010/05/sintel/trailer.mp4'
+      videoSrc: '',
+      legend: ''
     }
   },
   components: {
@@ -47,12 +55,37 @@ export default {
   },
   mounted() {
     this.getContentSearch()
+    this.getContent()
+    this.getVideoSearchOne()
   },
 
   methods: {
+    // 获取操作说明的内容
+    async getContent() {
+      const id = '3267144c-3a6f-4dca-99de-916a413969d9'
+      await this.$api.getContentSearch(id).then((res) => {
+        if (res) {
+          this.legend = res.data.content
+        }
+      }).catch((err) => {
+        console.log('err', err)
+      });
+    },
+
+    // 获取一个视频
+    async getVideoSearchOne() {
+      const name = 'portroam.mp4'
+      await this.$api.getVideoSearchOne(name).then((res) => {
+        this.videoSrc = this.$Constants.baseURL + res.data.path
+        console.log(`this.videoSrc`, this.videoSrc)
+      }).catch((err) => {
+        console.log('err', err)
+      });
+    },
+
     // 获取内容介绍
     async getContentSearch() {
-      const id = '1637108800537'
+      const id = '86e5023b-d6b8-4374-9037-30b142f8d87f'
       await this.$api.getContentSearch(id).then((res) => {
         if (res) {
           this.content = res.data.content
@@ -70,9 +103,15 @@ export default {
   .legend {
     height: 80vh;
     padding: 20px 0;
-    margin-left: 20px;
+    margin-left: 16px;
+    margin-right: 16px;
     font-size: 1rem;
     font-weight: 600;
+    .content {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-top: 6px;
+    }
   }
   .video {
     width: 100%;
