@@ -4,7 +4,7 @@
       <el-col :span="7">
         <keep-alive>
           <MianLeft>
-            <div class="legend">
+            <div class="legend" v-loading="loading">
               <el-scrollbar>
                 <div class="top">
                   <div class="title">设计水位</div>
@@ -63,15 +63,26 @@
       <el-col :span="10">
         <keep-alive>
           <MainCenter>
-            <div class="image">
+            <div class="image" v-loading="loading">
               <div class="left">
                 <el-image
                   style="height: 100%; width: 100%"
                   :src="imageUrl"
                   fit="fill"
+                  @click="changePoint"
                 ></el-image>
               </div>
-              <div class="right"></div>
+              <div class="right" v-if="!showPoint"></div>
+              <div class="right-box" v-else>
+                <div
+                  class="point-list border"
+                  v-for="item in pointList"
+                  :key="item.id"
+                  @click="changeWaveFormsAndStats(item.id)"
+                >
+                  <div class="content">{{ item.content }}</div>
+                </div>
+              </div>
             </div>
           </MainCenter>
         </keep-alive>
@@ -79,11 +90,27 @@
       <el-col :span="7">
         <keep-alive>
           <MianRight>
-            <div class="content">
-              <div class="content-list border">
-                <el-scrollbar height="12rem">
-                  <p class="item">{{ content }}</p>
-                </el-scrollbar>
+            <div class="right-box" v-loading="loading">
+              <div class="content">
+                <div class="content-list border">
+                  <el-scrollbar height="12rem">
+                    <p class="item">{{ content }}</p>
+                  </el-scrollbar>
+                </div>
+              </div>
+              <div class="wave-forms">
+                <el-image
+                  style="height: 100%; width: 100%"
+                  :src="waveFormsUrl"
+                  fit="fill"
+                ></el-image>
+              </div>
+              <div class="wave-stats">
+                <el-image
+                  style="height: 100%; width: 100%"
+                  :src="waveStatsUrl"
+                  fit="fill"
+                ></el-image>
               </div>
             </div>
           </MianRight>
@@ -95,7 +122,7 @@
 
 <script>
 // 测点数据
-
+import { ElMessage } from 'element-plus'
 export default {
   name: 'MeasurePointRoute',
   data() {
@@ -107,7 +134,15 @@ export default {
       water_level: '极端高水位',
       wave_direction: 'NW',
       embank_ment: '无堤',
-      queryObj: {}
+      queryObj: {},
+      // 展示点位选择列表
+      showPoint: false,
+      pointList: [],
+      // 波形图
+      waveFormsUrl: '',
+      // 波形统计图
+      waveStatsUrl: '',
+      loading: false
     }
   },
   components: {
@@ -133,6 +168,57 @@ export default {
     }
   },
   methods: {
+    // 左侧获取图片
+    async changeWaveFormsAndStats(point_id) {
+      this.loading = true
+      this.getWaveformsSearchPointId(point_id)
+      this.getWavestatsSearchPointId(point_id)
+    },
+
+    // 获取波形图
+    async getWaveformsSearchPointId(point_id) {
+      await this.$api.getWaveformsSearchPointId(point_id).then((res) => {
+        if (res.status === 200) {
+          this.waveFormsUrl = this.$Constants.baseURL + res.data.path
+          this.loading = false
+        }
+      }).catch((err) => {
+        console.log('err :>> ', err);
+        this.loading = false
+      });
+    },
+
+    // 获取波形统计图
+    async getWavestatsSearchPointId(point_id) {
+      await this.$api.getWavestatsSearchPointId(point_id).then((res) => {
+        if (res.status === 200) {
+          this.waveStatsUrl = this.$Constants.baseURL + res.data.path
+          this.loading = false
+        }
+      }).catch((err) => {
+        console.log('err :>> ', err);
+        this.loading = false
+      });
+    },
+
+    changePoint() {
+      this.showPoint = !this.showPoint
+    },
+
+    // 查询点位
+    async getPointSearch(port_point_map_id) {
+      this.loading = true
+      await this.$api.getPointSearch(port_point_map_id).then(res => {
+        if (res.status === 200) {
+          this.pointList = res.data
+          this.loading = false
+        }
+      }).catch(err => {
+        console.log('err :>> ', err);
+        this.loading = false
+      })
+    },
+
     // 获取测点数据
     async toMeasurePoint() {
       const params = {
@@ -140,24 +226,21 @@ export default {
         wave_direction: this.wave_direction,
         embank_ment: this.embank_ment
       }
-      await this.$api.getPortPointMapSearch(params).then((res) => {
-        if (res.status === 200) {
-          this.imageUrl = this.$Constants.baseURL + res.data.path
-        }
-      }).catch((err) => {
-        console.log(`err`, err)
-      });
+      this.getPortPointMapSearch(params)
     },
 
     // 获取左边选择
     async getChooseFindAll() {
+      this.loading = true
       await this.$api.getChooseFindAll().then((res) => {
         if (res.status === 200) {
           this.radioList = res.data
           this.getContentSearchChooseId(res.data[0].id)
+          this.loading = false
         }
       }).catch((err) => {
         console.log(`err`, err)
+        this.loading = false
       });
     },
 
@@ -165,9 +248,21 @@ export default {
       const params = {
         ...val
       }
+      this.loading = true
       await this.$api.getPortPointMapSearch(params).then((res) => {
         if (res.status === 200) {
           this.imageUrl = this.$Constants.baseURL + res.data.path
+          ElMessage({
+            message: res.msg,
+            type: 'success'
+          })
+          this.loading = false
+          this.getPointSearch(res.data.id)
+        } else if (res.status === 400) {
+          ElMessage.error({
+            message: res.msg
+          })
+          this.loading = false
         }
       }).catch((err) => {
         console.log(`err`, err)
@@ -176,9 +271,11 @@ export default {
 
     // 获取内容介绍
     async getContentSearchChooseId(choose_id) {
+      this.loading = true
       await this.$api.getContentSearchChooseId(choose_id).then((res) => {
-        if (res) {
+        if (res.status === 200) {
           this.content = res.data.content
+          this.loading = false
         }
       }).catch((err) => {
         console.log('err', err)
@@ -238,7 +335,6 @@ export default {
   }
   .image {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     height: 80vh;
     .left {
@@ -250,16 +346,60 @@ export default {
       height: 100%;
       background: url(../../assets/images/港口背景1.jpg);
     }
-  }
-  .content {
-    .content-list {
-      padding: 6px 0 0 6px;
-      .item {
-        padding: 0 16px 0 0;
-        font-size: 0.9rem;
-        font-weight: 500;
-        line-height: 20px;
+    .right-box {
+      width: 20%;
+      height: 100%;
+      padding: 10px 6px;
+      display: flex;
+      flex-flow: row wrap;
+      align-content: flex-start;
+      justify-content: space-between;
+      .point-list {
+        cursor: pointer;
+        text-align: center;
+        margin-bottom: 5px;
+        flex: 1;
+        width: 48%;
+        min-width: 48%; // 加入这两个后每个item的宽度就生效了
+        max-width: 48%; // 加入这两个后每个item的宽度就生效了
+        .content {
+          font-size: 0.9rem;
+        }
+        &:active {
+          color: $active-color;
+        }
+        &:hover {
+          background: $hover-background-color;
+          color: $hover-color;
+        }
       }
+    }
+  }
+  .right-box {
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    justify-content: space-between;
+    .content {
+      .content-list {
+        padding: 6px 0 0 6px;
+        .item {
+          padding: 0 16px 0 0;
+          font-size: 0.9rem;
+          font-weight: 500;
+          line-height: 20px;
+        }
+      }
+    }
+    .wave-forms {
+      margin-top: 10px;
+      width: 100%;
+      height: 26vh;
+    }
+    .wave-stats {
+      margin-top: 10px;
+      width: 100%;
+      height: 26vh;
     }
   }
 }
