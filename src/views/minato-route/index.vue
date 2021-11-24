@@ -13,19 +13,15 @@
         <MainCenter>
           <div class="video">
             <div class="video-location">
-              <video
-                class="video-style"
-                :src="videoSrc"
-                :autoplay="true"
-              ></video>
+              <div ref="video"></div>
             </div>
           </div>
         </MainCenter>
       </el-col>
       <el-col :span="7">
         <MianRight>
-          <div class="content">
-            <div class="content-list border">
+          <div class="content border-bottom">
+            <div class="content-list">
               <el-scrollbar height="12rem">
                 <p class="item">{{ content }}</p>
               </el-scrollbar>
@@ -39,13 +35,16 @@
 
 <script>
 // 港区漫游
+import Player from "xgplayer"
 export default {
   name: 'MinatoRoute',
   data() {
     return {
       content: '',
       videoSrc: '',
-      legend: ''
+      legend: '',
+      // 实例化播放器
+      videoPlayer: null,
     }
   },
   components: {
@@ -60,6 +59,31 @@ export default {
   },
 
   methods: {
+    // 西瓜播放器实例化
+    getVideo(res) {
+      this.videoPlayer = new Player({
+        el: this.$refs.video,
+        url: this.$Constants.baseURL + res.data.path,
+        // 流式布局
+        fitVideoSize: 'auto',
+        fluid: true,
+        // 初始音量
+        volume: 0.8,
+        // 自动播放
+        autoplay: true,
+        // 内联模式
+        playsinline: true,
+        // 跨域
+        cors: true,
+        // 初始化显示视频首帧
+        videoInit: true,
+        // 网页全屏
+        cssFullscreen: true,
+        controls: false,
+        errorTips: `请<spa>刷新</spa>测试哦`,
+      })
+    },
+
     // 获取操作说明的内容
     async getContent() {
       const id = '3267144c-3a6f-4dca-99de-916a413969d9'
@@ -76,7 +100,7 @@ export default {
     async getVideoSearchOne() {
       const name = 'portroam.mp4'
       await this.$api.getVideoSearchOne(name).then((res) => {
-        this.videoSrc = this.$Constants.baseURL + res.data.path
+        this.getVideo(res)
         console.log(`this.videoSrc`, this.videoSrc)
       }).catch((err) => {
         console.log('err', err)

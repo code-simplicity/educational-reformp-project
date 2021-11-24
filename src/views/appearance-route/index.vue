@@ -64,11 +64,7 @@
           <MainCenter>
             <div class="video">
               <div class="video-location">
-                <video
-                  class="video-style"
-                  :src="videoSrc"
-                  autoplay="tr"
-                ></video>
+                <div ref="video"></div>
               </div>
             </div>
           </MainCenter>
@@ -77,8 +73,8 @@
       <el-col :span="7">
         <keep-alive>
           <MianRight>
-            <div class="content">
-              <div class="content-list border">
+            <div class="content border-bottom">
+              <div class="content-list">
                 <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>
@@ -93,6 +89,7 @@
 
 <script>
 // 工况选配
+import Player from "xgplayer"
 export default {
   name: 'AppearanceRoute',
   data() {
@@ -107,7 +104,9 @@ export default {
       // 路由返回的参数接收
       queryObj: {},
       // 视频地址
-      videoSrc: ''
+      videoSrc: '',
+      // 实例化播放器
+      videoPlayer: null,
     }
   },
   components: {
@@ -117,6 +116,9 @@ export default {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
         this.queryObj = newVal.query
+        this.water_level = newVal.query.water_level
+        this.wave_direction = newVal.query.wave_direction
+        this.embank_ment = newVal.query.embank_ment
         this.getVideoSearch(this.queryObj)
       }
     }
@@ -128,13 +130,35 @@ export default {
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
-      this.water_level = queryObj.water_level
-      this.wave_direction = queryObj.wave_direction
-      this.embank_ment = queryObj.embank_ment
       this.getVideoSearch(queryObj)
     }
   },
   methods: {
+    // 西瓜播放器实例化
+    getVideo(res) {
+      this.videoPlayer = new Player({
+        el: this.$refs.video,
+        url: this.$Constants.baseURL + res.data.path,
+        // 流式布局
+        fitVideoSize: 'auto',
+        fluid: true,
+        // 初始音量
+        volume: 0.8,
+        // 自动播放
+        autoplay: true,
+        // 内联模式
+        playsinline: true,
+        // 跨域
+        cors: true,
+        // 初始化显示视频首帧
+        videoInit: true,
+        // 网页全屏
+        cssFullscreen: true,
+        controls: false,
+        errorTips: `请<spa>刷新</spa>测试哦`,
+      })
+    },
+
     // 获取左边选择
     async getChooseFindAll() {
       // const category = '设计水位'
@@ -166,7 +190,8 @@ export default {
     async getVideoSearch(params) {
       await this.$api.getVideoSearch(params).then(res => {
         if (res.status === 200) {
-          this.videoSrc = this.$Constants.baseURL + res.data.path
+          this.getVideo(res)
+          // this.videoSrc = this.$Constants.baseURL + res.data.path
         }
       }).catch(err => {
         console.log('err', err)

@@ -91,8 +91,8 @@
         <keep-alive>
           <MianRight>
             <div class="right-box" v-loading="loading">
-              <div class="content">
-                <div class="content-list border">
+              <div class="content border-bottom">
+                <div class="content-list">
                   <el-scrollbar height="12rem">
                     <p class="item">{{ content }}</p>
                   </el-scrollbar>
@@ -152,6 +152,9 @@ export default {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
         this.queryObj = newVal.query
+        this.water_level = newVal.query.water_level
+        this.wave_direction = newVal.query.wave_direction
+        this.embank_ment = newVal.query.embank_ment
         this.getPortPointMapSearch(this.queryObj)
       }
     }
@@ -161,9 +164,6 @@ export default {
     const queryObj = this.$route.query
     if (queryObj) {
       this.queryObj = queryObj
-      this.water_level = queryObj.water_level
-      this.wave_direction = queryObj.wave_direction
-      this.embank_ment = queryObj.embank_ment
       this.getPortPointMapSearch(queryObj)
     }
   },

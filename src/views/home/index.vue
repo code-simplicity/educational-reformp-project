@@ -27,8 +27,8 @@
       <el-col :span="7">
         <keep-alive>
           <MianRight>
-            <div class="content">
-              <div class="content-list border">
+            <div class="content border-bottom">
+              <div class="content-list">
                 <el-scrollbar height="12rem">
                   <p class="item">{{ content }}</p>
                 </el-scrollbar>

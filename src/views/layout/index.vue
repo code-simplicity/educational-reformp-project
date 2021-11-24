@@ -1,17 +1,12 @@
 <template>
   <div class="layout">
-    <!-- <MainDisplay></MainDisplay> -->
     <router-view></router-view>
-    <!-- <div class="footer">
-      <MainFooter></MainFooter>
-    </div> -->
+
   </div>
 </template>
 
 <script>
 // 分发路由
-// import MainDisplay from '../../components/main-display/index.vue'
-// import MainFooter from '@/components/main-footer/index.vue'
 
 export default {
   name: 'Layout',
@@ -21,8 +16,7 @@ export default {
     }
   },
   components: {
-    // MainDisplay
-    // MainFooter
+
   },
   mounted() {
 
