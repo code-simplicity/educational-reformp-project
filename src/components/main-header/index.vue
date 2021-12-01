@@ -60,7 +60,9 @@
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item command="toCenter"
+                  <el-dropdown-item
+                    v-if="userInfo.roles === 'admin'"
+                    command="toCenter"
                     >管理中心</el-dropdown-item
                   >
                   <el-dropdown-item command="logout">退出登录</el-dropdown-item>
@@ -85,7 +87,7 @@ export default {
   name: 'main-header',
   data() {
     return {
-      dateTime: ''
+      dateTime: '',
     }
   },
   components: {
@@ -101,8 +103,10 @@ export default {
     this.timer = setInterval(() => {
       this.dealWithTime()
     }, 200);
+
   },
   methods: {
+
     // 实时刷新时间
     dealWithTime() {
       let timestamp = new Date().valueOf()
@@ -115,12 +119,12 @@ export default {
         case "logout": {
           await this.$api.logout().then((res) => {
             if (res.status === 200) {
-              this.$router.replace({
-                name: 'login'
-              })
               ElMessage({
                 message: res.msg,
                 type: 'success',
+              })
+              this.$router.replace({
+                name: 'login'
               })
               // 清除token以及登录状态
               window.localStorage.setItem('_token_', null)
@@ -161,13 +165,13 @@ export default {
 
 <style lang='scss' scoped>
 .main-header {
-  /* min-width: 1080px; */
-  margin-bottom: 12px;
+  /* min-width: 750px; */
+  margin-bottom: 0.5rem;
   .left {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 50px;
+    height: 2.5rem;
     .title {
       font-size: 1.3rem;
       text-align: center;
@@ -186,7 +190,7 @@ export default {
   }
   .center {
     padding: 0 16px;
-    height: 50px;
+    height: 2.5rem;
     .menu-list {
       font-size: 1.2rem;
       text-align: center;
@@ -209,10 +213,14 @@ export default {
         background: $hover-background-color;
         color: $hover-color;
       }
+      &.router-link-active {
+        color: $active-color;
+        background: rgb(255, 255, 255);
+      }
     }
   }
   .right {
-    height: 50px;
+    height: 2.5rem;
     padding: 0 16px;
     position: relative;
     .time {

@@ -53,7 +53,7 @@
                 </div>
               </el-scrollbar>
               <div class="botton-click">
-                <div class="botton" @click="toMeasurePoint">测点数据</div>
+                <div class="botton" @click="changeAppearance">现象观察</div>
               </div>
             </div>
           </MianLeft>
@@ -64,7 +64,7 @@
           <MainCenter>
             <div class="video">
               <div class="video-location">
-                <div ref="video"></div>
+                <div v-if="destroy" ref="video"></div>
               </div>
             </div>
           </MainCenter>
@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import { ElMessage } from 'element-plus'
+import { mapGetters } from 'vuex'
 // 工况选配
 import Player from "xgplayer"
 export default {
@@ -95,23 +97,28 @@ export default {
   data() {
     return {
       content: '',
-      imageUrl: '',
       radioList: [],
       // 选择框的值   
-      water_level: '极端高水位',
-      wave_direction: 'NW',
-      embank_ment: '无堤',
+      water_level: '',
+      wave_direction: '',
+      embank_ment: '',
       // 路由返回的参数接收
       queryObj: {},
       // 视频地址
       videoSrc: '',
       // 实例化播放器
       videoPlayer: null,
+      // 销毁播放器实例
+      destroy: true
     }
   },
   components: {
 
   },
+  computed: {
+    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+  },
+
   watch: {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
@@ -125,12 +132,24 @@ export default {
   },
 
   mounted() {
-    this.getImageSearchOne()
     this.getChooseFindAll()
     const queryObj = this.$route.query
-    if (queryObj) {
+    if (Object.keys(queryObj).length > 0) {
       this.queryObj = queryObj
-      this.getVideoSearch(queryObj)
+      this.water_level = queryObj.water_level
+      this.wave_direction = queryObj.wave_direction
+      this.embank_ment = queryObj.embank_ment
+      this.getVideoSearch(this.queryObj)
+    } else {
+      this.water_level = '极端高水位'
+      this.wave_direction = 'NW'
+      this.embank_ment = '无堤'
+      const params = {
+        water_level: '极端高水位',
+        wave_direction: 'NW',
+        embank_ment: '无堤'
+      }
+      this.getVideoSearch(params)
     }
   },
   methods: {
@@ -142,6 +161,7 @@ export default {
         // 流式布局
         fitVideoSize: 'auto',
         fluid: true,
+        preloadTime: 10,
         // 初始音量
         volume: 0.8,
         // 自动播放
@@ -157,13 +177,41 @@ export default {
         controls: false,
         errorTips: `请<spa>刷新</spa>测试哦`,
       })
+      console.log('res :>> ', res);
+      // 注册视频结束事件，视频播放完成，学生成绩加80
+      this.videoPlayer.once('ended', () => {
+        setTimeout(() => {
+          this.getUserAddScore(this.videoPlayer.ended)
+        }, 500)
+      })
+    },
+
+    // 判断视频播放结束，进行加分
+    async getUserAddScore(val) {
+      const params = {
+        id: this.userInfo.id,
+        score: 80,
+      }
+      if (val) {
+        await this.$api.getUserAddScore(params).then((res) => {
+          if (res.status === 200) {
+            ElMessage({
+              message: res.msg,
+              type: 'success'
+            })
+          } else if (res.status === 400) {
+            ElMessage.error({
+              message: res.data,
+            })
+          }
+        }).catch((err) => {
+          console.log('err :>> ', err);
+        });
+      }
     },
 
     // 获取左边选择
     async getChooseFindAll() {
-      // const category = '设计水位'
-      // const category1 = '波浪来向'
-      // const category2 = '外堤布置'
       await this.$api.getChooseFindAll().then((res) => {
         if (res.status === 200) {
           this.radioList = res.data
@@ -175,36 +223,36 @@ export default {
     },
 
     // 去现象观察
-    toMeasurePoint() {
-      this.$router.push({
-        name: 'measure-point-route',
-        query: {
-          water_level: this.water_level,
-          wave_direction: this.wave_direction,
-          embank_ment: this.embank_ment
-        }
+    changeAppearance() {
+      const params = {
+        water_level: this.water_level,
+        wave_direction: this.wave_direction,
+        embank_ment: this.embank_ment
+      }
+      this.destroy = false
+      this.$nextTick(() => {
+        this.destroy = true
       })
+      this.getVideoSearch(params)
     },
 
     // 获取演示视频
     async getVideoSearch(params) {
       await this.$api.getVideoSearch(params).then(res => {
         if (res.status === 200) {
+          setTimeout(() => {
+            ElMessage.success({
+              message: res.msg
+            })
+          }, 3000)
           this.getVideo(res)
-          // this.videoSrc = this.$Constants.baseURL + res.data.path
+        } else if (res.status === 400) {
+          ElMessage.error({
+            message: res.msg
+          })
         }
       }).catch(err => {
         console.log('err', err)
-      })
-    },
-
-    // 获取港口图片
-    async getImageSearchOne() {
-      const name = "port.png"
-      await this.$api.getImageSearchOne(name).then(res => {
-        if (res) {
-          this.imageUrl = this.$Constants.baseURL + res.data.path
-        }
       })
     },
 
@@ -218,7 +266,7 @@ export default {
         console.log('err', err)
       });
     },
-  }
+  },
 }
 </script>
 
@@ -251,7 +299,7 @@ export default {
     .botton-click {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 0;
       .botton {
         padding: 4px 8px;
         text-align: center;

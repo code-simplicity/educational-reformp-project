@@ -92,7 +92,8 @@
 
 <script>
 // 工况选配
-
+import { ElMessage } from 'element-plus'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ProjectRoute',
   data() {
@@ -111,6 +112,9 @@ export default {
   },
   watch: {
 
+  },
+  computed: {
+    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
   },
   mounted() {
     // this.getContentSearch()
@@ -140,6 +144,29 @@ export default {
           embank_ment: this.embank_ment
         }
       })
+      this.getUserAddScore()
+    },
+
+    // 判断视频播放结束，进行加分
+    async getUserAddScore() {
+      const params = {
+        id: this.userInfo.id,
+        score: 40,
+      }
+      await this.$api.getUserAddScore(params).then((res) => {
+        if (res.status === 200) {
+          ElMessage({
+            message: res.msg,
+            type: 'success'
+          })
+        } else if (res.status === 400) {
+          ElMessage.error({
+            message: res.data,
+          })
+        }
+      }).catch((err) => {
+        console.log('err :>> ', err);
+      });
     },
 
     // 获取港口图片
@@ -195,7 +222,7 @@ export default {
     .botton-click {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 0;
       .botton {
         padding: 4px 8px;
         text-align: center;

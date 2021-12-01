@@ -35,6 +35,8 @@
 
 <script>
 // 港区漫游
+import { ElMessage } from 'element-plus'
+import { mapGetters } from 'vuex'
 import Player from "xgplayer"
 export default {
   name: 'MinatoRoute',
@@ -49,6 +51,9 @@ export default {
   },
   components: {
 
+  },
+  computed: {
+    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
   },
   watch: {
   },
@@ -82,6 +87,36 @@ export default {
         controls: false,
         errorTips: `请<spa>刷新</spa>测试哦`,
       })
+      // 注册视频结束事件，视频播放完成，学生成绩加80
+      this.videoPlayer.once('ended', () => {
+        setTimeout(() => {
+          this.getUserAddScore(this.videoPlayer.ended)
+        }, 500)
+      })
+    },
+
+    // 判断视频播放结束，进行加分
+    async getUserAddScore(val) {
+      const params = {
+        id: this.userInfo.id,
+        score: 20,
+      }
+      if (val) {
+        await this.$api.getUserAddScore(params).then((res) => {
+          if (res.status === 200) {
+            ElMessage({
+              message: res.msg,
+              type: 'success'
+            })
+          } else if (res.status === 400) {
+            ElMessage.error({
+              message: res.data,
+            })
+          }
+        }).catch((err) => {
+          console.log('err :>> ', err);
+        });
+      }
     },
 
     // 获取操作说明的内容
@@ -101,7 +136,6 @@ export default {
       const name = 'portroam.mp4'
       await this.$api.getVideoSearchOne(name).then((res) => {
         this.getVideo(res)
-        console.log(`this.videoSrc`, this.videoSrc)
       }).catch((err) => {
         console.log('err', err)
       });

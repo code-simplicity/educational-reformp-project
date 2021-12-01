@@ -78,7 +78,8 @@
                   class="point-list border"
                   v-for="item in pointList"
                   :key="item.id"
-                  @click="changeWaveFormsAndStats(item.id)"
+                  :class="activeContent === item.content ? 'active' : ''"
+                  @click="changeWaveFormsAndStats(item.content, item.id)"
                 >
                   <div class="content">{{ item.content }}</div>
                 </div>
@@ -90,29 +91,31 @@
       <el-col :span="7">
         <keep-alive>
           <MianRight>
-            <div class="right-box" v-loading="loading">
-              <div class="content border-bottom">
-                <div class="content-list">
-                  <el-scrollbar height="12rem">
-                    <p class="item">{{ content }}</p>
-                  </el-scrollbar>
+            <transition name="slide">
+              <div class="right-box" v-loading="loading">
+                <div class="content border-bottom">
+                  <div class="content-list">
+                    <el-scrollbar height="12rem">
+                      <p class="item">{{ content }}</p>
+                    </el-scrollbar>
+                  </div>
+                </div>
+                <div class="wave-forms">
+                  <el-image
+                    style="height: 100%; width: 100%"
+                    :src="waveFormsUrl"
+                    fit="fill"
+                  ></el-image>
+                </div>
+                <div class="wave-stats">
+                  <el-image
+                    style="height: 100%; width: 100%"
+                    :src="waveStatsUrl"
+                    fit="fill"
+                  ></el-image>
                 </div>
               </div>
-              <div class="wave-forms">
-                <el-image
-                  style="height: 100%; width: 100%"
-                  :src="waveFormsUrl"
-                  fit="fill"
-                ></el-image>
-              </div>
-              <div class="wave-stats">
-                <el-image
-                  style="height: 100%; width: 100%"
-                  :src="waveStatsUrl"
-                  fit="fill"
-                ></el-image>
-              </div>
-            </div>
+            </transition>
           </MianRight>
         </keep-alive>
       </el-col>
@@ -131,10 +134,11 @@ export default {
       imageUrl: '',
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
-      water_level: '极端高水位',
-      wave_direction: 'NW',
-      embank_ment: '无堤',
-      queryObj: {},
+      water_level: '',
+      wave_direction: '',
+      embank_ment: '',
+      // 激活内容
+      activeContent: '1',
       // 展示点位选择列表
       showPoint: false,
       pointList: [],
@@ -162,15 +166,29 @@ export default {
   mounted() {
     this.getChooseFindAll()
     const queryObj = this.$route.query
-    if (queryObj) {
-      this.queryObj = queryObj
+    if (Object.keys(queryObj).length > 0) {
+      this.water_level = queryObj.water_level
+      this.wave_direction = queryObj.wave_direction
+      this.embank_ment = queryObj.embank_ment
       this.getPortPointMapSearch(queryObj)
+    } else {
+      this.water_level = '极端高水位'
+      this.wave_direction = 'NW'
+      this.embank_ment = '无堤'
+      const params = {
+        water_level: this.water_level,
+        wave_direction: this.wave_direction,
+        embank_ment: this.embank_ment
+      }
+      this.getPortPointMapSearch(params)
     }
+
   },
   methods: {
     // 左侧获取图片
-    async changeWaveFormsAndStats(point_id) {
+    async changeWaveFormsAndStats(content, point_id) {
       this.loading = true
+      this.activeContent = content
       this.getWaveformsSearchPointId(point_id)
       this.getWavestatsSearchPointId(point_id)
     },
@@ -244,10 +262,7 @@ export default {
       });
     },
 
-    async getPortPointMapSearch(val) {
-      const params = {
-        ...val
-      }
+    async getPortPointMapSearch(params) {
       this.loading = true
       await this.$api.getPortPointMapSearch(params).then((res) => {
         if (res.status === 200) {
@@ -286,6 +301,16 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.slide-left-enter,
+.slide-right-leave-to {
+  transition: opacity 0.3s;
+}
+
+.slide-left-leave-to,
+.slide-right-enter {
+  opacity: 0;
+}
+
 .measure-point-route {
   .legend {
     padding: 20px 0;
@@ -314,7 +339,7 @@ export default {
     .botton-click {
       position: absolute;
       top: 10px;
-      right: 10px;
+      right: 0;
       .botton {
         padding: 4px 8px;
         text-align: center;
@@ -362,6 +387,10 @@ export default {
         width: 48%;
         min-width: 48%; // 加入这两个后每个item的宽度就生效了
         max-width: 48%; // 加入这两个后每个item的宽度就生效了
+        &.active {
+          background: $active-color;
+          color: $white;
+        }
         .content {
           font-size: 0.9rem;
         }

@@ -7,8 +7,8 @@ const MinatoRoute = () => import('../views/minato-route')
 const ProjectRoute = () => import('../views/project-route')
 const AppearanceRoute = () => import('../views/appearance-route')
 const MeasurePointRoute = () => import('../views/measure-point-route')
-// 登录路由
-export const loginRouter = [{
+// 静态路由
+export const constantRouter = [{
     path: '/login',
     name: 'login',
     meta: {
@@ -18,10 +18,10 @@ export const loginRouter = [{
 }]
 
 // 其他路由
-export const mainRouter = [{
+export const asyncRouter = [{
     path: '/',
     redirect: {
-        name: 'home'
+        name: 'login'
     },
     meta: {
         title: '登录',
@@ -78,4 +78,4 @@ export const mainRouter = [{
 }]
 
 // 暴露路由
-export const routes = [...loginRouter, ...mainRouter]
+export const routes = [...constantRouter, ...asyncRouter]

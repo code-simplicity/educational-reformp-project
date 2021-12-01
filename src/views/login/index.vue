@@ -1,60 +1,64 @@
 <template>
-  <div class="login flex-justify-center">
-    <div class="title">水运工程仿真实验系统</div>
-    <div class="login-box order">
-      <div class="login-title">账户登录</div>
-      <div class="form-box">
-        <el-form
-          ref="ruleForm"
-          :model="ruleForm"
-          status-icon
-          :rules="rules"
-          label-position="left"
-          label-width="50px"
-          class="demo-ruleForm"
-          label-suffix=":"
-          :hide-required-asterisk="true"
-        >
-          <el-form-item label="学号" prop="id">
-            <el-input
-              v-model="ruleForm.id"
-              type="text"
-              autocomplete="off"
-              autofocus
-              placeholder="请输入学号"
-              clearable
-            >
-              <template #prefix>
-                <el-icon class="el-input__icon"
-                  ><UserFilled
-                /></el-icon> </template
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input
-              v-model="ruleForm.password"
-              type="password"
-              placeholder="请输入密码"
-              autocomplete="off"
-              clearable
-              @click.enter="submitForm('ruleForm')"
-            >
-              <template #prefix>
-                <el-icon class="el-input__icon"><Unlock /></el-icon> </template
-            ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <div class="flex-between">
-              <el-button type="primary" @click="submitForm('ruleForm')"
-                >登录</el-button
+  <transition name="fade">
+    <div class="login flex-column">
+      <div class="title">水运工程仿真实验系统</div>
+      <div class="login-box order">
+        <div class="login-title">账户登录</div>
+        <div class="form-box">
+          <el-form
+            ref="ruleForm"
+            :model="ruleForm"
+            status-icon
+            :rules="rules"
+            label-position="left"
+            label-width="50px"
+            class="demo-ruleForm"
+            label-suffix=":"
+            :hide-required-asterisk="true"
+          >
+            <el-form-item label="学号" prop="id">
+              <el-input
+                v-model="ruleForm.id"
+                type="text"
+                autocomplete="off"
+                autofocus="true"
+                placeholder="请输入学号"
+                clearable
               >
-              <el-button @click="resetForm('ruleForm')">重置</el-button>
-            </div>
-          </el-form-item>
-        </el-form>
+                <template #prefix>
+                  <el-icon class="el-input__icon"
+                    ><UserFilled
+                  /></el-icon> </template
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-input
+                v-model="ruleForm.password"
+                type="password"
+                placeholder="请输入密码"
+                autocomplete="off"
+                clearable
+                @click.enter="submitForm('ruleForm')"
+              >
+                <template #prefix>
+                  <el-icon class="el-input__icon"
+                    ><Unlock
+                  /></el-icon> </template
+              ></el-input>
+            </el-form-item>
+            <el-form-item>
+              <div class="flex-between">
+                <el-button type="primary" @click="submitForm('ruleForm')"
+                  >登录</el-button
+                >
+                <el-button @click="resetForm('ruleForm')">重置</el-button>
+              </div>
+            </el-form-item>
+          </el-form>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -124,6 +128,10 @@ export default {
               this.$router.replace({
                 name: 'home'
               })
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.msg,
+              })
             }
           }).catch((err) => {
             console.log('error', err)
@@ -145,11 +153,20 @@ export default {
 </script>
 
 <style lang='scss' scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: 0.8s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 .login {
-  width: 100%;
-  min-height: 76vh;
+  width: 100vw;
+  min-height: 100vh;
   .title {
-    font-size: 2rem;
+    font-size: 30px;
     margin-bottom: 30px;
   }
   .login-box {
