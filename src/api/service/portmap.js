@@ -1,8 +1,9 @@
 // 港口地图
-import api from "../../common/interface"
+import api from "../../common/interface";
 
 /**
  * 获取港口地图
- * @returns 
+ * @param {*} data
+ * @returns
  */
-export const getPortMapFind = () => api.get(`/portmap/find`, {})
+export const getPortMapFind = (data) => api.post(`/portmap/find`, data);

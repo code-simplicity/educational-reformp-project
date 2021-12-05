@@ -80,66 +80,72 @@
 </template>
 
 <script>
-import { CaretBottom, Coordinate } from '@element-plus/icons'
-import { ElMessage } from 'element-plus'
-import { mapGetters, mapMutations } from 'vuex'
+import { CaretBottom, Coordinate } from "@element-plus/icons";
+import { ElMessage } from "element-plus";
+import { mapGetters, mapMutations } from "vuex";
 export default {
-  name: 'main-header',
+  name: "main-header",
   data() {
     return {
-      dateTime: '',
-    }
+      dateTime: "",
+    };
   },
   components: {
     CaretBottom,
-    Coordinate
+    Coordinate,
   },
   computed: {
-    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+    ...mapGetters("user", {
+      loginStatus: "login_Status",
+      userInfo: "user_Info",
+    }),
   },
 
   mounted() {
-    this.dealWithTime()
+    this.dealWithTime();
     this.timer = setInterval(() => {
-      this.dealWithTime()
+      this.dealWithTime();
     }, 200);
-
   },
   methods: {
-
     // 实时刷新时间
     dealWithTime() {
-      let timestamp = new Date().valueOf()
-      this.dateTime = this.$utils.dateFormat(timestamp, "YYYY-MM-DD HH-MM-SS")
+      let timestamp = new Date().valueOf();
+      this.dateTime = this.$utils.dateFormat(timestamp, "YYYY-MM-DD HH-MM-SS");
     },
 
     // 控制下拉菜单功能
     async handleCommand(command) {
       switch (command) {
         case "logout": {
-          await this.$api.logout().then((res) => {
-            if (res.status === 200) {
-              ElMessage({
-                message: res.msg,
-                type: 'success',
-              })
-              this.$router.replace({
-                name: 'login'
-              })
-              // 清除token以及登录状态
-              window.localStorage.setItem('_token_', null)
-              window.localStorage.setItem('_login_status_', null)
-              window.localStorage.setItem('_user_Info_', null)
-              this.setLogin_Status(null)
-              this.setUserInfo()
-            }
-          }).catch((err) => {
-            console.log(`err`, err)
-          });
-          break
+          await this.$api
+            .logout()
+            .then((res) => {
+              if (res.status === 200) {
+                ElMessage({
+                  message: res.msg,
+                  type: "success",
+                });
+                this.$router.replace({
+                  name: "login",
+                });
+                // 清除token以及登录状态
+                window.localStorage.setItem("_token_", null);
+                window.localStorage.setItem("_login_status_", null);
+                window.localStorage.setItem("_user_Info_", null);
+                this.setLogin_Status(null);
+                this.setUserInfo();
+              }
+            })
+            .catch((err) => {
+              console.log(`err`, err);
+            });
+          break;
         }
         case "toCenter": {
-          break
+          const url = "http://localhost:3002/#/dashboard";
+          window.open(url, "_blank");
+          break;
         }
       }
     },
@@ -147,23 +153,27 @@ export default {
     // 去登录页面
     doLogin() {
       this.$router.replace({
-        name: 'login'
-      })
+        name: "login",
+      });
     },
 
     // 提交状态
-    ...mapMutations('user', { setLogin_Status: 'LOGIN_STATUS', setUserInfo: 'USER_INFO' })
+    ...mapMutations("user", {
+      setLogin_Status: "LOGIN_STATUS",
+      setUserInfo: "USER_INFO",
+    }),
   },
 
   unmounted() {
-    if (this.timer) {  // 注意在vue实例销毁前，清除我们的定时器
+    if (this.timer) {
+      // 注意在vue实例销毁前，清除我们的定时器
       clearInterval(this.timer);
     }
-  }
-}
+  },
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .main-header {
   /* min-width: 750px; */
   margin-bottom: 0.5rem;

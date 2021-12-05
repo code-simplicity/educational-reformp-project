@@ -88,68 +88,73 @@
 </template>
 
 <script>
-import { ElMessage } from 'element-plus'
-import { mapGetters } from 'vuex'
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
 // 工况选配
-import Player from "xgplayer"
+import Player from "xgplayer";
 export default {
-  name: 'AppearanceRoute',
+  name: "AppearanceRoute",
   data() {
     return {
-      content: '',
+      content: "",
       radioList: [],
-      // 选择框的值   
-      water_level: '',
-      wave_direction: '',
-      embank_ment: '',
+      // 选择框的值
+      water_level: "",
+      wave_direction: "",
+      embank_ment: "",
       // 路由返回的参数接收
       queryObj: {},
       // 视频地址
-      videoSrc: '',
+      videoSrc: "",
       // 实例化播放器
       videoPlayer: null,
       // 销毁播放器实例
-      destroy: true
-    }
+      destroy: true,
+      page: {
+        pageNum: 1,
+        pageSize: 20,
+      },
+    };
   },
-  components: {
-
-  },
+  components: {},
   computed: {
-    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+    ...mapGetters("user", {
+      loginStatus: "login_Status",
+      userInfo: "user_Info",
+    }),
   },
 
   watch: {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
-        this.queryObj = newVal.query
-        this.water_level = newVal.query.water_level
-        this.wave_direction = newVal.query.wave_direction
-        this.embank_ment = newVal.query.embank_ment
-        this.getVideoSearch(this.queryObj)
+        this.queryObj = newVal.query;
+        this.water_level = newVal.query.water_level;
+        this.wave_direction = newVal.query.wave_direction;
+        this.embank_ment = newVal.query.embank_ment;
+        this.getVideoSearch(this.queryObj);
       }
-    }
+    },
   },
 
   mounted() {
-    this.getChooseFindAll()
-    const queryObj = this.$route.query
+    this.getChooseFindAll();
+    const queryObj = this.$route.query;
     if (Object.keys(queryObj).length > 0) {
-      this.queryObj = queryObj
-      this.water_level = queryObj.water_level
-      this.wave_direction = queryObj.wave_direction
-      this.embank_ment = queryObj.embank_ment
-      this.getVideoSearch(this.queryObj)
+      this.queryObj = queryObj;
+      this.water_level = queryObj.water_level;
+      this.wave_direction = queryObj.wave_direction;
+      this.embank_ment = queryObj.embank_ment;
+      this.getVideoSearch(this.queryObj);
     } else {
-      this.water_level = '极端高水位'
-      this.wave_direction = 'NW'
-      this.embank_ment = '无堤'
+      this.water_level = "极端高水位";
+      this.wave_direction = "NW";
+      this.embank_ment = "无堤";
       const params = {
-        water_level: '极端高水位',
-        wave_direction: 'NW',
-        embank_ment: '无堤'
-      }
-      this.getVideoSearch(params)
+        water_level: "极端高水位",
+        wave_direction: "NW",
+        embank_ment: "无堤",
+      };
+      this.getVideoSearch(params);
     }
   },
   methods: {
@@ -159,7 +164,7 @@ export default {
         el: this.$refs.video,
         url: this.$Constants.baseURL + res.data.path,
         // 流式布局
-        fitVideoSize: 'auto',
+        fitVideoSize: "auto",
         fluid: true,
         preloadTime: 10,
         // 初始音量
@@ -176,14 +181,14 @@ export default {
         cssFullscreen: true,
         controls: false,
         errorTips: `请<spa>刷新</spa>测试哦`,
-      })
-      console.log('res :>> ', res);
+      });
+      console.log("res :>> ", res);
       // 注册视频结束事件，视频播放完成，学生成绩加80
-      this.videoPlayer.once('ended', () => {
+      this.videoPlayer.once("ended", () => {
         setTimeout(() => {
-          this.getUserAddScore(this.videoPlayer.ended)
-        }, 500)
-      })
+          this.getUserAddScore(this.videoPlayer.ended);
+        }, 500);
+      });
     },
 
     // 判断视频播放结束，进行加分
@@ -191,35 +196,41 @@ export default {
       const params = {
         id: this.userInfo.id,
         score: 80,
-      }
+      };
       if (val) {
-        await this.$api.getUserAddScore(params).then((res) => {
-          if (res.status === 200) {
-            ElMessage({
-              message: res.msg,
-              type: 'success'
-            })
-          } else if (res.status === 400) {
-            ElMessage.error({
-              message: res.data,
-            })
-          }
-        }).catch((err) => {
-          console.log('err :>> ', err);
-        });
+        await this.$api
+          .getUserAddScore(params)
+          .then((res) => {
+            if (res.status === 200) {
+              ElMessage({
+                message: res.msg,
+                type: "success",
+              });
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.data,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
       }
     },
 
     // 获取左边选择
     async getChooseFindAll() {
-      await this.$api.getChooseFindAll().then((res) => {
-        if (res.status === 200) {
-          this.radioList = res.data
-          this.getContentSearchChooseId(res.data[0].id)
-        }
-      }).catch((err) => {
-        console.log(`err`, err)
-      });
+      await this.$api
+        .getChooseFindAll(this.page)
+        .then((res) => {
+          if (res.status === 200) {
+            this.radioList = res.data.list;
+            this.getContentSearchChooseId(res.data.list[0].id);
+          }
+        })
+        .catch((err) => {
+          console.log(`err`, err);
+        });
     },
 
     // 去现象观察
@@ -227,50 +238,61 @@ export default {
       const params = {
         water_level: this.water_level,
         wave_direction: this.wave_direction,
-        embank_ment: this.embank_ment
-      }
-      this.destroy = false
+        embank_ment: this.embank_ment,
+      };
+      this.destroy = false;
       this.$nextTick(() => {
-        this.destroy = true
-      })
-      this.getVideoSearch(params)
+        this.destroy = true;
+      });
+      this.getVideoSearch(params);
     },
 
     // 获取演示视频
     async getVideoSearch(params) {
-      await this.$api.getVideoSearch(params).then(res => {
-        if (res.status === 200) {
-          setTimeout(() => {
-            ElMessage.success({
-              message: res.msg
-            })
-          }, 3000)
-          this.getVideo(res)
-        } else if (res.status === 400) {
-          ElMessage.error({
-            message: res.msg
-          })
-        }
-      }).catch(err => {
-        console.log('err', err)
-      })
+      await this.$api
+        .getVideoSearch(params)
+        .then((res) => {
+          if (res.status === 200) {
+            setTimeout(() => {
+              ElMessage.success({
+                message: res.msg,
+              });
+            }, 3000);
+            this.getVideo(res);
+          } else if (res.status === 400) {
+            ElMessage.error({
+              message: res.msg,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
 
     // 获取内容介绍
     async getContentSearchChooseId(choose_id) {
-      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
-        if (res) {
-          this.content = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      const params = {
+        pageNum: 1,
+        pageSize: 10,
+        choose_id,
+      };
+      await this.$api
+        .getContentSearchChooseId(params)
+        .then((res) => {
+          if (res) {
+            this.content = res.data.list[0].content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
   },
-}
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .appearance-route {
   .legend {
     padding: 20px 0;

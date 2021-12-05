@@ -125,116 +125,130 @@
 
 <script>
 // 测点数据
-import { ElMessage } from 'element-plus'
+import { ElMessage } from "element-plus";
 export default {
-  name: 'MeasurePointRoute',
+  name: "MeasurePointRoute",
   data() {
     return {
-      content: '',
-      imageUrl: '',
+      content: "",
+      imageUrl: "",
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
-      water_level: '',
-      wave_direction: '',
-      embank_ment: '',
+      water_level: "",
+      wave_direction: "",
+      embank_ment: "",
       // 激活内容
-      activeContent: '1',
+      activeContent: "1",
       // 展示点位选择列表
       showPoint: false,
       pointList: [],
       // 波形图
-      waveFormsUrl: '',
+      waveFormsUrl: "",
       // 波形统计图
-      waveStatsUrl: '',
-      loading: false
-    }
+      waveStatsUrl: "",
+      loading: false,
+      page: {
+        pageNum: 1,
+        pageSize: 20,
+      },
+    };
   },
-  components: {
-
-  },
+  components: {},
   watch: {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
-        this.queryObj = newVal.query
-        this.water_level = newVal.query.water_level
-        this.wave_direction = newVal.query.wave_direction
-        this.embank_ment = newVal.query.embank_ment
-        this.getPortPointMapSearch(this.queryObj)
+        this.queryObj = newVal.query;
+        this.water_level = newVal.query.water_level;
+        this.wave_direction = newVal.query.wave_direction;
+        this.embank_ment = newVal.query.embank_ment;
+        this.getPortPointMapSearch(this.queryObj);
       }
-    }
+    },
   },
   mounted() {
-    this.getChooseFindAll()
-    const queryObj = this.$route.query
+    this.getChooseFindAll();
+    const queryObj = this.$route.query;
     if (Object.keys(queryObj).length > 0) {
-      this.water_level = queryObj.water_level
-      this.wave_direction = queryObj.wave_direction
-      this.embank_ment = queryObj.embank_ment
-      this.getPortPointMapSearch(queryObj)
+      this.water_level = queryObj.water_level;
+      this.wave_direction = queryObj.wave_direction;
+      this.embank_ment = queryObj.embank_ment;
+      this.getPortPointMapSearch(queryObj);
     } else {
-      this.water_level = '极端高水位'
-      this.wave_direction = 'NW'
-      this.embank_ment = '无堤'
+      this.water_level = "极端高水位";
+      this.wave_direction = "NW";
+      this.embank_ment = "无堤";
       const params = {
         water_level: this.water_level,
         wave_direction: this.wave_direction,
-        embank_ment: this.embank_ment
-      }
-      this.getPortPointMapSearch(params)
+        embank_ment: this.embank_ment,
+      };
+      this.getPortPointMapSearch(params);
     }
-
   },
   methods: {
     // 左侧获取图片
     async changeWaveFormsAndStats(content, point_id) {
-      this.loading = true
-      this.activeContent = content
-      this.getWaveformsSearchPointId(point_id)
-      this.getWavestatsSearchPointId(point_id)
+      this.loading = true;
+      this.activeContent = content;
+      this.getWaveformsSearchPointId(point_id);
+      this.getWavestatsSearchPointId(point_id);
     },
 
     // 获取波形图
     async getWaveformsSearchPointId(point_id) {
-      await this.$api.getWaveformsSearchPointId(point_id).then((res) => {
-        if (res.status === 200) {
-          this.waveFormsUrl = this.$Constants.baseURL + res.data.path
-          this.loading = false
-        }
-      }).catch((err) => {
-        console.log('err :>> ', err);
-        this.loading = false
-      });
+      await this.$api
+        .getWaveformsSearchPointId(point_id)
+        .then((res) => {
+          if (res.status === 200) {
+            this.waveFormsUrl = this.$Constants.baseURL + res.data.path;
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+          this.loading = false;
+        });
     },
 
     // 获取波形统计图
     async getWavestatsSearchPointId(point_id) {
-      await this.$api.getWavestatsSearchPointId(point_id).then((res) => {
-        if (res.status === 200) {
-          this.waveStatsUrl = this.$Constants.baseURL + res.data.path
-          this.loading = false
-        }
-      }).catch((err) => {
-        console.log('err :>> ', err);
-        this.loading = false
-      });
+      await this.$api
+        .getWavestatsSearchPointId(point_id)
+        .then((res) => {
+          if (res.status === 200) {
+            this.waveStatsUrl = this.$Constants.baseURL + res.data.path;
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+          this.loading = false;
+        });
     },
 
     changePoint() {
-      this.showPoint = !this.showPoint
+      this.showPoint = !this.showPoint;
     },
 
     // 查询点位
     async getPointSearch(port_point_map_id) {
-      this.loading = true
-      await this.$api.getPointSearch(port_point_map_id).then(res => {
-        if (res.status === 200) {
-          this.pointList = res.data
-          this.loading = false
-        }
-      }).catch(err => {
-        console.log('err :>> ', err);
-        this.loading = false
-      })
+      this.loading = true;
+      const params = {
+        ...this.page,
+        port_point_map_id,
+      };
+      await this.$api
+        .getPointSearch(params)
+        .then((res) => {
+          if (res.status === 200) {
+            this.pointList = res.data.list;
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+          this.loading = false;
+        });
     },
 
     // 获取测点数据
@@ -242,65 +256,82 @@ export default {
       const params = {
         water_level: this.water_level,
         wave_direction: this.wave_direction,
-        embank_ment: this.embank_ment
-      }
-      this.getPortPointMapSearch(params)
+        embank_ment: this.embank_ment,
+      };
+      this.getPortPointMapSearch(params);
     },
 
     // 获取左边选择
     async getChooseFindAll() {
-      this.loading = true
-      await this.$api.getChooseFindAll().then((res) => {
-        if (res.status === 200) {
-          this.radioList = res.data
-          this.getContentSearchChooseId(res.data[0].id)
-          this.loading = false
-        }
-      }).catch((err) => {
-        console.log(`err`, err)
-        this.loading = false
-      });
+      this.loading = true;
+      await this.$api
+        .getChooseFindAll(this.page)
+        .then((res) => {
+          if (res.status === 200) {
+            this.radioList = res.data.list;
+            this.getContentSearchChooseId(res.data.list[0].id);
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log(`err`, err);
+          this.loading = false;
+        });
     },
 
-    async getPortPointMapSearch(params) {
-      this.loading = true
-      await this.$api.getPortPointMapSearch(params).then((res) => {
-        if (res.status === 200) {
-          this.imageUrl = this.$Constants.baseURL + res.data.path
-          ElMessage({
-            message: res.msg,
-            type: 'success'
-          })
-          this.loading = false
-          this.getPointSearch(res.data.id)
-        } else if (res.status === 400) {
-          ElMessage.error({
-            message: res.msg
-          })
-          this.loading = false
-        }
-      }).catch((err) => {
-        console.log(`err`, err)
-      });
+    async getPortPointMapSearch(data) {
+      this.loading = true;
+      const params = {
+        ...data,
+        ...this.page,
+      };
+      await this.$api
+        .getPortPointMapSearch(params)
+        .then((res) => {
+          if (res.status === 200) {
+            this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
+            ElMessage({
+              message: res.msg,
+              type: "success",
+            });
+            this.loading = false;
+            this.getPointSearch(res.data.list[0].id);
+          } else if (res.status === 400) {
+            ElMessage.error({
+              message: res.msg,
+            });
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log(`err`, err);
+        });
     },
 
     // 获取内容介绍
     async getContentSearchChooseId(choose_id) {
-      this.loading = true
-      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
-        if (res.status === 200) {
-          this.content = res.data.content
-          this.loading = false
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      this.loading = true;
+      const params = {
+        ...this.page,
+        choose_id,
+      };
+      await this.$api
+        .getContentSearchChooseId(params)
+        .then((res) => {
+          if (res.status === 200) {
+            this.content = res.data.list[0].content;
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
-  }
-}
+  },
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .slide-left-enter,
 .slide-right-leave-to {
   transition: opacity 0.3s;

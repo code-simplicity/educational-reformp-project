@@ -45,65 +45,71 @@
 // 首页
 
 export default {
-  name: 'Home',
+  name: "Home",
   data() {
     return {
-      imageUrl: '',
-      content: '',
-      legend: ''
-    }
+      imageUrl: "",
+      content: "",
+      legend: "",
+      page: {
+        pageNum: 1,
+        pageSize: 10,
+      },
+    };
   },
-  components: {
-
-  },
-  watch: {
-
-  },
+  components: {},
+  watch: {},
 
   mounted() {
-    this.getContentSearch()
-    this.getContent()
-    this.getPortMapFind()
+    this.getContentSearch();
+    this.getContent();
+    this.getPortMapFind();
   },
 
   methods: {
     // 获取操作说明的内容
     async getContent() {
-      const id = '3267144c-3a6f-4dca-99de-916a413969d9'
-      await this.$api.getContentSearch(id).then((res) => {
-        if (res) {
-          this.legend = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      const id = "8c44f522-15d7-462a-bf63-eb45eb893c4b";
+      await this.$api
+        .getContentSearch(id)
+        .then((res) => {
+          if (res) {
+            this.legend = res.data.content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
 
     // 获取港口图片
     async getPortMapFind() {
-      await this.$api.getPortMapFind().then(res => {
+      await this.$api.getPortMapFind(this.page).then((res) => {
         if (res) {
-          this.imageUrl = this.$Constants.baseURL + res.data.path
+          this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
         }
-      })
+      });
     },
 
     // 获取内容介绍
     async getContentSearch() {
-      const id = '86e5023b-d6b8-4374-9037-30b142f8d87f'
-      await this.$api.getContentSearch(id).then((res) => {
-        if (res) {
-          this.content = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
-    }
-  }
-}
+      const id = "a195b032-28b8-4e7e-b3b0-6bdadff995c3";
+      await this.$api
+        .getContentSearch(id)
+        .then((res) => {
+          if (res) {
+            this.content = res.data.content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    },
+  },
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .home {
   .legend {
     padding: 20px 0;

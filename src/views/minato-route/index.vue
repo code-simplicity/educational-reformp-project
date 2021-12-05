@@ -35,32 +35,32 @@
 
 <script>
 // 港区漫游
-import { ElMessage } from 'element-plus'
-import { mapGetters } from 'vuex'
-import Player from "xgplayer"
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
+import Player from "xgplayer";
 export default {
-  name: 'MinatoRoute',
+  name: "MinatoRoute",
   data() {
     return {
-      content: '',
-      videoSrc: '',
-      legend: '',
+      content: "",
+      videoSrc: "",
+      legend: "",
       // 实例化播放器
       videoPlayer: null,
-    }
+    };
   },
-  components: {
-
-  },
+  components: {},
   computed: {
-    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+    ...mapGetters("user", {
+      loginStatus: "login_Status",
+      userInfo: "user_Info",
+    }),
   },
-  watch: {
-  },
+  watch: {},
   mounted() {
-    this.getContentSearch()
-    this.getContent()
-    this.getVideoSearchOne()
+    this.getContentSearch();
+    this.getContent();
+    this.getVideoSearchOne();
   },
 
   methods: {
@@ -70,7 +70,7 @@ export default {
         el: this.$refs.video,
         url: this.$Constants.baseURL + res.data.path,
         // 流式布局
-        fitVideoSize: 'auto',
+        fitVideoSize: "auto",
         fluid: true,
         // 初始音量
         volume: 0.8,
@@ -86,13 +86,13 @@ export default {
         cssFullscreen: true,
         controls: false,
         errorTips: `请<spa>刷新</spa>测试哦`,
-      })
+      });
       // 注册视频结束事件，视频播放完成，学生成绩加80
-      this.videoPlayer.once('ended', () => {
+      this.videoPlayer.once("ended", () => {
         setTimeout(() => {
-          this.getUserAddScore(this.videoPlayer.ended)
-        }, 500)
-      })
+          this.getUserAddScore(this.videoPlayer.ended);
+        }, 500);
+      });
     },
 
     // 判断视频播放结束，进行加分
@@ -100,63 +100,75 @@ export default {
       const params = {
         id: this.userInfo.id,
         score: 20,
-      }
+      };
       if (val) {
-        await this.$api.getUserAddScore(params).then((res) => {
-          if (res.status === 200) {
-            ElMessage({
-              message: res.msg,
-              type: 'success'
-            })
-          } else if (res.status === 400) {
-            ElMessage.error({
-              message: res.data,
-            })
-          }
-        }).catch((err) => {
-          console.log('err :>> ', err);
-        });
+        await this.$api
+          .getUserAddScore(params)
+          .then((res) => {
+            if (res.status === 200) {
+              ElMessage({
+                message: res.msg,
+                type: "success",
+              });
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.data,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
       }
     },
 
     // 获取操作说明的内容
     async getContent() {
-      const id = '3267144c-3a6f-4dca-99de-916a413969d9'
-      await this.$api.getContentSearch(id).then((res) => {
-        if (res) {
-          this.legend = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      const id = "8c44f522-15d7-462a-bf63-eb45eb893c4b";
+      await this.$api
+        .getContentSearch(id)
+        .then((res) => {
+          if (res) {
+            this.legend = res.data.content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
 
     // 获取一个视频
     async getVideoSearchOne() {
-      const name = 'portroam.mp4'
-      await this.$api.getVideoSearchOne(name).then((res) => {
-        this.getVideo(res)
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      const name = "portroam.mp4";
+      await this.$api
+        .getVideoSearchOne(name)
+        .then((res) => {
+          this.getVideo(res);
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
 
     // 获取内容介绍
     async getContentSearch() {
-      const id = '86e5023b-d6b8-4374-9037-30b142f8d87f'
-      await this.$api.getContentSearch(id).then((res) => {
-        if (res) {
-          this.content = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
+      const id = "a195b032-28b8-4e7e-b3b0-6bdadff995c3";
+      await this.$api
+        .getContentSearch(id)
+        .then((res) => {
+          if (res) {
+            this.content = res.data.content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
     },
-  }
-}
+  },
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .minato-route {
   .legend {
     height: 80vh;

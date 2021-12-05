@@ -92,59 +92,65 @@
 
 <script>
 // 工况选配
-import { ElMessage } from 'element-plus'
-import { mapGetters } from 'vuex'
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
 export default {
-  name: 'ProjectRoute',
+  name: "ProjectRoute",
   data() {
     return {
-      content: '',
-      imageUrl: '',
+      content: "",
+      imageUrl: "",
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
-      water_level: '极端高水位',
-      wave_direction: 'NW',
-      embank_ment: '无堤',
-    }
+      water_level: "极端高水位",
+      wave_direction: "NW",
+      embank_ment: "无堤",
+      page: {
+        pageNum: 1,
+        pageSize: 20,
+      },
+    };
   },
-  components: {
-
-  },
-  watch: {
-
-  },
+  components: {},
+  watch: {},
   computed: {
-    ...mapGetters('user', { loginStatus: 'login_Status', userInfo: 'user_Info' }),
+    ...mapGetters("user", {
+      loginStatus: "login_Status",
+      userInfo: "user_Info",
+    }),
   },
   mounted() {
     // this.getContentSearch()
-    this.getPortMapFind()
-    this.getChooseFindAll()
+    this.getPortMapFind();
+    this.getChooseFindAll();
   },
   methods: {
     // 获取左边选择
     async getChooseFindAll() {
-      await this.$api.getChooseFindAll().then((res) => {
-        if (res.status === 200) {
-          this.radioList = res.data
-          this.getContentSearchChooseId(res.data[0].id)
-        }
-      }).catch((err) => {
-        console.log(`err`, err)
-      });
+      await this.$api
+        .getChooseFindAll(this.page)
+        .then((res) => {
+          if (res.status === 200) {
+            this.radioList = res.data.list;
+            this.getContentSearchChooseId(res.data.list[0].id);
+          }
+        })
+        .catch((err) => {
+          console.log(`err`, err);
+        });
     },
 
     // 去现象观察
     toAppearance() {
       this.$router.push({
-        name: 'appearance-route',
+        name: "appearance-route",
         query: {
           water_level: this.water_level,
           wave_direction: this.wave_direction,
-          embank_ment: this.embank_ment
-        }
-      })
-      this.getUserAddScore()
+          embank_ment: this.embank_ment,
+        },
+      });
+      this.getUserAddScore();
     },
 
     // 判断视频播放结束，进行加分
@@ -152,48 +158,57 @@ export default {
       const params = {
         id: this.userInfo.id,
         score: 40,
-      }
-      await this.$api.getUserAddScore(params).then((res) => {
-        if (res.status === 200) {
-          ElMessage({
-            message: res.msg,
-            type: 'success'
-          })
-        } else if (res.status === 400) {
-          ElMessage.error({
-            message: res.data,
-          })
-        }
-      }).catch((err) => {
-        console.log('err :>> ', err);
-      });
+      };
+      await this.$api
+        .getUserAddScore(params)
+        .then((res) => {
+          if (res.status === 200) {
+            ElMessage({
+              message: res.msg,
+              type: "success",
+            });
+          } else if (res.status === 400) {
+            ElMessage.error({
+              message: res.data,
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("err :>> ", err);
+        });
     },
 
     // 获取港口图片
     async getPortMapFind() {
-      await this.$api.getPortMapFind().then(res => {
+      await this.$api.getPortMapFind(this.page).then((res) => {
         if (res) {
-          this.imageUrl = this.$Constants.baseURL + res.data.path
+          this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
         }
-      })
+      });
     },
 
     // 获取内容介绍
     async getContentSearchChooseId(choose_id) {
-      console.log(`choose_id`, choose_id)
-      await this.$api.getContentSearchChooseId(choose_id).then((res) => {
-        if (res) {
-          this.content = res.data.content
-        }
-      }).catch((err) => {
-        console.log('err', err)
-      });
-    }
+      const params = {
+        ...this.page,
+        choose_id,
+      };
+      await this.$api
+        .getContentSearchChooseId(params)
+        .then((res) => {
+          if (res) {
+            this.content = res.data.list[0].content;
+          }
+        })
+        .catch((err) => {
+          console.log("err", err);
+        });
+    },
   },
-}
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .project-route {
   .legend {
     padding: 20px 0;
