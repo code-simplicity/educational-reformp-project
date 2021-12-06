@@ -1,32 +1,23 @@
-import {
-    createRouter,
-    createWebHashHistory
-} from 'vue-router'
-
-import {
-    routes
-} from './router.js'
-
-
+import { createRouter, createWebHashHistory } from "vue-router";
+import { changeTitle } from "@/utils/title";
+import { routes } from "./router.js";
+import NProgress from "@/utils/nprogress";
 const router = createRouter({
-    history: createWebHashHistory(),
-    routes
-})
-
+  history: createWebHashHistory(),
+  routes,
+});
 
 // 做登录拦截
-//路由拦截
-// router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
+  NProgress.start();
+  // 生成动态的title
+  to.meta.title ? changeTitle(to.meta.title) : "";
+  next();
+});
 
-//     //验证浏览器本地存储是否有token（或从vuex、Cookie、localStorage中获取，依据自己的存储），用于判断是否登录
-//     if (!window.localStorage.getItem('_token_')) { //没有token，表示未登录，则重定向到login
-//         next({
-//             //这里是你登录页面的路由名称，或直接使用 path:'/login'
-//             name: 'login',
-//         })
-//     } else {
-//         next()
-//     }
-// })
+router.afterEach(() => {
+  //后置路由,顶部加载进度
+  NProgress.done();
+});
 
-export default router
+export default router;

@@ -52,8 +52,7 @@ export default {
   components: {},
   computed: {
     ...mapGetters("user", {
-      loginStatus: "login_Status",
-      userInfo: "user_Info",
+      userInfo: "userInfo",
     }),
   },
   watch: {},
@@ -99,26 +98,30 @@ export default {
     async getUserAddScore(val) {
       const params = {
         id: this.userInfo.id,
-        score: 20,
+        score: 40,
       };
       if (val) {
-        await this.$api
-          .getUserAddScore(params)
-          .then((res) => {
-            if (res.status === 200) {
-              ElMessage({
-                message: res.msg,
-                type: "success",
-              });
-            } else if (res.status === 400) {
-              ElMessage.error({
-                message: res.data,
-              });
-            }
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
-          });
+        // 获取该用户的分数，如果分数大于等于20，那么不触发加法
+        const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+        if (userInfo.data.score >= 20 && userInfo.data.score < 40) {
+          await this.$api
+            .getUserAddScore(params)
+            .then((res) => {
+              if (res.status === 200) {
+                ElMessage({
+                  message: res.msg,
+                  type: "success",
+                });
+              } else if (res.status === 400) {
+                ElMessage.error({
+                  message: res.data,
+                });
+              }
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+            });
+        }
       }
     },
 

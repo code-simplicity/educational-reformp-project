@@ -115,8 +115,7 @@ export default {
   watch: {},
   computed: {
     ...mapGetters("user", {
-      loginStatus: "login_Status",
-      userInfo: "user_Info",
+      userInfo: "userInfo",
     }),
   },
   mounted() {
@@ -157,25 +156,28 @@ export default {
     async getUserAddScore() {
       const params = {
         id: this.userInfo.id,
-        score: 40,
+        score: 60,
       };
-      await this.$api
-        .getUserAddScore(params)
-        .then((res) => {
-          if (res.status === 200) {
-            ElMessage({
-              message: res.msg,
-              type: "success",
-            });
-          } else if (res.status === 400) {
-            ElMessage.error({
-              message: res.data,
-            });
-          }
-        })
-        .catch((err) => {
-          console.log("err :>> ", err);
-        });
+      const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+      if (userInfo.data.score >= 40 && userInfo.data.score < 60) {
+        await this.$api
+          .getUserAddScore(params)
+          .then((res) => {
+            if (res.status === 200) {
+              ElMessage({
+                message: res.msg,
+                type: "success",
+              });
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.data,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+      }
     },
 
     // 获取港口图片

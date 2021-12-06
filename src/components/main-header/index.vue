@@ -49,11 +49,11 @@
       <el-col :span="7"
         ><div class="right flex-between border">
           <div class="time flex-nowrap">{{ dateTime }}</div>
-          <div class="user-info flex-nowrap flex" v-if="loginStatus">
+          <div class="user-info flex-nowrap flex" v-if="token">
             <div class="id">{{ userInfo.id }}</div>
             <div class="user-name">{{ userInfo.user_name }}</div>
           </div>
-          <div class="container flex-nowrap flex" v-if="loginStatus">
+          <div class="container flex-nowrap flex" v-if="token">
             <el-dropdown @command="handleCommand">
               <div class="botton">
                 模块功能<el-icon class="el-icon-right"><CaretBottom /></el-icon>
@@ -81,8 +81,8 @@
 
 <script>
 import { CaretBottom, Coordinate } from "@element-plus/icons";
-import { ElMessage } from "element-plus";
-import { mapGetters, mapMutations } from "vuex";
+// import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
 export default {
   name: "main-header",
   data() {
@@ -96,8 +96,8 @@ export default {
   },
   computed: {
     ...mapGetters("user", {
-      loginStatus: "login_Status",
-      userInfo: "user_Info",
+      token: "token",
+      userInfo: "userInfo",
     }),
   },
 
@@ -118,28 +118,11 @@ export default {
     async handleCommand(command) {
       switch (command) {
         case "logout": {
-          await this.$api
-            .logout()
-            .then((res) => {
-              if (res.status === 200) {
-                ElMessage({
-                  message: res.msg,
-                  type: "success",
-                });
-                this.$router.replace({
-                  name: "login",
-                });
-                // 清除token以及登录状态
-                window.localStorage.setItem("_token_", null);
-                window.localStorage.setItem("_login_status_", null);
-                window.localStorage.setItem("_user_Info_", null);
-                this.setLogin_Status(null);
-                this.setUserInfo();
-              }
-            })
-            .catch((err) => {
-              console.log(`err`, err);
+          this.$store.dispatch("user/loginOut").then(() => {
+            this.$router.replace({
+              name: "login",
             });
+          });
           break;
         }
         case "toCenter": {
@@ -156,12 +139,6 @@ export default {
         name: "login",
       });
     },
-
-    // 提交状态
-    ...mapMutations("user", {
-      setLogin_Status: "LOGIN_STATUS",
-      setUserInfo: "USER_INFO",
-    }),
   },
 
   unmounted() {

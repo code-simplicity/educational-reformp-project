@@ -62,97 +62,85 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import { UserFilled, Unlock } from '@element-plus/icons'
-import { ElMessage } from 'element-plus'
+// import { mapMutations } from "vuex";
+import { UserFilled, Unlock } from "@element-plus/icons";
+import { ElMessage } from "element-plus";
 export default {
-  name: 'Login',
+  name: "Login",
   data() {
     const validateId = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入学号.'))
+      if (value === "") {
+        callback(new Error("请输入学号."));
       } else {
-        if (this.ruleForm.id !== '') {
-          this.$refs.ruleForm.validateField('id')
+        if (this.ruleForm.id !== "") {
+          this.$refs.ruleForm.validateField("id");
         }
-        callback()
+        callback();
       }
-    }
+    };
     const validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码.'))
+      if (value === "") {
+        callback(new Error("请输入密码."));
       } else {
-        if (this.ruleForm.password !== '') {
-          this.$refs.ruleForm.validateField('password')
+        if (this.ruleForm.password !== "") {
+          this.$refs.ruleForm.validateField("password");
         }
-        callback()
+        callback();
       }
-    }
+    };
     return {
       ruleForm: {
         // 学号
-        id: '',
+        id: "",
         // 密码
-        password: '',
+        password: "",
       },
       rules: {
-        id: [{ validator: validateId, trigger: 'blur' }],
-        password: [{ validator: validatePass, trigger: 'blur' }],
+        id: [{ validator: validateId, trigger: "blur" }],
+        password: [{ validator: validatePass, trigger: "blur" }],
       },
-    }
+    };
   },
   components: {
     UserFilled,
-    Unlock
+    Unlock,
   },
-  mounted() {
-
-  },
+  mounted() {},
   methods: {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 验证登录
-          const params = this.ruleForm
-          this.$api.login(params).then((res) => {
-            if (res.status === 200) {
-              window.localStorage.setItem('_token_', res.token)
-              window.localStorage.setItem('_login_status_', true)
-              window.localStorage.setItem('_user_Info_', JSON.stringify(res.data))
-              this.setLogin_Status(true)
-              this.setUserInfo(res.data)
-              ElMessage({
-                message: res.msg,
-                type: "success"
-              })
-              this.$router.replace({
-                name: 'home'
-              })
-            } else if (res.status === 400) {
-              ElMessage.error({
-                message: res.msg,
-              })
-            }
-          }).catch((err) => {
-            console.log('error', err)
+          const params = this.ruleForm;
+          this.$store.dispatch("user/login", params).then(() => {
+            ElMessage.success({
+              message: "登录成功.",
+            });
+            this.$router.replace({
+              name: "home",
+            });
           });
         } else {
-          console.log('error submit!!')
-          return false
+          console.log("error submit!!");
+          return false;
         }
-      })
+      });
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      this.$refs[formName].resetFields();
     },
 
-    // 提交状态
-    ...mapMutations('user', { setLogin_Status: 'LOGIN_STATUS', setUserInfo: 'USER_INFO', setLogin: 'LOGIN' })
-  }
-}
+    // // 提交状态
+    // ...mapMutations("user", {
+    //   setLogin_Status: "LOGIN_STATUS",
+    //   setUserInfo: "USER_INFO",
+    //   setLogin: "LOGIN",
+    // }),
+  },
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
   transition: 0.8s ease;

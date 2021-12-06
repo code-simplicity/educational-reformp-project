@@ -1,24 +1,30 @@
-import api from "../../common/interface"
-
+import api from "../../common/interface";
 
 /**
  * 登录
  * id
  * password
- * @param {*} params 
- * @returns 
+ * @param {*} params
+ * @returns
  */
-export const login = (params) => api.post(`/user/login`, params)
+export const login = (params) => api.post(`/user/login`, params);
 
 /**
  * 退出登录
- * @returns 
+ * @returns
  */
-export const logout = () => api.get(`/user/logout`, {})
+export const logout = () => api.get(`/user/logout`, {});
 
 /**
  * 添加得分
- * @param {*} params 
- * @returns 
+ * @param {*} params
+ * @returns
  */
-export const getUserAddScore = params => api.post(`/user/add/score`, params)
+export const getUserAddScore = (params) => api.post(`/user/add/score`, params);
+
+/**
+ * 获取用户信息
+ * @param {*} id
+ * @returns
+ */
+export const getUserInfo = (id) => api.get(`/user/info?id=${id}`, {});

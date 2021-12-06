@@ -126,6 +126,7 @@
 <script>
 // 测点数据
 import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
 export default {
   name: "MeasurePointRoute",
   data() {
@@ -154,6 +155,11 @@ export default {
     };
   },
   components: {},
+  computed: {
+    ...mapGetters("user", {
+      userInfo: "userInfo",
+    }),
+  },
   watch: {
     $route(newVal, oldVal) {
       if (newVal.query.keywords !== oldVal.query.keywords) {
@@ -192,6 +198,8 @@ export default {
       this.activeContent = content;
       this.getWaveformsSearchPointId(point_id);
       this.getWavestatsSearchPointId(point_id);
+      // 获取得分
+      this.getUserAddScore();
     },
 
     // 获取波形图
@@ -224,6 +232,33 @@ export default {
           console.log("err :>> ", err);
           this.loading = false;
         });
+    },
+
+    async getUserAddScore() {
+      const params = {
+        id: this.userInfo.id,
+        score: 100,
+      };
+      const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+      if (userInfo.data.score >= 80 && userInfo.data.score < 100) {
+        await this.$api
+          .getUserAddScore(params)
+          .then((res) => {
+            if (res.status === 200) {
+              ElMessage({
+                message: res.msg,
+                type: "success",
+              });
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.data,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+      }
     },
 
     changePoint() {

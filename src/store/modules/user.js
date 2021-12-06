@@ -1,56 +1,86 @@
+import { getUserInfo, login, logout } from "@/api/service/user";
+import { findUserInfo, setUserInfo, removeUserInfo } from "@/utils/userInfo";
+import { getToken, setToken, removeToken } from "@/utils/token";
+import { ElMessage } from "element-plus";
 // state
 const state = () => ({
-    // 登录状态
-    login_Status: null,
-
-    // 用户信息
-    user_Info: null
-})
+  // 用户信息
+  userInfo: findUserInfo(),
+  // token
+  token: getToken(),
+});
 
 // getter
 const getters = {
-    // 获取登录状态
-    login_Status: (state) => {
-        return state.login_Status || JSON.parse(window.localStorage.getItem('_login_status_'))
-    },
+  // 获取用户信息
+  userInfo(state) {
+    return state.userInfo;
+  },
 
-    // 获取用户信息
-    user_Info: (state) => {
-        return state.user_Info || JSON.parse(window.localStorage.getItem('_user_Info_'))
-    }
-}
-
-// actions 
-const actions = {
-
-}
+  // 获取token
+  token(state) {
+    return state.token;
+  },
+};
 
 // mutations
 const mutations = {
-    // 是否登录
-    LOGIN_STATUS(state, login_Status) {
-        state.login_Status = login_Status
-    },
-    // 用户信息
-    USER_INFO(state, user_Info) {
-        state.user_Info = user_Info
-    },
-    LOGIN(state, res) {
-        state.login_Status = true
-        state.user_Info = res
-        window.localStorage.setItem({
-            key: '_user_Info_',
-            data: res
-        })
-    }
-}
+  // 用户信息
+  infoChange(state, userInfo) {
+    state.userInfo = userInfo;
+    setUserInfo(userInfo);
+  },
+  // token
+  Token(state, token) {
+    state.token = token;
+    setToken(token);
+  },
+};
+
+// actions
+const actions = {
+  // 登录
+  login({ commit, dispatch }, params) {
+    return new Promise((resolve) => {
+      login(params).then((res) => {
+        commit("Token", res.token);
+        dispatch("getUserInfo", res.data.id).then(() => {
+          resolve(res.data.id);
+        });
+      });
+    });
+  },
+  // 获取用户信息
+  getUserInfo({ commit }, params) {
+    return new Promise((resolve) => {
+      getUserInfo(params).then((res) => {
+        commit("infoChange", res.data);
+        resolve(res.data);
+      });
+    });
+  },
+
+  loginOut() {
+    logout()
+      .then((res) => {
+        ElMessage.success(res.msg);
+      })
+      .catch((error) => {
+        ElMessage.error(error);
+      })
+      .finally(() => {
+        removeUserInfo();
+        removeToken();
+      });
+  },
+};
 
 // 统一暴露
 export default {
-    // 开启命名空间
-    namespaced: true,
-    state,
-    getters,
-    actions,
-    mutations
-}
+  // 开启命名空间
+  namespaced: true,
+  state,
+  getters,
+  actions,
+  mutations,
+};

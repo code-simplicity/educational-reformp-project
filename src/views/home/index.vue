@@ -43,7 +43,8 @@
 
 <script>
 // 首页
-
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
 export default {
   name: "Home",
   data() {
@@ -58,12 +59,19 @@ export default {
     };
   },
   components: {},
-  watch: {},
+  computed: {
+    ...mapGetters("user", {
+      userInfo: "userInfo",
+    }),
+  },
 
   mounted() {
     this.getContentSearch();
     this.getContent();
     this.getPortMapFind();
+    setTimeout(() => {
+      this.getUserAddScore();
+    }, 6000);
   },
 
   methods: {
@@ -104,6 +112,34 @@ export default {
         .catch((err) => {
           console.log("err", err);
         });
+    },
+    // 添加分数
+    async getUserAddScore() {
+      const params = {
+        id: this.userInfo.id,
+        score: 20,
+      };
+      // 获取该用户的分数，如果分数大于等于20，那么不触发加法
+      const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+      if (userInfo.data.score >= 0 && userInfo.data.score < 20) {
+        await this.$api
+          .getUserAddScore(params)
+          .then((res) => {
+            if (res.status === 200) {
+              ElMessage({
+                message: res.msg,
+                type: "success",
+              });
+            } else if (res.status === 400) {
+              ElMessage.error({
+                message: res.data,
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("err :>> ", err);
+          });
+      }
     },
   },
 };

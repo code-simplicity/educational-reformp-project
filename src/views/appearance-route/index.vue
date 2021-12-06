@@ -119,8 +119,7 @@ export default {
   components: {},
   computed: {
     ...mapGetters("user", {
-      loginStatus: "login_Status",
-      userInfo: "user_Info",
+      userInfo: "userInfo",
     }),
   },
 
@@ -198,23 +197,26 @@ export default {
         score: 80,
       };
       if (val) {
-        await this.$api
-          .getUserAddScore(params)
-          .then((res) => {
-            if (res.status === 200) {
-              ElMessage({
-                message: res.msg,
-                type: "success",
-              });
-            } else if (res.status === 400) {
-              ElMessage.error({
-                message: res.data,
-              });
-            }
-          })
-          .catch((err) => {
-            console.log("err :>> ", err);
-          });
+        const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+        if (userInfo.data.score >= 60 && userInfo.data.score < 80) {
+          await this.$api
+            .getUserAddScore(params)
+            .then((res) => {
+              if (res.status === 200) {
+                ElMessage({
+                  message: res.msg,
+                  type: "success",
+                });
+              } else if (res.status === 400) {
+                ElMessage.error({
+                  message: res.data,
+                });
+              }
+            })
+            .catch((err) => {
+              console.log("err :>> ", err);
+            });
+        }
       }
     },
 
