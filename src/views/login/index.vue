@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="login flex-column">
+    <div class="login flex-justify-center">
       <div class="title">水运工程仿真实验系统</div>
       <div class="login-box order">
         <div class="login-title">账户登录</div>

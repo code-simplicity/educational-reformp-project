@@ -67,7 +67,7 @@
               <div class="left">
                 <el-image
                   style="height: 100%; width: 100%"
-                  :src="imageUrl"
+                  :src="$Constants.baseURL + `/portpointmap/search?id=` + id"
                   fit="fill"
                   @click="changePoint"
                 ></el-image>
@@ -103,14 +103,14 @@
                 <div class="wave-forms">
                   <el-image
                     style="height: 100%; width: 100%"
-                    :src="waveFormsUrl"
+                    :src=" $Constants.baseURL + `/waveforms/search?id=` + waveFormsId"
                     fit="fill"
                   ></el-image>
                 </div>
                 <div class="wave-stats">
                   <el-image
                     style="height: 100%; width: 100%"
-                    :src="waveStatsUrl"
+                    :src="$Constants.baseURL + `/wavestats/search?id=` + waveStatsId"
                     fit="fill"
                   ></el-image>
                 </div>
@@ -132,7 +132,7 @@ export default {
   data() {
     return {
       content: "",
-      imageUrl: "",
+      id: "",
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
       water_level: "",
@@ -144,9 +144,9 @@ export default {
       showPoint: false,
       pointList: [],
       // 波形图
-      waveFormsUrl: "",
+      waveFormsId: "",
       // 波形统计图
-      waveStatsUrl: "",
+      waveStatsId: "",
       loading: false,
       page: {
         pageNum: 1,
@@ -208,7 +208,7 @@ export default {
         .getWaveformsSearchPointId(point_id)
         .then((res) => {
           if (res.status === 200) {
-            this.waveFormsUrl = this.$Constants.baseURL + res.data.path;
+            this.waveFormsId = res.data.id;
             this.loading = false;
           }
         })
@@ -224,7 +224,7 @@ export default {
         .getWavestatsSearchPointId(point_id)
         .then((res) => {
           if (res.status === 200) {
-            this.waveStatsUrl = this.$Constants.baseURL + res.data.path;
+            this.waveStatsId = res.data.id;
             this.loading = false;
           }
         })
@@ -324,7 +324,7 @@ export default {
         .getPortPointMapSearch(params)
         .then((res) => {
           if (res.status === 200) {
-            this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
+            this.id = res.data.list[0].id;
             ElMessage({
               message: res.msg,
               type: "success",

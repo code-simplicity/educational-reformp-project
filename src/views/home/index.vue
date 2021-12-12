@@ -17,7 +17,7 @@
             <div class="image">
               <el-image
                 style="height: 100%; width: 100%"
-                :src="imageUrl"
+                :src="$Constants.baseURL + `/portmap/search?id=` + id"
                 fit="fill"
               ></el-image>
             </div>
@@ -49,12 +49,12 @@ export default {
   name: "Home",
   data() {
     return {
-      imageUrl: "",
+      id: "",
       content: "",
       legend: "",
       page: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 20,
       },
     };
   },
@@ -66,8 +66,7 @@ export default {
   },
 
   mounted() {
-    this.getContentSearch();
-    this.getContent();
+    this.contentFindAll();
     this.getPortMapFind();
     setTimeout(() => {
       this.getUserAddScore();
@@ -76,13 +75,13 @@ export default {
 
   methods: {
     // 获取操作说明的内容
-    async getContent() {
-      const id = "8c44f522-15d7-462a-bf63-eb45eb893c4b";
+    async contentFindAll() {
       await this.$api
-        .getContentSearch(id)
+        .contentFindAll(this.page)
         .then((res) => {
           if (res) {
-            this.legend = res.data.content;
+            this.legend = res.data.list[0].content;
+            this.content = res.data.list[1].content;
           }
         })
         .catch((err) => {
@@ -94,25 +93,12 @@ export default {
     async getPortMapFind() {
       await this.$api.getPortMapFind(this.page).then((res) => {
         if (res) {
-          this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
+          // 港口地图id
+          this.id = res.data.list[0].id;
         }
       });
     },
 
-    // 获取内容介绍
-    async getContentSearch() {
-      const id = "a195b032-28b8-4e7e-b3b0-6bdadff995c3";
-      await this.$api
-        .getContentSearch(id)
-        .then((res) => {
-          if (res) {
-            this.content = res.data.content;
-          }
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-    },
     // 添加分数
     async getUserAddScore() {
       const params = {

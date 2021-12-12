@@ -14,3 +14,10 @@ export const getContentSearch = (id) => api.get(`/content/search?id=${id}`, {});
  */
 export const getContentSearchChooseId = (data) =>
   api.post(`/content/search/choose_id`, data);
+
+/**
+ * 查询所有数据
+ * @param {*} data
+ * @returns
+ */
+export const contentFindAll = (data) => api.post("/content/findAll", data);

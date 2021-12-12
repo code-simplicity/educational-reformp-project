@@ -47,6 +47,10 @@ export default {
       legend: "",
       // 实例化播放器
       videoPlayer: null,
+      page: {
+        pageNum: 1,
+        pageSize: 20,
+      },
     };
   },
   components: {},
@@ -57,8 +61,7 @@ export default {
   },
   watch: {},
   mounted() {
-    this.getContentSearch();
-    this.getContent();
+    this.contentFindAll();
     this.getVideoSearchOne();
   },
 
@@ -67,7 +70,7 @@ export default {
     getVideo(res) {
       this.videoPlayer = new Player({
         el: this.$refs.video,
-        url: this.$Constants.baseURL + res.data.path,
+        url: this.$Constants.baseURL + "/video/search?id=" + res.data.id,
         // 流式布局
         fitVideoSize: "auto",
         fluid: true,
@@ -126,13 +129,13 @@ export default {
     },
 
     // 获取操作说明的内容
-    async getContent() {
-      const id = "8c44f522-15d7-462a-bf63-eb45eb893c4b";
+    async contentFindAll() {
       await this.$api
-        .getContentSearch(id)
+        .contentFindAll(this.page)
         .then((res) => {
           if (res) {
-            this.legend = res.data.content;
+            this.legend = res.data.list[0].content;
+            this.content = res.data.list[1].content;
           }
         })
         .catch((err) => {
@@ -147,21 +150,6 @@ export default {
         .getVideoSearchOne(name)
         .then((res) => {
           this.getVideo(res);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
-    },
-
-    // 获取内容介绍
-    async getContentSearch() {
-      const id = "a195b032-28b8-4e7e-b3b0-6bdadff995c3";
-      await this.$api
-        .getContentSearch(id)
-        .then((res) => {
-          if (res) {
-            this.content = res.data.content;
-          }
         })
         .catch((err) => {
           console.log("err", err);

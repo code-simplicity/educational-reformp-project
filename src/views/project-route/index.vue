@@ -66,7 +66,7 @@
             <div class="image">
               <el-image
                 style="height: 100%; width: 100%"
-                :src="imageUrl"
+                :src="$Constants.baseURL + `/portmap/search?id=` + id"
                 fit="fill"
               ></el-image>
             </div>
@@ -99,7 +99,7 @@ export default {
   data() {
     return {
       content: "",
-      imageUrl: "",
+      id: "",
       radioList: [],
       // 选择框的值,分别是水位，波浪方向，堤坝布置
       water_level: "极端高水位",
@@ -184,7 +184,7 @@ export default {
     async getPortMapFind() {
       await this.$api.getPortMapFind(this.page).then((res) => {
         if (res) {
-          this.imageUrl = this.$Constants.baseURL + res.data.list[0].path;
+          this.id = res.data.list[0].id;
         }
       });
     },

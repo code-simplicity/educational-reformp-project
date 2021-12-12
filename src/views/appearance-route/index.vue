@@ -161,7 +161,7 @@ export default {
     getVideo(res) {
       this.videoPlayer = new Player({
         el: this.$refs.video,
-        url: this.$Constants.baseURL + res.data.path,
+        url: this.$Constants.baseURL + "/video/search?id=" + res.data.id,
         // 流式布局
         fitVideoSize: "auto",
         fluid: true,
