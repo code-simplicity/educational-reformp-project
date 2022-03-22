@@ -1,7 +1,21 @@
-import { getUserInfo, login, logout } from "@/api/service/user";
-import { findUserInfo, setUserInfo, removeUserInfo } from "@/utils/userInfo";
-import { getToken, setToken, removeToken } from "@/utils/token";
-import { ElMessage } from "element-plus";
+import {
+  getUserInfo,
+  login,
+  logout
+} from "@/api/service/user";
+import {
+  findUserInfo,
+  setUserInfo,
+  removeUserInfo
+} from "@/utils/userInfo";
+import {
+  getToken,
+  setToken,
+  removeToken
+} from "@/utils/token";
+import {
+  ElMessage
+} from "element-plus";
 // state
 const state = () => ({
   // 用户信息
@@ -40,22 +54,38 @@ const mutations = {
 // actions
 const actions = {
   // 登录
-  login({ commit, dispatch }, params) {
+  login({
+    commit,
+    dispatch
+  }, params) {
     return new Promise((resolve) => {
       login(params).then((res) => {
-        commit("Token", res.token);
-        dispatch("getUserInfo", res.data.id).then(() => {
-          resolve(res.data.id);
-        });
+        if (res.status === 20000) {
+          ElMessage.success({
+            message: res.msg
+          });
+          commit("Token", res.data.token);
+          dispatch("getUserInfo", res.data.id).then(() => {
+            resolve(res.data.id);
+          });
+        } else {
+          ElMessage.error({
+            message: res.msg
+          })
+        }
       });
     });
   },
   // 获取用户信息
-  getUserInfo({ commit }, params) {
+  getUserInfo({
+    commit
+  }, params) {
     return new Promise((resolve) => {
       getUserInfo(params).then((res) => {
-        commit("infoChange", res.data);
-        resolve(res.data);
+        if (res.status === 20000) {
+          commit("infoChange", res.data);
+          resolve(res.data);
+        }
       });
     });
   },
