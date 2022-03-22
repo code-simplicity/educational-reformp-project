@@ -12,8 +12,6 @@ const {
   api_base_url
 } = config;
 
-console.log(api_base_url)
-
 // 创建axios实例
 let instance = axios.create({
   time: 60 * 10000,
