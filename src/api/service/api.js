@@ -6,6 +6,6 @@ export const getOnload = () => api.get(`/onload`, {
 
 })
 
-export const getVideoSerach = params => api.post(`/video/serach`, 
+export const getVideoSerach = params => api.post(`/video/serach`,
     params
 )

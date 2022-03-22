@@ -2,126 +2,120 @@
 	<div class="measure-point-route">
 		<el-row :gutter="12">
 			<el-col :span="7">
-				<keep-alive>
-					<MianLeft>
-						<div class="legend" v-loading="loading">
-							<el-scrollbar>
-								<div class="top">
-									<div class="title">设计水位</div>
-									<div class="radio-check">
-										<el-radio-group
-											v-for="item in radioList.slice(0, 4)"
-											:key="item.id"
-											v-model="water_level"
-											@change="getContentSearchChooseId(item.id)"
-										>
-											<el-radio :label="item.content">{{
-												item.content
-											}}</el-radio>
-										</el-radio-group>
-									</div>
+				<MianLeft>
+					<div class="legend">
+						<el-scrollbar>
+							<div class="top">
+								<div class="title">设计水位</div>
+								<div class="radio-check">
+									<el-radio-group
+										v-for="item in radioList.slice(0, 4)"
+										:key="item.id"
+										v-model="water_level"
+										@change="getContentSearchChooseId(item.id)"
+									>
+										<el-radio :label="item.content">{{
+											item.content
+										}}</el-radio>
+									</el-radio-group>
 								</div>
-								<div class="center">
-									<div class="title">波浪来向</div>
-									<div class="radio-check">
-										<el-radio-group
-											v-for="item in radioList.slice(4, 7)"
-											:key="item.id"
-											v-model="wave_direction"
-											@change="getContentSearchChooseId(item.id)"
-										>
-											<el-radio :label="item.content">{{
-												item.content
-											}}</el-radio>
-										</el-radio-group>
-									</div>
-								</div>
-								<div class="bottom">
-									<div class="title">外堤布置</div>
-									<div class="radio-check">
-										<el-radio-group
-											v-for="item in radioList.slice(7, 11)"
-											:key="item.id"
-											v-model="embank_ment"
-											@change="getContentSearchChooseId(item.id)"
-										>
-											<el-radio :label="item.content">{{
-												item.content
-											}}</el-radio>
-										</el-radio-group>
-									</div>
-								</div>
-							</el-scrollbar>
-
-							<div class="botton-click">
-								<div class="botton" @click="toMeasurePoint">测点数据</div>
 							</div>
+							<div class="center">
+								<div class="title">波浪来向</div>
+								<div class="radio-check">
+									<el-radio-group
+										v-for="item in radioList.slice(4, 7)"
+										:key="item.id"
+										v-model="wave_direction"
+										@change="getContentSearchChooseId(item.id)"
+									>
+										<el-radio :label="item.content">{{
+											item.content
+										}}</el-radio>
+									</el-radio-group>
+								</div>
+							</div>
+							<div class="bottom">
+								<div class="title">外堤布置</div>
+								<div class="radio-check">
+									<el-radio-group
+										v-for="item in radioList.slice(7, 11)"
+										:key="item.id"
+										v-model="embank_ment"
+										@change="getContentSearchChooseId(item.id)"
+									>
+										<el-radio :label="item.content">{{
+											item.content
+										}}</el-radio>
+									</el-radio-group>
+								</div>
+							</div>
+						</el-scrollbar>
+
+						<div class="botton-click">
+							<div class="botton" @click="toMeasurePoint">测点数据</div>
 						</div>
-					</MianLeft>
-				</keep-alive>
+					</div>
+				</MianLeft>
 			</el-col>
 			<el-col :span="10">
-				<keep-alive>
-					<MainCenter>
-						<div class="image" v-loading="loading">
-							<div class="left">
-								<el-image
-									style="height: 100%; width: 100%"
-									:src="$Constants.baseURL + `/portpointmap/search?id=` + id"
-									fit="fill"
-									@click="changePoint"
-								></el-image>
-							</div>
-							<div class="right" v-if="!showPoint"></div>
-							<div class="right-box" v-else>
-								<div
-									class="point-list border"
-									v-for="item in pointList"
-									:key="item.id"
-									:class="activeContent === item.content ? 'active' : ''"
-									@click="changeWaveFormsAndStats(item.content, item.id)"
-								>
-									<div class="content">{{ item.content }}</div>
-								</div>
+				<MainCenter>
+					<div class="image">
+						<div class="left">
+							<el-image
+								style="height: 100%; width: 100%"
+								:src="$Constants.baseURL + `/portpointmap/search?id=` + id"
+								fit="fill"
+								@click="changePoint"
+							></el-image>
+						</div>
+						<div class="right" v-if="!showPoint"></div>
+						<div class="right-box" v-else>
+							<div
+								class="point-list border"
+								v-for="item in pointList"
+								:key="item.id"
+								:class="activeContent === item.content ? 'active' : ''"
+								@click="changeWaveFormsAndStats(item.content, item.id)"
+							>
+								<div class="content">{{ item.content }}</div>
 							</div>
 						</div>
-					</MainCenter>
-				</keep-alive>
+					</div>
+				</MainCenter>
 			</el-col>
 			<el-col :span="7">
-				<keep-alive>
-					<MianRight>
-						<transition name="slide">
-							<div class="right-box" v-loading="loading">
-								<div class="content border-bottom">
-									<div class="content-list">
-										<el-scrollbar height="12rem">
-											<p class="item">{{ content }}</p>
-										</el-scrollbar>
-									</div>
-								</div>
-								<div class="wave-forms">
-									<el-image
-										style="height: 100%; width: 100%"
-										:src="
-											$Constants.baseURL + `/waveforms/search?id=` + waveFormsId
-										"
-										fit="fill"
-									></el-image>
-								</div>
-								<div class="wave-stats">
-									<el-image
-										style="height: 100%; width: 100%"
-										:src="
-											$Constants.baseURL + `/wavestats/search?id=` + waveStatsId
-										"
-										fit="fill"
-									></el-image>
+				<MianRight>
+					<transition name="slide">
+						<div class="right-box">
+							<div class="content border-bottom">
+								<div class="content-list">
+									<el-scrollbar height="12rem">
+										<p class="item">{{ content }}</p>
+									</el-scrollbar>
 								</div>
 							</div>
-						</transition>
-					</MianRight>
-				</keep-alive>
+							<div class="wave-forms">
+								<el-image
+									style="height: 100%; width: 100%"
+									:src="
+										$Constants.baseURL + `/waveforms/search?id=` + waveFormsId
+									"
+									fit="fill"
+								></el-image>
+							</div>
+							<div class="wave-stats">
+								<el-image
+									style="height: 100%; width: 100%"
+									:src="
+										$Constants.baseURL + `/wavestats/search?id=` + waveStatsId
+									"
+									fit="fill"
+								></el-image>
+							</div>
+						</div>
+					</transition>
+				</MianRight>
 			</el-col>
 		</el-row>
 	</div>
@@ -151,7 +145,6 @@ export default {
 			waveFormsId: "",
 			// 波形统计图
 			waveStatsId: "",
-			loading: false,
 			page: {
 				pageNum: 1,
 				pageSize: 20,
@@ -198,7 +191,6 @@ export default {
 	methods: {
 		// 左侧获取图片
 		async changeWaveFormsAndStats(content, point_id) {
-			// this.loading = true;
 			this.activeContent = content;
 			this.getWaveformsSearchPointId(point_id);
 			this.getWavestatsSearchPointId(point_id);
@@ -213,12 +205,10 @@ export default {
 				.then((res) => {
 					if (res.status === 200) {
 						this.waveFormsId = res.data.id;
-						// this.loading = false;
 					}
 				})
 				.catch((err) => {
 					console.log("err :>> ", err);
-					// this.loading = false;
 				});
 		},
 
@@ -229,12 +219,10 @@ export default {
 				.then((res) => {
 					if (res.status === 200) {
 						this.waveStatsId = res.data.id;
-						// this.loading = false;
 					}
 				})
 				.catch((err) => {
 					console.log("err :>> ", err);
-					// this.loading = false;
 				});
 		},
 
@@ -271,7 +259,6 @@ export default {
 
 		// 查询点位
 		async getPointSearch(port_point_map_id) {
-			this.loading = true;
 			const params = {
 				...this.page,
 				port_point_map_id,
@@ -281,12 +268,10 @@ export default {
 				.then((res) => {
 					if (res.status === 200) {
 						this.pointList = res.data.list;
-						this.loading = false;
 					}
 				})
 				.catch((err) => {
 					console.log("err :>> ", err);
-					this.loading = false;
 				});
 		},
 
@@ -302,24 +287,20 @@ export default {
 
 		// 获取左边选择
 		async getChooseFindAll() {
-			this.loading = true;
 			await this.$api
 				.getChooseFindAll(this.page)
 				.then((res) => {
 					if (res.status === 200) {
 						this.radioList = res.data.list;
 						this.getContentSearchChooseId(res.data.list[0].id);
-						this.loading = false;
 					}
 				})
 				.catch((err) => {
 					console.log(`err`, err);
-					this.loading = false;
 				});
 		},
 
 		async getPortPointMapSearch(data) {
-			this.loading = true;
 			const params = {
 				...data,
 				...this.page,
@@ -333,13 +314,11 @@ export default {
 							message: res.msg,
 							type: "success",
 						});
-						this.loading = false;
 						this.getPointSearch(res.data.list[0].id);
 					} else if (res.status === 400) {
 						ElMessage.error({
 							message: res.msg,
 						});
-						this.loading = false;
 					}
 				})
 				.catch((err) => {
@@ -349,7 +328,6 @@ export default {
 
 		// 获取内容介绍
 		async getContentSearchChooseId(choose_id) {
-			this.loading = true;
 			const params = {
 				...this.page,
 				choose_id,
@@ -359,7 +337,6 @@ export default {
 				.then((res) => {
 					if (res.status === 200) {
 						this.content = res.data.list[0].content;
-						this.loading = false;
 					}
 				})
 				.catch((err) => {

@@ -1,6 +1,13 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import { changeTitle } from "@/utils/title";
-import { routes } from "./router.js";
+import {
+  createRouter,
+  createWebHashHistory
+} from "vue-router";
+import {
+  changeTitle
+} from "@/utils/title";
+import {
+  routes
+} from "./router.js";
 import NProgress from "@/utils/nprogress";
 import store from "@/store";
 const router = createRouter({

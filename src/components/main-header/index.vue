@@ -141,7 +141,7 @@ export default {
 					break;
 				}
 				case "toCenter": {
-					const url = "https://mp.bugdr.cn/#/dashboard";
+					const url = "https://localhost/admin/#/dashboard";
 					window.open(url, "_blank");
 					break;
 				}

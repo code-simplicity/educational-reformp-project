@@ -4,13 +4,19 @@ import qs from "qs";
 // 引入接口地址
 import config from "../api/config";
 
-import { ElMessage } from "element-plus";
+import {
+  ElMessage
+} from "element-plus";
 
-const { api_base_url } = config;
+const {
+  api_base_url
+} = config;
+
+console.log(api_base_url)
 
 // 创建axios实例
 let instance = axios.create({
-  time: 60 * 1000,
+  time: 60 * 10000,
   baseURL: api_base_url,
 });
 

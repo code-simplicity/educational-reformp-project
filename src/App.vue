@@ -1,43 +1,36 @@
 <template>
-  <div class="app">
-    <router-view></router-view>
-  </div>
+	<div class="app">
+		<router-view v-slot="{ Component }">
+			<keep-alive>
+				<component :is="Component" />
+			</keep-alive>
+		</router-view>
+	</div>
 </template>
 
 <script>
-
 export default {
-  name: 'App',
-  data() {
-    return {
+	name: "App",
+	data() {
+		return {};
+	},
 
-    }
-  },
+	components: {},
 
-  components: {
+	computed: {},
 
-  },
+	mounted() {},
 
-  computed: {
-
-  },
-
-  mounted() {
-
-  },
-
-  methods: {
-
-  },
-}
+	methods: {},
+};
 </script>
 
 <style>
 .app {
-  width: 100vw;
-  height: 100vh;
-  background-color: #ffffff;
-  overflow: hidden;
-  padding: 16px;
+	width: 100vw;
+	height: 100vh;
+	background-color: #ffffff;
+	overflow: hidden;
+	padding: 16px;
 }
 </style>
