@@ -14,7 +14,7 @@
 					<div class="image">
 						<el-image
 							style="height: 100%; width: 100%"
-							:src="$Constants.baseURL + `/portmap/search?id=` + id"
+							:src="imageUrl"
 							fit="fill"
 						></el-image>
 					</div>
@@ -43,13 +43,13 @@ export default {
 	name: "Home",
 	data() {
 		return {
-			id: "",
 			content: "",
 			legend: "",
 			page: {
 				pageNum: 1,
 				pageSize: 20,
 			},
+			imageUrl: "",
 		};
 	},
 	components: {},
@@ -67,28 +67,28 @@ export default {
 	methods: {
 		// 获取操作说明的内容
 		async contentFindAll() {
-			await this.$api
-				.contentFindAll(this.page)
-				.then((res) => {
-					if (res) {
-						this.legend = res.data.list[0].content;
-						this.content = res.data.list[1].content;
-					}
-				})
-				.catch((err) => {
-					console.log("err", err);
-				});
+			await this.$api.contentFindAll(this.page).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.legend = res.data.list[0].content;
+					this.content = res.data.list[1].content;
+					ElMessage.success(res.msg);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 获取港口图片
 		async getPortMapFind() {
 			await this.$api.getPortMapFind(this.page).then((res) => {
-				if (res) {
+				if (res.status === this.$Constants.status.SUCCESS) {
 					// 港口地图id
-					this.id = res.data.list[0].id;
+					this.imageUrl = res.data.list[0].url;
 					setTimeout(() => {
 						this.getUserAddScore();
 					}, 6000);
+				} else {
+					ElMessage.error(res.msg);
 				}
 			});
 		},
@@ -102,23 +102,13 @@ export default {
 			// 获取该用户的分数，如果分数大于等于20，那么不触发加法
 			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
 			if (userInfo.data.score >= 0 && userInfo.data.score < 20) {
-				await this.$api
-					.getUserAddScore(params)
-					.then((res) => {
-						if (res.status === 200) {
-							ElMessage({
-								message: res.msg,
-								type: "success",
-							});
-						} else if (res.status === 400) {
-							ElMessage.error({
-								message: res.data,
-							});
-						}
-					})
-					.catch((err) => {
-						console.log("err :>> ", err);
-					});
+				await this.$api.getUserAddScore(params).then((res) => {
+					if (res.status === this.$Constants.status.SUCCESS) {
+						ElMessage.success(res.msg);
+					} else {
+						ElMessage.error(res.msg);
+					}
+				});
 			}
 		},
 	},
