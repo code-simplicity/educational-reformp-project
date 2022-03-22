@@ -8,6 +8,13 @@ import api from "../../common/interface"
 export const getVideoSearch = params => api.post(`/video/serach`, params)
 
 /**
+ * 获取视频
+ * @param {*} params 
+ * @returns 
+ */
+export const videoSearchFindOne = params => api.post(`/video/serach/findOne`, params)
+
+/**
  * 获取一个视频
  * @param {*} name 
  * @returns 
