@@ -201,6 +201,7 @@ export default {
 					this.waveFormsUrl = res.data.url;
 				} else {
 					ElMessage.error(res.msg);
+					this.waveFormsUrl = "";
 				}
 			});
 		},
@@ -212,6 +213,7 @@ export default {
 					this.waveStatsUrl = res.data.url;
 				} else {
 					ElMessage.error(res.msg);
+					this.waveStatsUrl = "";
 				}
 			});
 		},
