@@ -64,7 +64,7 @@
 						<div class="left">
 							<el-image
 								style="height: 100%; width: 100%"
-								:src="$Constants.baseURL + `/portpointmap/search?id=` + id"
+								:src="imageUrl"
 								fit="fill"
 								@click="changePoint"
 							></el-image>
@@ -98,18 +98,14 @@
 							<div class="wave-forms">
 								<el-image
 									style="height: 100%; width: 100%"
-									:src="
-										$Constants.baseURL + `/waveforms/search?id=` + waveFormsId
-									"
+									:src="waveFormsUrl"
 									fit="fill"
 								></el-image>
 							</div>
 							<div class="wave-stats">
 								<el-image
 									style="height: 100%; width: 100%"
-									:src="
-										$Constants.baseURL + `/wavestats/search?id=` + waveStatsId
-									"
+									:src="waveStatsUrl"
 									fit="fill"
 								></el-image>
 							</div>
@@ -130,7 +126,7 @@ export default {
 	data() {
 		return {
 			content: "",
-			id: "",
+			imageUrl: "", // 图片的路径
 			radioList: [],
 			// 选择框的值,分别是水位，波浪方向，堤坝布置
 			water_level: "",
@@ -142,9 +138,9 @@ export default {
 			showPoint: false,
 			pointList: [],
 			// 波形图
-			waveFormsId: "",
+			waveFormsUrl: "",
 			// 波形统计图
-			waveStatsId: "",
+			waveStatsUrl: "",
 			page: {
 				pageNum: 1,
 				pageSize: 20,
@@ -200,30 +196,24 @@ export default {
 
 		// 获取波形图
 		async getWaveformsSearchPointId(point_id) {
-			await this.$api
-				.getWaveformsSearchPointId(point_id)
-				.then((res) => {
-					if (res.status === 200) {
-						this.waveFormsId = res.data.id;
-					}
-				})
-				.catch((err) => {
-					console.log("err :>> ", err);
-				});
+			await this.$api.getWaveformsSearchPointId(point_id).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.waveFormsUrl = res.data.url;
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 获取波形统计图
 		async getWavestatsSearchPointId(point_id) {
-			await this.$api
-				.getWavestatsSearchPointId(point_id)
-				.then((res) => {
-					if (res.status === 200) {
-						this.waveStatsId = res.data.id;
-					}
-				})
-				.catch((err) => {
-					console.log("err :>> ", err);
-				});
+			await this.$api.getWavestatsSearchPointId(point_id).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.waveStatsUrl = res.data.url;
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		async getUserAddScore() {
@@ -233,23 +223,13 @@ export default {
 			};
 			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
 			if (userInfo.data.score >= 80 && userInfo.data.score < 100) {
-				await this.$api
-					.getUserAddScore(params)
-					.then((res) => {
-						if (res.status === 200) {
-							ElMessage({
-								message: res.msg,
-								type: "success",
-							});
-						} else if (res.status === 400) {
-							ElMessage.error({
-								message: res.data,
-							});
-						}
-					})
-					.catch((err) => {
-						console.log("err :>> ", err);
-					});
+				await this.$api.getUserAddScore(params).then((res) => {
+					if (res.status === this.$Constants.status.SUCCESS) {
+						ElMessage.success(res.msg);
+					} else {
+						ElMessage.error(res.msg);
+					}
+				});
 			}
 		},
 
@@ -263,16 +243,13 @@ export default {
 				...this.page,
 				port_point_map_id,
 			};
-			await this.$api
-				.getPointSearch(params)
-				.then((res) => {
-					if (res.status === 200) {
-						this.pointList = res.data.list;
-					}
-				})
-				.catch((err) => {
-					console.log("err :>> ", err);
-				});
+			await this.$api.getPointSearch(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.pointList = res.data.list;
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 获取测点数据
@@ -287,43 +264,29 @@ export default {
 
 		// 获取左边选择
 		async getChooseFindAll() {
-			await this.$api
-				.getChooseFindAll(this.page)
-				.then((res) => {
-					if (res.status === 200) {
-						this.radioList = res.data.list;
-						this.getContentSearchChooseId(res.data.list[0].id);
-					}
-				})
-				.catch((err) => {
-					console.log(`err`, err);
-				});
+			await this.$api.getChooseFindAll(this.page).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.radioList = res.data.list;
+					this.getContentSearchChooseId(res.data.list[0].id);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		async getPortPointMapSearch(data) {
 			const params = {
 				...data,
-				...this.page,
 			};
-			await this.$api
-				.getPortPointMapSearch(params)
-				.then((res) => {
-					if (res.status === 200) {
-						this.id = res.data.list[0].id;
-						ElMessage({
-							message: res.msg,
-							type: "success",
-						});
-						this.getPointSearch(res.data.list[0].id);
-					} else if (res.status === 400) {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				})
-				.catch((err) => {
-					console.log(`err`, err);
-				});
+			await this.$api.portPointMapSearchFindOne(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.imageUrl = res.data.url;
+					ElMessage.success(res.msg);
+					this.getPointSearch(res.data.id);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 获取内容介绍
@@ -332,16 +295,13 @@ export default {
 				...this.page,
 				choose_id,
 			};
-			await this.$api
-				.getContentSearchChooseId(params)
-				.then((res) => {
-					if (res.status === 200) {
-						this.content = res.data.list[0].content;
-					}
-				})
-				.catch((err) => {
-					console.log("err", err);
-				});
+			await this.$api.getContentSearchChooseId(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.content = res.data.list[0].content;
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 	},
 };
