@@ -60,7 +60,7 @@ const actions = {
   }, params) {
     return new Promise((resolve) => {
       login(params).then((res) => {
-        if (res.status === 20000) {
+        if (res.status === this.$Constants.state.SUCCESS) {
           ElMessage.success({
             message: res.msg
           });
@@ -82,7 +82,7 @@ const actions = {
   }, params) {
     return new Promise((resolve) => {
       getUserInfo(params).then((res) => {
-        if (res.status === 20000) {
+        if (res.status === this.$Constants.state.SUCCESS) {
           commit("infoChange", res.data);
           resolve(res.data);
         }
@@ -93,10 +93,11 @@ const actions = {
   loginOut() {
     logout()
       .then((res) => {
-        ElMessage.success(res.msg);
-      })
-      .catch((error) => {
-        ElMessage.error(error);
+        if (res.status === this.$Constants.state.SUCCESS) {
+          ElMessage.success(res.msg);
+        } else {
+          ElMessage.error(res.msg);
+        }
       })
       .finally(() => {
         removeUserInfo();
