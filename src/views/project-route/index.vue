@@ -63,7 +63,7 @@
 					<div class="image">
 						<el-image
 							style="height: 100%; width: 100%"
-							:src="$Constants.baseURL + `/portmap/search?id=` + id"
+							:src="imageUrl"
 							fit="fill"
 						></el-image>
 					</div>
@@ -93,7 +93,7 @@ export default {
 	data() {
 		return {
 			content: "",
-			id: "",
+			imageUrl: "",
 			radioList: [],
 			// 选择框的值,分别是水位，波浪方向，堤坝布置
 			water_level: "极端高水位",
@@ -120,17 +120,15 @@ export default {
 	methods: {
 		// 获取左边选择
 		async getChooseFindAll() {
-			await this.$api
-				.getChooseFindAll(this.page)
-				.then((res) => {
-					if (res.status === 200) {
-						this.radioList = res.data.list;
-						this.getContentSearchChooseId(res.data.list[0].id);
-					}
-				})
-				.catch((err) => {
-					console.log(`err`, err);
-				});
+			await this.$api.getChooseFindAll(this.page).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.radioList = res.data.list;
+					this.getContentSearchChooseId(res.data.list[0].id);
+					ElMessage.success(res.msg);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 去现象观察
@@ -154,31 +152,23 @@ export default {
 			};
 			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
 			if (userInfo.data.score >= 40 && userInfo.data.score < 60) {
-				await this.$api
-					.getUserAddScore(params)
-					.then((res) => {
-						if (res.status === 200) {
-							ElMessage({
-								message: res.msg,
-								type: "success",
-							});
-						} else if (res.status === 400) {
-							ElMessage.error({
-								message: res.data,
-							});
-						}
-					})
-					.catch((err) => {
-						console.log("err :>> ", err);
-					});
+				await this.$api.getUserAddScore(params).then((res) => {
+					if (res.status === this.$Constants.status.SUCCESS) {
+						ElMessage.success(res.msg);
+					} else {
+						ElMessage.error(res.data);
+					}
+				});
 			}
 		},
 
 		// 获取港口图片
 		async getPortMapFind() {
 			await this.$api.getPortMapFind(this.page).then((res) => {
-				if (res) {
-					this.id = res.data.list[0].id;
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.imageUrl = res.data.list[0].url;
+				} else {
+					ElMessage.error(res.data);
 				}
 			});
 		},
@@ -189,16 +179,13 @@ export default {
 				...this.page,
 				choose_id,
 			};
-			await this.$api
-				.getContentSearchChooseId(params)
-				.then((res) => {
-					if (res) {
-						this.content = res.data.list[0].content;
-					}
-				})
-				.catch((err) => {
-					console.log("err", err);
-				});
+			await this.$api.getContentSearchChooseId(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.content = res.data.list[0].content;
+				} else {
+					ElMessage.error(res.data);
+				}
+			});
 		},
 	},
 };
