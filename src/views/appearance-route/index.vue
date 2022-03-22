@@ -152,10 +152,10 @@ export default {
 	},
 	methods: {
 		// 西瓜播放器实例化
-		getVideo(res) {
+		getVideo() {
 			this.videoPlayer = new Player({
 				el: this.$refs.video,
-				url: this.$Constants.baseURL + "/video/search?id=" + res.data.id,
+				url: this.videoSrc,
 				// 流式布局
 				fitVideoSize: "auto",
 				fluid: true,
@@ -175,7 +175,6 @@ export default {
 				controls: false,
 				errorTips: `请<spa>刷新</spa>测试哦`,
 			});
-			console.log("res :>> ", res);
 			// 注册视频结束事件，视频播放完成，学生成绩加80
 			this.videoPlayer.once("ended", () => {
 				setTimeout(() => {
@@ -193,40 +192,27 @@ export default {
 			if (val) {
 				const userInfo = await this.$api.getUserInfo(this.userInfo.id);
 				if (userInfo.data.score >= 60 && userInfo.data.score < 80) {
-					await this.$api
-						.getUserAddScore(params)
-						.then((res) => {
-							if (res.status === 200) {
-								ElMessage({
-									message: res.msg,
-									type: "success",
-								});
-							} else if (res.status === 400) {
-								ElMessage.error({
-									message: res.data,
-								});
-							}
-						})
-						.catch((err) => {
-							console.log("err :>> ", err);
-						});
+					await this.$api.getUserAddScore(params).then((res) => {
+						if (res.status === this.$Constants.status.SUCCESS) {
+							ElMessage.success(res.msg);
+						} else {
+							ElMessage.error(res.msg);
+						}
+					});
 				}
 			}
 		},
 
 		// 获取左边选择
 		async getChooseFindAll() {
-			await this.$api
-				.getChooseFindAll(this.page)
-				.then((res) => {
-					if (res.status === 200) {
-						this.radioList = res.data.list;
-						this.getContentSearchChooseId(res.data.list[0].id);
-					}
-				})
-				.catch((err) => {
-					console.log(`err`, err);
-				});
+			await this.$api.getChooseFindAll(this.page).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.radioList = res.data.list;
+					this.getContentSearchChooseId(res.data.list[0].id);
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 去现象观察
@@ -245,25 +231,17 @@ export default {
 
 		// 获取演示视频
 		async getVideoSearch(params) {
-			await this.$api
-				.getVideoSearch(params)
-				.then((res) => {
-					if (res.status === 200) {
-						setTimeout(() => {
-							ElMessage.success({
-								message: res.msg,
-							});
-						}, 3000);
-						this.getVideo(res);
-					} else if (res.status === 400) {
-						ElMessage.error({
-							message: res.msg,
-						});
-					}
-				})
-				.catch((err) => {
-					console.log("err", err);
-				});
+			await this.$api.videoSearchFindOne(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					setTimeout(() => {
+						ElMessage.success(res.msg);
+					}, 3000);
+					this.videoSrc = res.data.url;
+					this.getVideo();
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 
 		// 获取内容介绍
@@ -273,16 +251,13 @@ export default {
 				pageSize: 10,
 				choose_id,
 			};
-			await this.$api
-				.getContentSearchChooseId(params)
-				.then((res) => {
-					if (res) {
-						this.content = res.data.list[0].content;
-					}
-				})
-				.catch((err) => {
-					console.log("err", err);
-				});
+			await this.$api.getContentSearchChooseId(params).then((res) => {
+				if (res.status === this.$Constants.status.SUCCESS) {
+					this.content = res.data.list[0].content;
+				} else {
+					ElMessage.error(res.msg);
+				}
+			});
 		},
 	},
 };
