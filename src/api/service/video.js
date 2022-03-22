@@ -12,7 +12,7 @@ export const getVideoSearch = params => api.post(`/video/serach`, params)
  * @param {*} params 
  * @returns 
  */
-export const videoSearchFindOne = params => api.post(`/video/serach/findOne`, params)
+export const videoSearchFindOne = params => api.post(`/video/search/findOne`, params)
 
 /**
  * 获取一个视频
