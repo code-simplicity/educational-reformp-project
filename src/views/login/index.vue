@@ -3,15 +3,15 @@
 		<div class="login flex-justify-center">
 			<div class="title">水运工程仿真实验系统</div>
 			<div class="login-box order">
-				<div class="login-title">账户登录</div>
+				<div class="login-title">登录</div>
 				<div class="form-box">
 					<el-form
-						ref="ruleForm"
+						ref="ruleFormRef"
 						:model="ruleForm"
 						status-icon
 						:rules="rules"
 						label-position="left"
-						label-width="50px"
+						label-width="60px"
 						class="demo-ruleForm"
 						label-suffix=":"
 						:hide-required-asterisk="true"
@@ -38,7 +38,6 @@
 								placeholder="请输入密码"
 								autocomplete="off"
 								clearable
-								@click.enter="submitForm('ruleForm')"
 							>
 								<template #prefix>
 									<el-icon class="el-input__icon"
@@ -46,12 +45,37 @@
 									/></el-icon> </template
 							></el-input>
 						</el-form-item>
+						<el-form-item label="验证码" prop="captcha">
+							<el-row :gutter="24">
+								<el-col :span="14"
+									><el-input
+										v-model="ruleForm.captcha"
+										type="text"
+										placeholder="请输入图灵验证码"
+										autocomplete="off"
+										clearable
+										@click="submitForm(ruleFormRef)"
+									>
+										<template #prefix>
+											<el-icon class="el-input__icon"
+												><Key
+											/></el-icon> </template></el-input
+								></el-col>
+								<el-col :span="10">
+									<div
+										class="captcha-style"
+										v-html="captchaUrl"
+										@click="updateCaptchaCode"
+									></div>
+								</el-col>
+							</el-row>
+						</el-form-item>
 						<el-form-item>
 							<div class="flex-between">
-								<el-button type="primary" @click="submitForm('ruleForm')"
+								<el-button type="primary" @click="submitForm(ruleFormRef)"
 									>登录</el-button
 								>
-								<el-button @click="resetForm('ruleForm')">重置</el-button>
+								<el-button @click="resetForm('ruleForm')">注册</el-button>
 							</div>
 						</el-form-item>
 					</el-form>
@@ -61,75 +85,78 @@
 	</transition>
 </template>
 
-<script>
-// import { mapMutations } from "vuex";
-import { UserFilled, Unlock } from "@element-plus/icons";
-// import { ElMessage } from "element-plus";
+<script setup>
+import { reactive, ref } from "vue";
+import { UserFilled, Unlock, Key } from "@element-plus/icons";
+import { sendCaptcha } from "../../api/service/user";
 import SparkMD5 from "spark-md5";
-export default {
-	name: "Login",
-	data() {
-		const validateId = (rule, value, callback) => {
-			if (value === "") {
-				callback(new Error("请输入学号."));
-			} else {
-				if (this.ruleForm.id !== "") {
-					this.$refs.ruleForm.validateField("id");
-				}
-				callback();
-			}
-		};
-		const validatePass = (rule, value, callback) => {
-			if (value === "") {
-				callback(new Error("请输入密码."));
-			} else {
-				if (this.ruleForm.password !== "") {
-					this.$refs.ruleForm.validateField("password");
-				}
-				callback();
-			}
-		};
-		return {
-			ruleForm: {
-				// 学号
-				id: "",
-				// 密码
-				password: "",
-			},
-			rules: {
-				id: [{ validator: validateId, trigger: "blur" }],
-				password: [{ validator: validatePass, trigger: "blur" }],
-			},
-		};
-	},
-	components: {
-		UserFilled,
-		Unlock,
-	},
-	mounted() {},
-	methods: {
-		submitForm(formName) {
-			this.$refs[formName].validate((valid) => {
-				if (valid) {
-					// 验证登录
-					const params = {
-						id: this.ruleForm.id,
-						password: SparkMD5.hash(this.ruleForm.password),
-					};
-					this.$store.dispatch("user/login", params).then(() => {
-						this.$router.replace({
-							name: "home",
-						});
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import Constants from "../../utils/Constants.js";
+const router = useRouter();
+const store = useStore();
+const ruleFormRef = ref(null);
+// 登录表单
+const ruleForm = reactive({
+	// 学号
+	id: "",
+	// 密码
+	password: "",
+	captcha: "",
+});
+// 验证规则
+const rules = reactive({
+	id: [{ required: true, message: "请输入学号", trigger: "blur" }],
+	password: [
+		{
+			required: true,
+			message: "请输入密码",
+			trigger: "blur",
+		},
+	],
+	captcha: [
+		{
+			required: true,
+			message: "请输入验证码",
+			trigger: "blur",
+		},
+	],
+});
+// svg-captcha验证码
+const captchaUrl = ref(null);
+
+/**
+ * 获取验证码
+ */
+const updateCaptchaCode = async () => {
+	const data = await sendCaptcha();
+	captchaUrl.value = data;
+};
+// 函数调用
+updateCaptchaCode();
+
+/**
+登录提交
+ */
+const submitForm = async (formEl) => {
+	if (!formEl) return;
+	await formEl.validate((valid) => {
+		if (valid) {
+			// 验证登录
+			const params = {
+				id: ruleForm.id,
+				password: SparkMD5.hash(ruleForm.password),
+				captcha: ruleForm.captcha,
+			};
+			store.dispatch("user/login", params).then((res) => {
+				if (res.status === Constants.status.SUCCESS) {
+					router.replace({
+						name: "home",
 					});
-				} else {
-					return false;
 				}
 			});
-		},
-		resetForm(formName) {
-			this.$refs[formName].resetFields();
-		},
-	},
+		}
+	});
 };
 </script>
 
@@ -153,14 +180,17 @@ export default {
 	.login-box {
 		padding: 16px;
 		box-shadow: -1px 1px 10px rgb(0, 0, 0, 0.6);
-		width: 20%;
+		width: 30%;
 		min-width: 400px;
 		display: flex;
 		flex-direction: column;
 		.login-title {
 			margin-bottom: 16px;
-			font-size: 1rem;
+			font-size: 20px;
 			text-align: center;
+		}
+		.captcha-style {
+			cursor: pointer;
 		}
 	}
 }

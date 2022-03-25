@@ -1,30 +1,125 @@
-import api from "../../common/interface";
+import request from '@/utils/request';
 
 /**
- * 登录
- * id
- * password
- * @param {*} params
+ * 用户登录
+ * @data {*} data
  * @returns
  */
-export const login = (params) => api.post(`/user/login`, params);
+export const login = (data) => {
+    return request({
+        url: "/portal/user/login",
+        method: "post",
+        data
+    })
+}
 
 /**
  * 退出登录
  * @returns
  */
-export const logout = () => api.get(`/user/logout`, {});
+export const logout = () => {
+    return request({
+        url: "/portal/user/logout",
+        method: "get",
+
+    })
+}
 
 /**
- * 添加得分
- * @param {*} params
- * @returns
+ * 用户注册
+ * @param {*} data 
+ * @returns 
  */
-export const getUserAddScore = (params) => api.post(`/user/add/score`, params);
+export const addUser = (data) => {
+    return request({
+        url: "/portal/user/add",
+        method: "post",
+        data
+    })
+}
 
 /**
  * 获取用户信息
- * @param {*} id
- * @returns
+ * @param {*} id 
+ * @returns 
  */
-export const getUserInfo = (id) => api.get(`/user/info?id=${id}`, {});
+export const getUserInfo = (id) => {
+    return request({
+        url: `/portal/user/info?id=${id}`,
+        method: "get"
+    })
+}
+
+/**
+ * 更新用户信息
+ * @param {*} data 
+ * @returns 
+ */
+export const updateUserInfo = (data) => {
+    return request({
+        url: "/portal/user/update/info",
+        method: "put",
+        data
+    })
+}
+
+/**
+ * 重置用户密码
+ * @param {*} data 
+ * @returns 
+ */
+export const resetPassword = (data) => {
+    return request({
+        url: "/portal/user/reset-password",
+        method: "put",
+        data
+    })
+}
+
+/**
+ * 添加用户等分
+ * @param {*} data 
+ * @returns 
+ */
+export const addUserScore = (data) => {
+    return request({
+        url: "/portal/user/add/score",
+        method: "post",
+        data
+    })
+}
+
+/**
+ * 发送邮箱验证码
+ * @param {*} data 
+ * @returns 
+ */
+export const sendEmailCode = (data) => {
+    return request({
+        url: "/portal/userEx/sendMailCode",
+        method: "post",
+        data
+    })
+}
+
+/**
+ * 发送图灵验证码
+ * @returns 
+ */
+export const sendCaptcha = () => {
+    return request({
+        url: "/captcha",
+        method: "get"
+    })
+}
+
+/**
+ * 检查token是否存在
+ * @returns 
+ */
+export const checkToken = () => {
+    return request({
+        url: "/portal/user/check-token",
+        method: "get"
+    })
+}

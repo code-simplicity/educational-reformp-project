@@ -9,26 +9,38 @@ import {
   routes
 } from "./router.js";
 import NProgress from "@/utils/nprogress";
+
+// import {
+//   checkToken
+// } from "../api/service/user"
+
 import store from "@/store";
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
 
-const whiteList = ["/login"];
+// const whiteList = ["/login"];
 
 // 做登录拦截
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   NProgress.start();
-  if (store.state.user.token || whiteList.indexOf(to.path) !== -1) {
-    // 生成动态的title
-    to.meta.title ? changeTitle(to.meta.title) : "";
-    next();
+  // 生成动态的title
+  to.meta.title ? changeTitle(to.meta.title) : "";
+  const userInfo = store.getters["user/userInfo"]
+  if (userInfo) {
+    next()
   } else {
-    // 全部重置到登录页
-    next("/login");
-    to.meta.title ? changeTitle(to.meta.title) : "";
+    if (to.path === "/forget") {
+      next("/forget")
+    } else {
+      next()
+    }
+    store.dispatch("user/checkUserLoginStatus")
+    next()
   }
+
 });
 
 router.afterEach(() => {

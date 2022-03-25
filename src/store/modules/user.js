@@ -1,18 +1,17 @@
 import {
   getUserInfo,
   login,
-  logout
+  logout,
+  checkToken
 } from "@/api/service/user";
 import {
   findUserInfo,
   setUserInfo,
   removeUserInfo
 } from "@/utils/userInfo";
-import {
-  getToken,
-  setToken,
-  removeToken
-} from "@/utils/token";
+
+import Constants from "../../utils/Constants";
+
 import {
   ElMessage
 } from "element-plus";
@@ -20,8 +19,6 @@ import {
 const state = () => ({
   // 用户信息
   userInfo: findUserInfo(),
-  // token
-  token: getToken(),
 });
 
 // getter
@@ -29,11 +26,6 @@ const getters = {
   // 获取用户信息
   userInfo(state) {
     return state.userInfo;
-  },
-
-  // 获取token
-  token(state) {
-    return state.token;
   },
 };
 
@@ -44,30 +36,22 @@ const mutations = {
     state.userInfo = userInfo;
     setUserInfo(userInfo);
   },
-  // token
-  Token(state, token) {
-    state.token = token;
-    setToken(token);
-  },
 };
 
 // actions
 const actions = {
   // 登录
   login({
-    commit,
     dispatch
   }, params) {
     return new Promise((resolve) => {
       login(params).then((res) => {
-        if (res.status === this.$Constants.state.SUCCESS) {
+        if (res.status === Constants.status.SUCCESS) {
           ElMessage.success({
             message: res.msg
           });
-          commit("Token", res.data.token);
-          dispatch("getUserInfo", res.data.id).then(() => {
-            resolve(res.data.id);
-          });
+          dispatch("checkUserLoginStatus")
+          resolve(res)
         } else {
           ElMessage.error({
             message: res.msg
@@ -82,7 +66,7 @@ const actions = {
   }, params) {
     return new Promise((resolve) => {
       getUserInfo(params).then((res) => {
-        if (res.status === this.$Constants.state.SUCCESS) {
+        if (res.status === Constants.status.SUCCESS) {
           commit("infoChange", res.data);
           resolve(res.data);
         }
@@ -93,7 +77,7 @@ const actions = {
   loginOut() {
     logout()
       .then((res) => {
-        if (res.status === this.$Constants.state.SUCCESS) {
+        if (res.status === Constants.status.SUCCESS) {
           ElMessage.success(res.msg);
         } else {
           ElMessage.error(res.msg);
@@ -101,9 +85,27 @@ const actions = {
       })
       .finally(() => {
         removeUserInfo();
-        removeToken();
       });
   },
+
+  // 检查用户是否登录
+  async checkUserLoginStatus({
+    commit,
+    dispatch
+  }) {
+    await checkToken().then((res) => {
+      if (res.status === Constants.status.SUCCESS) {
+        dispatch("getUserInfo", res.data.id).then((result) => {
+          commit("infoChange", result)
+        })
+        if (res.status === Constants.status.SUCCESS) {
+          ElMessage.success(res.msg)
+        } else {
+          ElMessage.error(res.msg)
+        }
+      }
+    })
+  }
 };
 
 // 统一暴露

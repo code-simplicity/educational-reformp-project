@@ -37,7 +37,7 @@ export const asyncRouter = [{
     name: "home",
   },
   meta: {
-    title: "登录",
+    title: "首页",
     keepAlive: true,
   },
   component: Layout,

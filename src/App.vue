@@ -8,21 +8,8 @@
 	</div>
 </template>
 
-<script>
-export default {
-	name: "App",
-	data() {
-		return {};
-	},
-
-	components: {},
-
-	computed: {},
-
-	mounted() {},
-
-	methods: {},
-};
+<script setup>
+//
 </script>
 
 <style>
