@@ -8,6 +8,12 @@ import {
     ElMessage
 } from "element-plus";
 
+import {
+    getToken
+} from "./token"
+
+// import router from "../router/index"
+
 const {
     api_base_url
 } = config;
@@ -34,28 +40,41 @@ instance.defaults.validateStatus = function () {
     return true;
 };
 
+// 请求拦截
 instance.interceptors.request.use(config => {
-    config.withCredentials = true;
+    // 判断token是否存在，这个token是存在redis中的，存在tokenKey，给请求头加上这个值
+    const tokenKey = getToken()
+    if (tokenKey) {
+        console.log('config', config)
+        config.headers['Authorization'] = `Bearer ${tokenKey}`
+    }
     return config;
 }, error => {
-    console.log("error", error)
     return new Promise.reject(error)
 })
 
 instance.interceptors.response.use(response => {
+    if (response.data.token) {
+        console.log("response.data.token", response.data.token)
+    }
+    console.log("response", response)
     const {
         data,
         status
     } = response
     if (status === 200) {
         return Promise.resolve(data)
-    } else {
-        // 返回错误信息
-        showError(data)
-        return Promise.reject(data)
     }
+    // console.log(response)
+    // if (status === 401) {
+    //     router.replace({
+    //         path: "/login"
+    //     })
+    //     ElMessage.error(data.msg)
+    // }
+    // return Promise.resolve(response.data)
 }, error => {
-    console.log(error); // for debug
+    console.log("error", error.response)
     const badMessage = error.message || error;
     const code = parseInt(
         badMessage

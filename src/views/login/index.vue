@@ -151,7 +151,7 @@ const submitForm = async (formEl) => {
 			store.dispatch("user/login", params).then((res) => {
 				if (res.status === Constants.status.SUCCESS) {
 					router.replace({
-						name: "home",
+						path: "/home",
 					});
 				}
 			});

@@ -21,5 +21,36 @@ export default {
     formatZero(num, len) {
         if (String(num).length > len) return num
         return (Array(len).join(0) + num).slice(-len)
+    },
+
+    // 获取tokenKey
+    getCookieTokenKey(name) {
+        // 首先就是将cookie中的后端返回的tokenKey拿出来
+        const array = document.cookie.split(";")
+        const obj = {}
+        array.forEach((item) => {
+            let arr = item.trim().split("=")
+            obj[arr[0]] = arr[1]
+        })
+        for (const key in obj) {
+            if (key === name) {
+                return key
+            }
+        }
+        return null
+    },
+
+    // 清除所有的cookie
+    clearAllCookie() {
+        let keys = document.cookie.match(/[^ =;]+(?==)/g);
+        if (keys) {
+            for (let i = keys.length; i--;) {
+                document.cookie =
+                    keys[i] +
+                    "=0;expires=" +
+                    new Date(0).toUTCString() +
+                    ";max-age=0";
+            }
+        }
     }
 }

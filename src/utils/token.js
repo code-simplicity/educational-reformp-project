@@ -3,7 +3,7 @@
  * @returns
  */
 export function getToken() {
-  return localStorage.getItem("token");
+  return localStorage.getItem("app_cookie_data");
 }
 
 /**
@@ -14,7 +14,7 @@ export function getToken() {
  * @return {*}
  */
 export function setToken(token) {
-  return localStorage.setItem("token", token);
+  return localStorage.setItem("app_cookie_data", token);
 }
 
 /**
@@ -24,5 +24,5 @@ export function setToken(token) {
  * @return {*}
  */
 export function removeToken() {
-  return localStorage.removeItem("token");
+  return localStorage.removeItem("app_cookie_data");
 }

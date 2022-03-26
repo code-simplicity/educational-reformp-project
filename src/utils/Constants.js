@@ -6,6 +6,10 @@ const status = {
   // api调用过于频繁
   API_BUSY: 40001,
 }
+
+const tokenKey = "app_cookie_data"
+
 export default {
-  status
+  status,
+  tokenKey
 }

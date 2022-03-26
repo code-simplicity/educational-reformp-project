@@ -1,5 +1,5 @@
 import {
-  getUserInfo,
+  // getUserInfo,
   login,
   logout,
   checkToken
@@ -10,7 +10,15 @@ import {
   removeUserInfo
 } from "@/utils/userInfo";
 
-import Constants from "../../utils/Constants";
+import {
+  getToken,
+  setToken,
+  removeToken
+} from "@/utils/token"
+
+import Constants from "@/utils/Constants";
+
+import utils from "../../utils/utils"
 
 import {
   ElMessage
@@ -19,6 +27,8 @@ import {
 const state = () => ({
   // 用户信息
   userInfo: findUserInfo(),
+  // token拿去是通过前端从cookie中读取
+  tokenData: getToken()
 });
 
 // getter
@@ -27,6 +37,9 @@ const getters = {
   userInfo(state) {
     return state.userInfo;
   },
+  tokenData(state) {
+    return state.tokenData
+  }
 };
 
 // mutations
@@ -36,13 +49,18 @@ const mutations = {
     state.userInfo = userInfo;
     setUserInfo(userInfo);
   },
+  // token
+  tokenData(state, tokenKey) {
+    state.tokenData = tokenKey
+    setToken(tokenKey)
+  }
 };
 
 // actions
 const actions = {
   // 登录
   login({
-    dispatch
+    dispatch,
   }, params) {
     return new Promise((resolve) => {
       login(params).then((res) => {
@@ -60,24 +78,13 @@ const actions = {
       });
     });
   },
-  // 获取用户信息
-  getUserInfo({
-    commit
-  }, params) {
-    return new Promise((resolve) => {
-      getUserInfo(params).then((res) => {
-        if (res.status === Constants.status.SUCCESS) {
-          commit("infoChange", res.data);
-          resolve(res.data);
-        }
-      });
-    });
-  },
-
   loginOut() {
     logout()
       .then((res) => {
         if (res.status === Constants.status.SUCCESS) {
+          removeToken()
+          removeUserInfo();
+          utils.clearAllCookie()
           ElMessage.success(res.msg);
         } else {
           ElMessage.error(res.msg);
@@ -85,24 +92,22 @@ const actions = {
       })
       .finally(() => {
         removeUserInfo();
+        removeToken()
+        utils.clearAllCookie()
       });
   },
 
   // 检查用户是否登录
-  async checkUserLoginStatus({
-    commit,
-    dispatch
+  checkUserLoginStatus({
+    commit
   }) {
-    await checkToken().then((res) => {
+    checkToken().then((res) => {
+      console.log("res", res)
       if (res.status === Constants.status.SUCCESS) {
-        dispatch("getUserInfo", res.data.id).then((result) => {
-          commit("infoChange", result)
-        })
-        if (res.status === Constants.status.SUCCESS) {
-          ElMessage.success(res.msg)
-        } else {
-          ElMessage.error(res.msg)
-        }
+        const tokenKey = utils.getCookieTokenKey(Constants.tokenKey)
+        commit("tokenData", tokenKey)
+        commit("infoChange", res.data);
+        return res
       }
     })
   }

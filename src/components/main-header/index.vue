@@ -51,11 +51,11 @@
 					<div class="time flex-nowrap" v-if="isShowDateTime">
 						{{ dateTime }}
 					</div>
-					<div class="user-info flex-nowrap flex" v-if="userInfo">
+					<div class="user-info flex-nowrap flex" v-if="tokenData">
 						<div class="id">{{ userInfo.id }}</div>
 						<div class="user-name">{{ userInfo.user_name }}</div>
 					</div>
-					<div class="container flex-nowrap flex" v-if="userInfo">
+					<div class="container flex-nowrap flex" v-if="tokenData">
 						<el-dropdown @command="handleCommand">
 							<div class="botton">
 								模块功能<el-icon class="el-icon-right"><CaretBottom /></el-icon>
@@ -101,6 +101,7 @@ export default {
 	},
 	computed: {
 		...mapGetters("user", {
+			tokenData: "tokenData",
 			userInfo: "userInfo",
 		}),
 	},
