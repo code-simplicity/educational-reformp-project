@@ -149,7 +149,8 @@ const submitForm = async (formEl) => {
 				captcha: ruleForm.captcha,
 			};
 			store.dispatch("user/login", params).then((res) => {
-				if (res.status === Constants.status.SUCCESS) {
+				console.log("res", res);
+				if (res.code === Constants.status.SUCCESS) {
 					router.replace({
 						path: "/home",
 					});

@@ -1,3 +1,11 @@
+<!--
+ * @Author: bugdr
+ * @Date: 2021-11-16 16:54:25
+ * @LastEditors: bugdr
+ * @LastEditTime: 2022-03-27 23:10:19
+ * @FilePath: \educational_reformp-project\src\views\layout\index.vue
+ * @Description: 
+-->
 <template>
 	<div class="layout">
 		<MainHeader></MainHeader>
@@ -33,6 +41,7 @@ export default {
 <style lang="scss" scoped>
 .layout {
 	width: 100%;
+	padding: 16px;
 	/* height: 100vh; */
 	/* padding: 10px; */
 	/* min-width: 1080px; */

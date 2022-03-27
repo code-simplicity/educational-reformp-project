@@ -1,5 +1,5 @@
 import {
-  // getUserInfo,
+  getUserInfo,
   login,
   logout,
   checkToken
@@ -59,25 +59,36 @@ const mutations = {
 // actions
 const actions = {
   // 登录
-  login({
-    dispatch,
+  async login({
+    commit,
   }, params) {
-    return new Promise((resolve) => {
-      login(params).then((res) => {
-        if (res.status === Constants.status.SUCCESS) {
-          ElMessage.success({
-            message: res.msg
-          });
-          dispatch("checkUserLoginStatus")
-          resolve(res)
-        } else {
-          ElMessage.error({
-            message: res.msg
-          })
-        }
+    const result = await login(params)
+    if (result.code === Constants.status.SUCCESS) {
+      const {
+        tokenKey,
+        ...data
+      } = result.data
+      commit("tokenData", tokenKey)
+      commit("infoChange", data)
+      ElMessage.success({
+        message: result.msg
       });
-    });
+      return result
+    } else {
+      ElMessage.error({
+        message: result.msg
+      })
+    }
   },
+
+  async getUserInfoById({
+    commit
+  }, id) {
+    const result = await getUserInfo(id)
+    console.log("result", result)
+    commit("infoChange", result.data);
+  },
+
   loginOut() {
     logout()
       .then((res) => {

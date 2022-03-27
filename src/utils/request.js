@@ -12,7 +12,7 @@ import {
     getToken
 } from "./token"
 
-// import router from "../router/index"
+import router from "../router/index"
 
 const {
     api_base_url
@@ -41,12 +41,11 @@ instance.defaults.validateStatus = function () {
 };
 
 // 请求拦截
-instance.interceptors.request.use(config => {
+instance.interceptors.request.use((config) => {
     // 判断token是否存在，这个token是存在redis中的，存在tokenKey，给请求头加上这个值
     const tokenKey = getToken()
-    if (tokenKey) {
-        console.log('config', config)
-        config.headers['Authorization'] = `Bearer ${tokenKey}`
+    if (tokenKey !== "" && tokenKey !== undefined && tokenKey !== null) {
+        config.headers.common['authorization'] = tokenKey
     }
     return config;
 }, error => {
@@ -54,25 +53,21 @@ instance.interceptors.request.use(config => {
 })
 
 instance.interceptors.response.use(response => {
-    if (response.data.token) {
-        console.log("response.data.token", response.data.token)
-    }
-    console.log("response", response)
     const {
         data,
         status
     } = response
-    if (status === 200) {
+    if (status === 200 || status === 422) {
         return Promise.resolve(data)
     }
-    // console.log(response)
-    // if (status === 401) {
-    //     router.replace({
-    //         path: "/login"
-    //     })
-    //     ElMessage.error(data.msg)
-    // }
-    // return Promise.resolve(response.data)
+    // 返回401的话，证明是没有登录的，然后路由重定向到登录页
+    if (status === 401) {
+        router.replace({
+            path: "/login"
+        })
+        ElMessage.error(data.msg)
+    }
+    return Promise.reject(data)
 }, error => {
     console.log("error", error.response)
     const badMessage = error.message || error;

@@ -67,6 +67,9 @@
 										command="toCenter"
 										>管理中心</el-dropdown-item
 									>
+									<el-dropdown-item command="usersetting"
+										>用户设置</el-dropdown-item
+									>
 									<el-dropdown-item command="logout">退出登录</el-dropdown-item>
 								</el-dropdown-menu>
 							</template>
@@ -85,6 +88,7 @@
 import { CaretBottom, Coordinate } from "@element-plus/icons";
 // import { ElMessage } from "element-plus";
 import { mapGetters } from "vuex";
+// import { updateUserInfo } from "../../api/service/user";
 export default {
 	name: "main-header",
 	data() {
@@ -137,6 +141,12 @@ export default {
 						this.$router.replace({
 							name: "login",
 						});
+					});
+					break;
+				}
+				case "usersetting": {
+					this.$router.push({
+						name: "user",
 					});
 					break;
 				}

@@ -71,7 +71,6 @@ export default {
 				if (res.status === this.$Constants.status.SUCCESS) {
 					this.legend = res.data.list[0].content;
 					this.content = res.data.list[1].content;
-					ElMessage.success(res.msg);
 				} else {
 					ElMessage.error(res.msg);
 				}
@@ -101,9 +100,10 @@ export default {
 			};
 			// 获取该用户的分数，如果分数大于等于20，那么不触发加法
 			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+			console.log("userInfo :>> ", userInfo);
 			if (userInfo.data.score >= 0 && userInfo.data.score < 20) {
 				await this.$api.getUserAddScore(params).then((res) => {
-					if (res.status === this.$Constants.status.SUCCESS) {
+					if (res.code === this.$Constants.status.SUCCESS) {
 						ElMessage.success(res.msg);
 					} else {
 						ElMessage.error(res.msg);
