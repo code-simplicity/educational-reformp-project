@@ -15,6 +15,7 @@ import utils from './utils/utils'
 
 import "./utils/flexible.js";
 
+import './assets/icon/iconfont.css'
 
 import '../src/assets/style/reset.scss'
 import '../src/assets/style/common.css'

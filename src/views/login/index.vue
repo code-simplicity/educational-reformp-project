@@ -149,11 +149,14 @@ const submitForm = async (formEl) => {
 				captcha: ruleForm.captcha,
 			};
 			store.dispatch("user/login", params).then((res) => {
-				console.log("res", res);
 				if (res.code === Constants.status.SUCCESS) {
 					router.replace({
 						path: "/home",
 					});
+					updateCaptchaCode();
+				} else {
+					// 更新验证码
+					updateCaptchaCode();
 				}
 			});
 		}

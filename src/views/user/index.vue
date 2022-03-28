@@ -2,7 +2,7 @@
  * @Author: bugdr
  * @Date: 2022-03-27 11:45:29
  * @LastEditors: bugdr
- * @LastEditTime: 2022-03-27 23:21:52
+ * @LastEditTime: 2022-03-28 09:46:10
  * @FilePath: \educational_reformp-project\src\views\user\index.vue
  * @Description: 
 -->
@@ -22,64 +22,71 @@
 				<el-icon :size="18"><User /></el-icon>
 			</div>
 		</el-header>
-		<div class="user-container flex flex-center">
-			<div class="user-nav">
-				<div class="menu-collapse">
-					<el-icon v-model="isCollapse" :size="30" color="#000000">
-						<Expand />
-					</el-icon>
-				</div>
-				<div class="user-box flex">
-					<el-menu
-						default-openeds="1"
-						class="el-menu-vertical-demo"
-						active-text-color="#11d04b"
-						background-color="#545c64"
-						text-color="#fff"
-						:collapse="isCollapse"
-						@open="handleOpen"
-						@close="handleClose"
-						router
+		<div class="el-menu-aside">
+			<div class="el-menu-container">
+				<el-menu
+					class="el-menu-vertical"
+					active-text-color="#dddd4b"
+					background-color="#545c64"
+					text-color="#fff"
+					:collapse="isCollapse"
+					@open="handleOpen"
+					@close="handleClose"
+					:default-active="activeMenu"
+					router
+				>
+					<el-menu-item
+						v-for="(item, index) in navItems"
+						:key="index"
+						:index="item.path"
 					>
-						<el-menu-item
-							v-for="(item, index) in navItems"
-							:key="index"
-							:index="item.path"
-						>
-							<el-icon>
-								<template v-slot:icon>
-									{{ icon }}
-								</template>
-							</el-icon>
-							<template #title>{{ item.name }}</template>
-						</el-menu-item>
-					</el-menu>
-					<div class="right-container">
-						<router-view></router-view>
-					</div>
-				</div>
+						<i class="iconfont" :class="item.icon"></i>
+						<template v-slot:title>
+							<span class="menu-name">{{ item.name }}</span>
+						</template>
+					</el-menu-item>
+				</el-menu>
+			</div>
+			<div class="user-router">
+				<router-view></router-view>
 			</div>
 		</div>
 	</el-container>
 </template>
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onBeforeMount } from "vue";
 import { useStore } from "vuex";
-import { Expand } from "@element-plus/icons-vue";
 import { User } from "@element-plus/icons-vue";
+import { useEventListener } from "@vueuse/core";
 import { navItems } from "@/json/navItems";
-
 const store = useStore();
-
 // 获取用户信息
 const userInfo = computed(() => store.getters["user/userInfo"]);
-
 // 获取路由信息
 const navItem = ref([]);
-
 navItem.value = navItems;
+// 默认激活菜单
+const activeMenu = computed(() => {
+	const { path } = navItems[0];
+	return path;
+});
+const isCollapse = computed(() => store.state.app.isCollapse);
 
-const isCollapse = ref(false);
+// 页面监听
+const resizeHandler = () => {
+	if (document.body.clientWidth <= 1000 && !isCollapse.value) {
+		store.commit("app/isCollapseChange", true);
+	} else if (document.body.clientWidth > 1000 && isCollapse.value) {
+		store.commit("app/isCollapseChange", false);
+	}
+};
+// 初始化调用
+resizeHandler();
+// 监听页面的变化，beforeMount
+onBeforeMount(() => {
+	useEventListener("resize", resizeHandler());
+});
+
 const handleOpen = (key, keyPath) => {
 	console.log(key, keyPath);
 };
@@ -88,23 +95,28 @@ const handleClose = (key, keyPath) => {
 };
 </script>
 <style lang="scss" scope>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-	width: 200px;
+.el-header {
+	padding-left: 16px;
+	padding-right: 16px;
 }
+
 .container {
+	position: relative;
 	.user-header {
 		display: flex;
-		background: #6b9ac9;
+		background: #ffffff;
 		height: 50px;
 		align-items: center;
 		justify-content: space-between;
+		margin-bottom: 20px;
 		.user-header-left {
 			display: flex;
 			.to-home {
 				margin-left: 40px;
-				font-size: 22px;
+				font-size: 18px;
+				border-bottom: 2px solid #123456;
 				.active-class {
-					color: #e94040;
+					color: #1000f1;
 					text-decoration: none;
 					cursor: pointer;
 					&.router-link-active {
@@ -124,20 +136,33 @@ const handleClose = (key, keyPath) => {
 			}
 		}
 	}
-	.user-container {
-		padding: 10px 16px;
-		.user-nav {
-			position: relative;
-			.menu-collapse {
-				position: absolute;
-			}
-			.user-box {
-				display: flex;
-				align-items: baseline;
-				margin-top: 20px;
-				.right-container {
+	.el-menu-aside {
+		display: flex;
+		justify-content: center;
+		position: relative;
+		.el-menu-container {
+			display: flex;
+			height: 400px;
+			.el-menu {
+				background-color: #ffffff;
+				.el-menu-item {
+					color: #000000;
+					&.is-active {
+						color: #ffffff;
+						background-color: #3a3a3a;
+					}
 				}
 			}
+			.el-menu-vertical {
+				.menu-name {
+					margin-left: 8px;
+				}
+			}
+		}
+		.user-router {
+			display: flex;
+			align-items: flex-start;
+			margin-left: 20px;
 		}
 	}
 }

@@ -1,124 +1,228 @@
 <template>
-	<div class="user-info flex flex-center">
-		<div class="user-card flex flex-column border-radius">
-			<div class="container">
-				<el-form
-					ref="userFormRef"
-					:model="userForm"
-					label-position="left"
-					label-width="60px"
-					style="max-width: 460px"
-					label-suffix=":"
-				>
-					<el-form-item label="学号">
-						<el-input
-							v-model="userForm.id"
-							placeholder="学号"
-							disabled
-						></el-input>
-					</el-form-item>
-					<el-form-item label="姓名"
-						><el-input
-							v-model="userForm.user_name"
-							placeholder="姓名"
-						></el-input
-					></el-form-item>
-					<el-form-item label="性别">
-						<el-radio
-							v-model="userForm.sex"
-							:label="userForm.sex"
-							size="large"
-						></el-radio>
-					</el-form-item>
-					<el-form-item label="邮箱">
-						<template #default>
-							<el-row>
-								<el-col :span="16" class="email-style">{{
-									userForm.email
-								}}</el-col>
-								<el-col :span="8">
-									<el-button type="primary">修改邮箱</el-button>
-								</el-col>
-							</el-row>
-						</template>
-					</el-form-item>
-				</el-form>
-			</div>
-			<div class="user-footer">
-				<div class="left">
-					<el-button type="primary" plain @click="toHome">返回首页</el-button>
-				</div>
-				<div class="right">
-					<el-button type="info" plain>修改信息</el-button>
-				</div>
-			</div>
+	<div class="user-info">
+		<div class="container">
+			<el-form
+				ref="userFormRef"
+				:model="userForm"
+				:rules="userRules"
+				label-position="right"
+				label-width="100px"
+				style="max-width: 460px"
+				label-suffix=":"
+			>
+				<el-form-item label="学号" prop="id">
+					<el-input v-model="userForm.id" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱" prop="email">
+					<el-row :gutter="24">
+						<el-col :span="16">
+							<el-input
+								v-model="userForm.email"
+								placeholder="请输入邮箱"
+								@input="checkEmailValue"
+								clearable
+							></el-input>
+						</el-col>
+						<el-col :span="2">
+							<el-button
+								:disabled="isEmailText"
+								type="success"
+								@click="sendEmailCode"
+								>{{ emailTextBtn }}</el-button
+							>
+						</el-col>
+					</el-row>
+				</el-form-item>
+				<el-form-item label="邮箱验证码" prop="emailCode">
+					<el-input
+						v-model="userForm.emailCode"
+						placeholder="请输入邮箱验证码"
+						@input="checkUserValue"
+						clearable
+					></el-input>
+				</el-form-item>
+				<el-form-item label="验证码" prop="captcha">
+					<el-row :gutter="24">
+						<el-col :span="16">
+							<el-input
+								v-model="userForm.captcha"
+								placeholder="请输入图灵验证码"
+								@input="checkUserValue"
+								clearable
+							></el-input
+						></el-col>
+						<el-col :span="2">
+							<div
+								class="captcha-style"
+								v-html="captchaUrl"
+								@click="updateCaptchaCode"
+							></div>
+						</el-col>
+					</el-row>
+				</el-form-item>
+			</el-form>
+		</div>
+		<div class="user-footer">
+			<el-button
+				:disabled="isDisabled"
+				type="primary"
+				@click="submitForm(userFormRef)"
+				>确定</el-button
+			>
 		</div>
 	</div>
 </template>
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, reactive } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-// import {
-// 	Document,
-// 	Menu as IconMenu,
-// 	Location,
-// 	Setting,
-// } from "@element-plus/icons-vue";
+import {
+	sendCaptcha,
+	sendMailCode,
+	resetEmailUser,
+} from "../../../api/service/user";
+import Constants from "@/utils/Constants";
+import { ElMessage } from "element-plus";
+// import { Message } from "@element-plus/icons-vue";
 const store = useStore();
-const router = useRouter();
-const userForm = ref({
+const userFormRef = ref(null);
+let userForm = ref({
 	id: "",
-	user_name: "",
-	sex: "",
 	email: "",
+	emailCode: "",
+	captcha: "",
+});
+// 验证规则
+const userRules = reactive({
+	email: [
+		{
+			required: true,
+			message: "邮箱不可以为空",
+			trigger: "blur",
+		},
+	],
+	emailCode: [
+		{
+			required: true,
+			message: "邮箱验证码不可以为空",
+			trigger: "blur",
+		},
+	],
+	captcha: [
+		{
+			required: true,
+			message: "请输入图灵验证码",
+			trigger: "blur",
+		},
+	],
 });
 // 获取用户信息
-const userInfo = computed(() => store.getters["user/userInfo"]);
-userForm.value = userInfo.value;
+const userInfo = computed(() => store.state.user.userInfo);
+userForm.value = JSON.parse(JSON.stringify(userInfo.value));
+// svg-captcha验证码
+const captchaUrl = ref(null);
+/**
+ * 获取验证码
+ */
+const updateCaptchaCode = async () => {
+	const data = await sendCaptcha();
+	captchaUrl.value = data;
+};
 
-// 返回首页
-const toHome = () => {
-	router.push({
-		name: "home",
+const emailTextBtn = ref("发送验证码");
+const isEmailText = ref(true);
+// 验证邮箱
+const checkEmailValue = () => {
+	if (userForm.value.email !== "") {
+		isEmailText.value = false;
+	}
+};
+// 60s倒计时
+const countDown = () => {
+	let time = 60;
+	const sendTime = setInterval(() => {
+		time--;
+		if (time < 0) {
+			clearInterval(sendTime);
+			emailTextBtn.value = "获取验证码";
+			isEmailText.value = false;
+		} else {
+			// 重新发送
+			emailTextBtn.value = `重新发送（${time}）`;
+		}
+	}, 1000);
+};
+// 发送邮箱验证码
+const sendEmailCode = async () => {
+	const params = {
+		emailAddress: userForm.value.email,
+	};
+	// 发送验证码
+	const result = await sendMailCode(params);
+	if (result.code === Constants.status.SUCCESS) {
+		ElMessage.success(result.msg);
+		// 禁止发送按钮
+		isEmailText.value = true;
+		// 邮箱验证码发送成功
+		countDown();
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+// 函数调用
+updateCaptchaCode();
+// 提交表单
+// 首先就是验证码用户名，性别，图灵验证码是否填写，不填写的话，按钮控制为不可选
+const isDisabled = ref(true); // 默认禁用
+const checkUserValue = () => {
+	if (
+		userForm.value.email !== "" &&
+		userForm.value.emailCode !== "" &&
+		userForm.value.captcha !== ""
+	) {
+		isDisabled.value = false;
+	}
+};
+const submitForm = async (formEl) => {
+	if (!formEl) {
+		isDisabled.value = true;
+		return;
+	}
+	await formEl.validate(async (valid) => {
+		if (valid) {
+			// 验证
+			const params = {
+				id: userForm.value.id,
+				email: userForm.value.email,
+				emailCode: userForm.value.emailCode,
+				captcha: userForm.value.captcha,
+			};
+			const result = await resetEmailUser(params);
+			if (result.code === Constants.status.SUCCESS) {
+				// 之后对用户信息进行获取
+				store.dispatch("user/updateUser", userForm.value.id);
+				ElMessage.success(result.msg);
+				updateCaptchaCode();
+			} else {
+				ElMessage.error(result.msg);
+				updateCaptchaCode();
+			}
+		}
 	});
 };
 </script>
 <style lang="scss" scope>
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-	width: 200px;
-}
 .user-info {
-	padding: 20px;
-	.user-nav {
-		margin-right: 40px;
+	background: #ffffff;
+	padding: 16px 40px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	.container {
+		margin-bottom: 16px;
 	}
-	.user-card {
-		background: #e7e7e7;
-		padding: 20px 60px;
-		position: relative;
-		box-shadow: 10px 5px 5px rgb(5, 5, 5);
-		.container {
-			width: 400px;
-			padding: 0 16px;
-			.email-style {
-				font-size: 20px;
-				font-weight: 600;
-			}
-		}
-		.user-footer {
-			margin-top: 40px;
-			.left {
-				position: absolute;
-				left: 76px;
-				bottom: 20px;
-			}
-			.right {
-				position: absolute;
-				right: 76px;
-				bottom: 20px;
-			}
-		}
+	.user-footer {
+		display: flex;
+		justify-content: flex-end;
 	}
 }
 </style>

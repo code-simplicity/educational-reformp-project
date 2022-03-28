@@ -185,6 +185,8 @@ export default {
 		align-items: center;
 		justify-content: center;
 		height: 2.5rem;
+		background: #ffffff;
+
 		.title {
 			font-size: 1.3rem;
 			text-align: center;
@@ -204,6 +206,8 @@ export default {
 	.center {
 		padding: 0 16px;
 		height: 2.5rem;
+		background: #ffffff;
+
 		.menu-list {
 			font-size: 1.2rem;
 			text-align: center;
@@ -238,6 +242,8 @@ export default {
 		padding: 0 16px;
 		position: relative;
 		overflow: hidden;
+		background: #ffffff;
+
 		.time {
 			font-size: 0.8rem;
 			font-weight: 500;

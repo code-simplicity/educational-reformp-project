@@ -2,7 +2,7 @@ import {
   getUserInfo,
   login,
   logout,
-  checkToken
+  updateUserInfo
 } from "@/api/service/user";
 import {
   findUserInfo,
@@ -89,6 +89,9 @@ const actions = {
     commit("infoChange", result.data);
   },
 
+  /**
+   * 退出登录
+   */
   loginOut() {
     logout()
       .then((res) => {
@@ -108,19 +111,20 @@ const actions = {
       });
   },
 
-  // 检查用户是否登录
-  checkUserLoginStatus({
-    commit
-  }) {
-    checkToken().then((res) => {
-      console.log("res", res)
-      if (res.status === Constants.status.SUCCESS) {
-        const tokenKey = utils.getCookieTokenKey(Constants.tokenKey)
-        commit("tokenData", tokenKey)
-        commit("infoChange", res.data);
-        return res
-      }
-    })
+  /**
+   * 修改用户信息
+   * @param {*} params 
+   */
+  async updateUser({
+    dispatch
+  }, params) {
+    const result = await updateUserInfo(params)
+    if (result.code === Constants.status.SUCCESS) {
+      dispatch("getUserInfoById", params.id)
+      ElMessage.success(result.msg)
+    } else {
+      ElMessage.error(result.msg)
+    }
   }
 };
 

@@ -123,3 +123,42 @@ export const checkToken = () => {
         method: "get"
     })
 }
+
+/**
+ * 重置邮箱
+ * @param {*} data 
+ * @returns 
+ */
+export const resetEmailUser = (data) => {
+    return request({
+        url: "/portal/user/reset-email",
+        method: "put",
+        data
+    })
+}
+
+/**
+ * 重置密码
+ * @param {*} data 
+ * @returns 
+ */
+export const resetPasswordUser = (data) => {
+    return request({
+        url: "/portal/user/reset-password",
+        method: "put",
+        data
+    })
+}
+
+/**
+ * 发送邮箱验证码
+ * @param {*} data 
+ * @returns 
+ */
+export const sendMailCode = (data) => {
+    return request({
+        url: "/portal/userEx/sendMailCode",
+        method: "post",
+        data
+    })
+}

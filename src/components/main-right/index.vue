@@ -1,32 +1,25 @@
 <template>
-  <div class="main-right border">
-    <slot />
-  </div>
+	<div class="main-right border">
+		<slot />
+	</div>
 </template>
 
 <script>
 // 右边内容插槽
 export default {
-  name: 'MainRight',
-  data() {
-    return {
-
-    }
-  },
-  components: {
-
-  },
-  mounted() {
-
-  },
-  methods: {
-
-  }
-}
+	name: "MainRight",
+	data() {
+		return {};
+	},
+	components: {},
+	mounted() {},
+	methods: {},
+};
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .main-right {
-  height: 100%;
+	height: 100%;
+	background: #ffffff;
 }
 </style>
