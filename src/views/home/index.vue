@@ -35,83 +35,71 @@
 	</div>
 </template>
 
-<script>
-// 首页
+<script setup>
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
-import { mapGetters } from "vuex";
-export default {
-	name: "Home",
-	data() {
-		return {
-			content: "",
-			legend: "",
-			page: {
-				pageNum: 1,
-				pageSize: 20,
-			},
-			imageUrl: "",
-		};
-	},
-	components: {},
-	computed: {
-		...mapGetters("user", {
-			userInfo: "userInfo",
-		}),
-	},
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { contentFindAll } from "../../api/service/content";
+import { getPortMapFindAll } from "../../api/service/portmap";
+const store = useStore();
+// 获取用户信息
+const userInfo = computed(() => store.getters["user/userInfo"]);
+const legend = ref("");
+const content = ref("");
+const page = ref({
+	pageNum: 1,
+	pageSize: 20,
+});
+const imageUrl = ref("");
+const getContentFindAll = async () => {
+	const params = {
+		...page.value,
+	};
+	const result = await contentFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		legend.value = result.data.list[0].content;
+		content.value = result.data.list[0].content;
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+getContentFindAll();
 
-	mounted() {
-		this.contentFindAll();
-		this.getPortMapFind();
-	},
+// 获取港口地图
+const portMapFindAll = async () => {
+	const params = {
+		...page.value,
+	};
+	const result = await getPortMapFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		imageUrl.value = result.data.list[0].url;
+		setTimeout(() => {
+			userAddScore();
+		}, 6000);
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+portMapFindAll();
 
-	methods: {
-		// 获取操作说明的内容
-		async contentFindAll() {
-			await this.$api.contentFindAll(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.legend = res.data.list[0].content;
-					this.content = res.data.list[1].content;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
-		},
-
-		// 获取港口图片
-		async getPortMapFind() {
-			await this.$api.getPortMapFind(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					// 港口地图id
-					this.imageUrl = res.data.list[0].url;
-					setTimeout(() => {
-						this.getUserAddScore();
-					}, 6000);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
-		},
-
-		// 添加分数
-		async getUserAddScore() {
-			const params = {
-				id: this.userInfo.id,
-				score: 20,
-			};
-			// 获取该用户的分数，如果分数大于等于20，那么不触发加法
-			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
-			console.log("userInfo :>> ", userInfo);
-			if (userInfo.data.score >= 0 && userInfo.data.score < 20) {
-				await this.$api.getUserAddScore(params).then((res) => {
-					if (res.code === this.$Constants.status.SUCCESS) {
-						ElMessage.success(res.msg);
-					} else {
-						ElMessage.error(res.msg);
-					}
-				});
-			}
-		},
-	},
+// 添加用户等分
+const userAddScore = async () => {
+	const params = {
+		id: userInfo.value.id,
+		score: 20,
+	};
+	// 获取该用户的分数，如果分数大于等于20，那么不触发加法
+	const { data } = await getUserInfo(userInfo.value.id);
+	if (data.score >= 0 && data.score < 20) {
+		const result = await addUserScore(params);
+		if (result.code === Constants.status.SUCCESS) {
+			ElMessage.success(result.msg);
+		} else {
+			ElMessage.error(result.msg);
+		}
+	}
 };
 </script>
 

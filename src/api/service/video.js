@@ -1,4 +1,5 @@
 import api from "../../common/interface"
+import request from '@/utils/request';
 
 /**
  * 获取视频
@@ -15,8 +16,14 @@ export const getVideoSearch = params => api.post(`/video/serach`, params)
 export const videoSearchFindOne = params => api.post(`/video/search/findOne`, params)
 
 /**
- * 获取一个视频
- * @param {*} name 
+ * 获取视频
+ * @param {*} params 
  * @returns 
  */
-export const getVideoSearchOne = name => api.get(`/video/search/one?name=${name}`, {})
+export const videoFindAll = (params) => {
+    return request({
+        url: "/portal/user/video/findAll",
+        method: "get",
+        params
+    })
+}

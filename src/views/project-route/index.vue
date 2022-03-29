@@ -84,110 +84,104 @@
 	</div>
 </template>
 
-<script>
-// 工况选配
+<script setup>
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { mapGetters } from "vuex";
-export default {
-	name: "ProjectRoute",
-	data() {
-		return {
-			content: "",
-			imageUrl: "",
-			radioList: [],
-			// 选择框的值,分别是水位，波浪方向，堤坝布置
-			water_level: "极端高水位",
-			wave_direction: "NW",
-			embank_ment: "无堤",
-			page: {
-				pageNum: 1,
-				pageSize: 20,
-			},
-		};
-	},
-	components: {},
-	watch: {},
-	computed: {
-		...mapGetters("user", {
-			userInfo: "userInfo",
-		}),
-	},
-	mounted() {
-		// this.getContentSearch()
-		this.getPortMapFind();
-		this.getChooseFindAll();
-	},
-	methods: {
-		// 获取左边选择
-		async getChooseFindAll() {
-			await this.$api.getChooseFindAll(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.radioList = res.data.list;
-					this.getContentSearchChooseId(res.data.list[0].id);
-					ElMessage.success(res.msg);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
-		},
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { getChooseFindAll } from "../../api/service/choose";
+import { getPortMapFindAll } from "../../api/service/portmap";
+import { contentSearchChooseId } from "../../api/service/content";
+const store = useStore();
+const router = useRouter();
+// 获取用户信息
+const userInfo = computed(() => store.getters["user/userInfo"]);
+const content = ref("");
+const page = ref({
+	pageNum: 1,
+	pageSize: 20,
+});
+const imageUrl = ref("");
+const radioList = ref([]);
+// 选择框的值,分别是水位，波浪方向，堤坝布置
+const water_level = ref("极端高水位");
+const wave_direction = ref("NW");
+const embank_ment = ref("无堤");
 
-		// 去现象观察
-		toAppearance() {
-			this.$router.push({
-				name: "appearance-route",
-				query: {
-					water_level: this.water_level,
-					wave_direction: this.wave_direction,
-					embank_ment: this.embank_ment,
-				},
-			});
-			this.getUserAddScore();
-		},
+// 获取港口地图
+const portMapFindAll = async () => {
+	const params = {
+		...page.value,
+	};
+	const result = await getPortMapFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		imageUrl.value = result.data.list[0].url;
+		setTimeout(() => {
+			userAddScore();
+		}, 6000);
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+portMapFindAll();
 
-		// 判断视频播放结束，进行加分
-		async getUserAddScore() {
-			const params = {
-				id: this.userInfo.id,
-				score: 60,
-			};
-			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
-			if (userInfo.data.score >= 40 && userInfo.data.score < 60) {
-				await this.$api.getUserAddScore(params).then((res) => {
-					if (res.status === this.$Constants.status.SUCCESS) {
-						ElMessage.success(res.msg);
-					} else {
-						ElMessage.error(res.data);
-					}
-				});
-			}
-		},
+// 添加用户等分
+const userAddScore = async () => {
+	const params = {
+		id: userInfo.value.id,
+		score: 20,
+	};
+	// 获取该用户的分数，如果分数大于等于20，那么不触发加法
+	const { data } = await getUserInfo(userInfo.value.id);
+	if (data.score >= 40 && data.score < 60) {
+		const result = await addUserScore(params);
+		if (result.code === Constants.status.SUCCESS) {
+			ElMessage.success(result.msg);
+		} else {
+			ElMessage.error(result.msg);
+		}
+	}
+};
 
-		// 获取港口图片
-		async getPortMapFind() {
-			await this.$api.getPortMapFind(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.imageUrl = res.data.list[0].url;
-				} else {
-					ElMessage.error(res.data);
-				}
-			});
-		},
+// 获取左边选择
+const chooseFindAll = async () => {
+	const params = { ...page.value };
+	const result = await getChooseFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		radioList.value = result.data.list;
+		getContentSearchChooseId(result.data.list[0].id);
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+chooseFindAll();
 
-		// 获取内容介绍
-		async getContentSearchChooseId(choose_id) {
-			const params = {
-				...this.page,
-				choose_id,
-			};
-			await this.$api.getContentSearchChooseId(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.content = res.data.list[0].content;
-				} else {
-					ElMessage.error(res.data);
-				}
-			});
+// 获取内容介绍
+const getContentSearchChooseId = async (choose_id) => {
+	const params = {
+		choose_id,
+	};
+	const result = await contentSearchChooseId(params);
+	if (result.code === Constants.status.SUCCESS) {
+		content.value = result.data.content;
+	} else {
+		ElMessage.error(result.data);
+	}
+};
+
+// 去现象观察
+const toAppearance = async () => {
+	router.push({
+		name: "appearance-route",
+		query: {
+			water_level: water_level.value,
+			wave_direction: wave_direction.value,
+			embank_ment: embank_ment.value,
 		},
-	},
+	});
+	this.userAddScore();
 };
 </script>
 
@@ -230,11 +224,12 @@ export default {
 				font-weight: 600;
 				font-size: 0.8rem;
 				&:active {
-					color: $active-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 				&:hover {
-					background: $hover-background-color;
-					color: $hover-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 			}
 		}

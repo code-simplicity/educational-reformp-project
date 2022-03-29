@@ -1,16 +1,15 @@
 // 港口地图
-import api from "../../common/interface";
+import request from '@/utils/request';
 
 /**
- * 获取港口列表
- * @param {*} data
+ * 获取港口地图列表
+ * @param {*} params
  * @returns
  */
-export const getPortMapFind = (data) => api.post(`/portmap/find`, data);
-
-/**
- * 获取港口地图, 通过id
- * @param {*} id
- * @returns
- */
-export const getPortMapSearch = (id) => api.get(`/portmap/search?id=${id}`, {});
+export const getPortMapFindAll = (params) => {
+    return request({
+        url: "/portal/user/portmap/findAll",
+        method: "get",
+        params
+    })
+}

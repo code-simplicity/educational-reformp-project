@@ -33,117 +33,102 @@
 	</div>
 </template>
 
-<script>
-// 港区漫游
+<script setup>
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
-import { mapGetters } from "vuex";
 import Player from "xgplayer";
-export default {
-	name: "MinatoRoute",
-	data() {
-		return {
-			content: "",
-			videoSrc: "", // 视频播放地址
-			legend: "",
-			// 实例化播放器
-			videoPlayer: null,
-			page: {
-				pageNum: 1,
-				pageSize: 20,
-			},
-		};
-	},
-	components: {},
-	computed: {
-		...mapGetters("user", {
-			userInfo: "userInfo",
-		}),
-	},
-	watch: {},
-	mounted() {
-		this.contentFindAll();
-		this.getVideoSearchOne();
-	},
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { videoFindAll } from "../../api/service/video";
+import { contentFindAll } from "../../api/service/content";
 
-	methods: {
-		// 西瓜播放器实例化
-		getVideo() {
-			this.videoPlayer = new Player({
-				el: this.$refs.video,
-				url: this.videoSrc,
-				// 流式布局
-				fitVideoSize: "auto",
-				fluid: true,
-				// 初始音量
-				volume: 0.8,
-				// 自动播放
-				autoplay: true,
-				// 内联模式
-				playsinline: true,
-				// 跨域
-				cors: true,
-				// 初始化显示视频首帧
-				videoInit: true,
-				// 网页全屏
-				cssFullscreen: true,
-				controls: false,
-				errorTips: `请<spa>刷新</spa>测试哦`,
-			});
-			// 注册视频结束事件，视频播放完成，学生成绩加80
-			this.videoPlayer.once("ended", () => {
-				setTimeout(() => {
-					this.getUserAddScore(this.videoPlayer.ended);
-				}, 500);
-			});
-		},
+const store = useStore();
+// 获取用户信息
+const userInfo = computed(() => store.getters["user/userInfo"]);
+const legend = ref("");
+const content = ref("");
+const page = ref({
+	pageNum: 1,
+	pageSize: 20,
+});
+const videoSrc = ref(""); // 视频播放地址
+const videoPlayer = ref(null); // 实例化播放器
+const video = ref(null);
 
-		// 判断视频播放结束，进行加分
-		async getUserAddScore(val) {
-			const params = {
-				id: this.userInfo.id,
-				score: 40,
-			};
-			if (val) {
-				// 获取该用户的分数，如果分数大于等于20，那么不触发加法
-				const userInfo = await this.$api.getUserInfo(this.userInfo.id);
-				if (userInfo.data.score >= 20 && userInfo.data.score < 40) {
-					await this.$api.getUserAddScore(params).then((res) => {
-						if (res.status === this.$Constants.status.SUCCESS) {
-							ElMessage.success(res.msg);
-						} else {
-							ElMessage.error(res.msg);
-						}
-					});
-				}
-			}
-		},
+const getContentFindAll = async () => {
+	const params = {
+		...page.value,
+	};
+	const result = await contentFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		legend.value = result.data.list[0].content;
+		content.value = result.data.list[0].content;
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+getContentFindAll();
 
-		// 获取操作说明的内容
-		async contentFindAll() {
-			await this.$api.contentFindAll(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.legend = res.data.list[0].content;
-					this.content = res.data.list[1].content;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
-		},
+// 添加用户等分
+const userAddScore = async () => {
+	const params = {
+		id: userInfo.value.id,
+		score: 40,
+	};
+	// 获取该用户的分数，如果分数大于等于20，那么不触发加法
+	const { data } = await getUserInfo(userInfo.value.id);
+	if (data.score >= 20 && data.score < 40) {
+		const result = await addUserScore(params);
+		if (result.code === Constants.status.SUCCESS) {
+			ElMessage.success(result.msg);
+		} else {
+			ElMessage.error(result.msg);
+		}
+	}
+};
 
-		// 获取一个视频
-		async getVideoSearchOne() {
-			const name = "portroam.mp4";
-			await this.$api.getVideoSearchOne(name).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.videoSrc = res.data.url;
-					ElMessage.success(res.msg);
-					this.getVideo();
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
-		},
-	},
+// 获取一个视频
+const getVideoFindAll = async () => {
+	const params = { ...page.value };
+	const result = await videoFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		videoSrc.value = result.data.list[0].url;
+		getVideo();
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+getVideoFindAll();
+
+const getVideo = async () => {
+	videoPlayer.value = new Player({
+		el: video.value,
+		url: videoSrc.value,
+		// 流式布局
+		fitVideoSize: "auto",
+		fluid: true,
+		// 初始音量
+		volume: 0.8,
+		// 自动播放
+		autoplay: true,
+		// 内联模式
+		playsinline: true,
+		// 跨域
+		cors: true,
+		// 初始化显示视频首帧
+		videoInit: true,
+		// 网页全屏
+		cssFullscreen: true,
+		controls: false,
+		errorTips: `请<spa>刷新</spa>测试哦`,
+	});
+	// 注册视频结束事件，视频播放完成，学生成绩加80
+	videoPlayer.value.once("ended", () => {
+		setTimeout(() => {
+			userAddScore(videoPlayer.value.ended);
+		}, 500);
+	});
 };
 </script>
 

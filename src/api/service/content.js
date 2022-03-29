@@ -1,23 +1,27 @@
-import api from "../../common/interface";
+import request from '@/utils/request';
 
 /**
- * 获取文本介绍
- * @param {*} id
- * @returns
+ * 获取所有内容
+ * @param {*} params 
+ * @returns 
  */
-export const getContentSearch = (id) => api.get(`/content/search?id=${id}`, {});
+export const contentFindAll = (params) => {
+  return request({
+    url: "/portal/user/content/findAll",
+    method: "get",
+    params
+  })
+}
 
 /**
- * 根据选择表id查询对应内容
- * @param {*} data
- * @returns
+ * 获取内容
+ * @param {*} params 
+ * @returns 
  */
-export const getContentSearchChooseId = (data) =>
-  api.post(`/content/search/choose_id`, data);
-
-/**
- * 查询所有数据
- * @param {*} data
- * @returns
- */
-export const contentFindAll = (data) => api.post("/content/findAll", data);
+export const contentSearchChooseId = (data) => {
+  return request({
+    url: "/portal/user/content/choose_id",
+    method: "post",
+    data
+  })
+}
