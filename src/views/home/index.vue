@@ -118,14 +118,14 @@ export default {
 <style lang="scss" scoped>
 .home {
 	.legend {
-		padding: 20px 0;
+		padding: 10px 0;
 		height: 80vh;
 		margin-left: 16px;
 		margin-right: 16px;
 		font-size: 1rem;
 		font-weight: 600;
 		.content {
-			font-size: 0.9rem;
+			font-size: 1rem;
 			font-weight: 500;
 			margin-top: 6px;
 		}

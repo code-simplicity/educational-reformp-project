@@ -95,7 +95,7 @@ const actions = {
   loginOut() {
     logout()
       .then((res) => {
-        if (res.status === Constants.status.SUCCESS) {
+        if (res.code === Constants.status.SUCCESS) {
           removeToken()
           removeUserInfo();
           utils.clearAllCookie()

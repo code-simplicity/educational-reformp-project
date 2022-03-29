@@ -9,7 +9,16 @@ export const constantRouter = [{
     title: "登录",
   },
   component: () => import("@/views/login"),
-}, ];
+}, {
+  path: "/register",
+  name: "register",
+  meta: {
+    title: "用户注册",
+    keepAlive: true,
+  },
+  component: () =>
+    import("@/views/user/user-register/index.vue")
+}];
 
 /**
  * 通配符路由匹配-404
@@ -129,15 +138,6 @@ export const asyncRouter = [{
         },
         component: () =>
           import("@/views/user/user-reset-password/index.vue")
-      }, {
-        path: "register",
-        name: "register",
-        meta: {
-          title: "用户注册",
-          keepAlive: true,
-        },
-        component: () =>
-          import("@/views/user/user-register/index.vue")
       },
     ]
   }

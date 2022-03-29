@@ -20,7 +20,7 @@
 .app {
 	width: 100vw;
 	height: 100vh;
-	overflow: hidden;
 	background: #f0f0f0;
+	min-width: 1200px;
 }
 </style>

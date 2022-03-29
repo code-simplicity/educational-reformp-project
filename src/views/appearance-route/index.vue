@@ -266,7 +266,7 @@ export default {
 <style lang="scss" scoped>
 .appearance-route {
 	.legend {
-		padding: 20px 0;
+		padding: 10px 0;
 		height: 80vh;
 		margin-left: 16px;
 		margin-right: 16px;
@@ -302,11 +302,12 @@ export default {
 				font-weight: 600;
 				font-size: 0.8rem;
 				&:active {
-					color: $active-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 				&:hover {
-					background: $hover-background-color;
-					color: $hover-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 			}
 		}
@@ -332,7 +333,7 @@ export default {
 			padding: 6px 0 0 6px;
 			.item {
 				padding: 0 16px 0 0;
-				font-size: 0.9rem;
+				font-size: 1rem;
 				font-weight: 500;
 				line-height: 20px;
 			}

@@ -21,23 +21,16 @@ export default {
 
 <style lang="scss" scoped>
 .main-footer {
-	/* position: absolute;
-  bottom: 10px;
-  left: 16px;
-  right: 16px; */
-	/* width: 100%; */
-	/* margin-top: 16px; */
-	/* min-width: 1080px; */
 	background-color: #ffffff;
 
 	.container {
 		padding: 6px 0;
 		.version {
-			font-size: 0.8rem;
+			font-size: 1rem;
 			cursor: pointer;
 		}
 		.maintain {
-			font-size: 0.8rem;
+			font-size: 1rem;
 			cursor: pointer;
 		}
 	}

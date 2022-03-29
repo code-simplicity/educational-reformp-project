@@ -7,7 +7,7 @@
     function setBodyFontSize() {
         // html已完成加载，则立即调整字体大小，否则等待html加载完成再调整字体大小
         if (document.body) {
-            document.body.style.fontSize = 14 + "px";
+            document.body.style.fontSize = 16 + "px";
         } else {
             // 监听DOMContentLoaded 事件——当初始的 HTML 文档被完全加载和解析完成之后触发，无需等待样式表
             document.addEventListener("DOMContentLoaded", setBodyFontSize);

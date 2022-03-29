@@ -194,7 +194,7 @@ export default {
 <style lang="scss" scoped>
 .project-route {
 	.legend {
-		padding: 20px 0;
+		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
 		position: relative;
@@ -249,7 +249,7 @@ export default {
 			padding: 6px 0 0 6px;
 			.item {
 				padding: 0 16px 0 0;
-				font-size: 0.9rem;
+				font-size: 1rem;
 				font-weight: 500;
 				line-height: 20px;
 			}

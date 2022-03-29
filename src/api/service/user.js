@@ -90,19 +90,6 @@ export const addUserScore = (data) => {
 }
 
 /**
- * 发送邮箱验证码
- * @param {*} data 
- * @returns 
- */
-export const sendEmailCode = (data) => {
-    return request({
-        url: "/portal/userEx/sendMailCode",
-        method: "post",
-        data
-    })
-}
-
-/**
  * 发送图灵验证码
  * @returns 
  */

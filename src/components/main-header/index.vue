@@ -12,46 +12,18 @@
 			>
 			<el-col :span="10"
 				><div class="center flex-between border">
-					<el-col :span="6"
-						><div class="menu-list">
-							<router-link class="active-class" :to="{ path: 'minato-route' }"
-								>港区漫游</router-link
-							>
-						</div></el-col
-					>
-					<el-col :span="6">
-						<div class="menu-list">
-							<router-link class="active-class" :to="{ path: 'project-route' }"
-								>工况选配</router-link
-							>
-						</div></el-col
-					>
-					<el-col :span="6">
-						<div class="menu-list">
-							<router-link
-								class="active-class"
-								:to="{ path: 'appearance-route' }"
-								>现象观察</router-link
-							>
-						</div></el-col
-					>
-					<el-col :span="6">
-						<div class="menu-list">
-							<router-link
-								class="active-class"
-								:to="{ path: 'measure-point-route' }"
-								>测点数据</router-link
-							>
-						</div></el-col
+					<router-link
+						v-for="(item, index) in homeItem"
+						:key="index"
+						class="active-class"
+						:to="{ path: item.path }"
+						>{{ item.name }}</router-link
 					>
 				</div></el-col
 			>
 			<el-col :span="7"
 				><div class="right flex-between border">
-					<div class="time flex-nowrap" v-if="isShowDateTime">
-						{{ dateTime }}
-					</div>
-					<div class="user-info flex-nowrap flex" v-if="tokenData">
+					<div class="user-info" v-if="tokenData">
 						<div class="id">{{ userInfo.id }}</div>
 						<div class="user-name">{{ userInfo.user_name }}</div>
 					</div>
@@ -176,6 +148,14 @@ export default {
 };
 </script>
 
+<script setup>
+import { ref } from "vue";
+import { homeItem } from "@/json/homeItem";
+
+const homeItems = ref([]);
+homeItems.value = homeItem;
+</script>
+
 <style lang="scss" scoped>
 .main-header {
 	/* min-width: 750px; */
@@ -185,6 +165,7 @@ export default {
 		align-items: center;
 		justify-content: center;
 		height: 2.5rem;
+		min-height: 30px;
 		background: #ffffff;
 
 		.title {
@@ -206,39 +187,31 @@ export default {
 	.center {
 		padding: 0 16px;
 		height: 2.5rem;
+		min-height: 30px;
 		background: #ffffff;
 
-		.menu-list {
-			font-size: 1.2rem;
+		.active-class {
+			flex-shrink: 0;
+			color: #000000;
+			text-decoration: none;
 			text-align: center;
 			box-shadow: -1px 1px 5px rgb(0, 0, 0);
 			cursor: pointer;
-			.active-class {
-				color: #000000;
-				text-decoration: none;
-				&.router-link-active {
-					color: $active-color;
-				}
-				&:hover {
-					color: $hover-color;
-				}
-			}
-			&:active {
-				color: $active-color;
-				background: $hover-background-color;
+			padding: 0 20px;
+			font-size: 1.1rem;
+			&.router-link-active {
+				color: #ffffff;
+				background: rgb(111, 125, 255);
 			}
 			&:hover {
-				background: $hover-background-color;
-				color: $hover-color;
-			}
-			&.router-link-active {
-				color: $active-color;
-				background: rgb(255, 255, 255);
+				color: #ffffff;
+				background: rgb(111, 125, 255);
 			}
 		}
 	}
 	.right {
 		height: 2.5rem;
+		min-height: 30px;
 		padding: 0 16px;
 		position: relative;
 		overflow: hidden;
@@ -250,12 +223,14 @@ export default {
 			margin-right: 10px;
 		}
 		.user-info {
+			display: flex;
+			flex-wrap: nowrap;
+			align-items: center;
 			.id {
-				font-size: 0.8rem;
 				font-weight: 500;
 			}
 			.user-name {
-				font-size: 0.8rem;
+				flex-shrink: 0;
 				font-weight: 500;
 				margin-left: 16px;
 			}
@@ -267,16 +242,18 @@ export default {
 			.botton {
 				font-size: 0.8rem;
 				cursor: pointer;
+				padding: 0 6px;
+
 				.el-icon-right {
 					color: $active-color;
 				}
 				&:active {
-					background: $active-color;
-					color: $active-background-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 				&:hover {
-					background: $hover-background-color;
-					color: $hover-color;
+					color: #ffffff;
+					background: rgb(111, 125, 255);
 				}
 			}
 		}

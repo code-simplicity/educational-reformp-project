@@ -2,7 +2,7 @@
     width: 100vw;
     height: 100vh;
     background-color: #ffffff;
-    overflow: hidden;
+    letter-spacing: 3px;
 }
 
 .flex {
@@ -57,4 +57,10 @@
 }
 .border-radius {
     border-radius: 8px;
+}
+
+@media screen and (max-width: 1200px) {
+    #app {
+        overflow-y: scroll;
+    }
 }

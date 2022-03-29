@@ -1,84 +1,85 @@
 <template>
 	<transition name="fade">
-		<div class="login flex-justify-center">
-			<div class="title">水运工程仿真实验系统</div>
-			<div class="login-box order">
-				<div class="login-title">登录</div>
-				<div class="form-box">
-					<el-form
-						ref="ruleFormRef"
-						:model="ruleForm"
-						status-icon
-						:rules="rules"
-						label-position="left"
-						label-width="60px"
-						class="demo-ruleForm"
-						label-suffix=":"
-						:hide-required-asterisk="true"
-					>
-						<el-form-item label="学号" prop="id">
-							<el-input
-								v-model="ruleForm.id"
-								type="text"
-								autocomplete="off"
-								autofocus="true"
-								placeholder="请输入学号"
-								clearable
-							>
-								<template #prefix>
-									<el-icon class="el-input__icon"
-										><UserFilled
-									/></el-icon> </template
-							></el-input>
-						</el-form-item>
-						<el-form-item label="密码" prop="password">
-							<el-input
-								v-model="ruleForm.password"
-								type="password"
-								placeholder="请输入密码"
-								autocomplete="off"
-								clearable
-							>
-								<template #prefix>
-									<el-icon class="el-input__icon"
-										><Unlock
-									/></el-icon> </template
-							></el-input>
-						</el-form-item>
-						<el-form-item label="验证码" prop="captcha">
-							<el-row :gutter="24">
-								<el-col :span="14"
-									><el-input
-										v-model="ruleForm.captcha"
-										type="text"
-										placeholder="请输入图灵验证码"
-										autocomplete="off"
-										clearable
-										@click="submitForm(ruleFormRef)"
-									>
-										<template #prefix>
-											<el-icon class="el-input__icon"
-												><Key
-											/></el-icon> </template></el-input
-								></el-col>
-								<el-col :span="10">
-									<div
-										class="captcha-style"
-										v-html="captchaUrl"
-										@click="updateCaptchaCode"
-									></div>
-								</el-col>
-							</el-row>
-						</el-form-item>
-						<el-form-item>
-							<div class="flex-between">
-								<el-button type="primary" @click="submitForm(ruleFormRef)"
-									>登录</el-button
+		<div class="login">
+			<div class="login-container">
+				<div class="title">水运工程仿真实验系统</div>
+				<div class="login-box order">
+					<div class="login-title">登录</div>
+					<div class="form-box">
+						<el-form
+							ref="ruleFormRef"
+							:model="ruleForm"
+							status-icon
+							:rules="rules"
+							label-position="right"
+							label-width="80px"
+							class="demo-ruleForm"
+							label-suffix=":"
+							:hide-required-asterisk="true"
+						>
+							<el-form-item label="学号" prop="id">
+								<el-input
+									v-model="ruleForm.id"
+									type="text"
+									autocomplete="off"
+									autofocus="true"
+									placeholder="请输入学号"
+									clearable
 								>
-								<el-button @click="resetForm('ruleForm')">注册</el-button>
-							</div>
-						</el-form-item>
-					</el-form>
+									<template #prefix>
+										<el-icon class="el-input__icon"
+											><UserFilled
+										/></el-icon> </template
+								></el-input>
+							</el-form-item>
+							<el-form-item label="密码" prop="password">
+								<el-input
+									v-model="ruleForm.password"
+									type="password"
+									placeholder="请输入密码"
+									autocomplete="off"
+									clearable
+								>
+									<template #prefix>
+										<el-icon class="el-input__icon"
+											><Unlock
+										/></el-icon> </template
+								></el-input>
+							</el-form-item>
+							<el-form-item label="验证码" prop="captcha">
+								<el-row :gutter="24">
+									<el-col :span="16"
+										><el-input
+											v-model="ruleForm.captcha"
+											type="text"
+											placeholder="请输入图灵验证码"
+											autocomplete="off"
+											clearable
+											@click="submitForm(ruleFormRef)"
+										>
+											<template #prefix>
+												<el-icon class="el-input__icon"
+													><Key
+												/></el-icon> </template></el-input
+									></el-col>
+									<el-col :span="2">
+										<div
+											class="captcha-style"
+											v-html="captchaUrl"
+											@click="updateCaptchaCode"
+										></div>
+									</el-col>
+								</el-row>
+							</el-form-item>
+						</el-form>
+						<div class="login-footer">
+							<el-button type="primary" @click="submitForm(ruleFormRef)"
+								>登录</el-button
+							>
+
+							<el-button @click="registerUser">注册</el-button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -162,6 +163,13 @@ const submitForm = async (formEl) => {
 		}
 	});
 };
+
+// 注册
+const registerUser = () => {
+	router.push({
+		name: "register",
+	});
+};
 </script>
 
 <style lang="scss" scoped>
@@ -175,26 +183,40 @@ const submitForm = async (formEl) => {
 	opacity: 0;
 }
 .login {
-	width: 100vw;
-	min-height: 100vh;
-	.title {
-		font-size: 30px;
-		margin-bottom: 30px;
-	}
-	.login-box {
-		padding: 16px;
-		box-shadow: -1px 1px 10px rgb(0, 0, 0, 0.6);
-		width: 30%;
-		min-width: 400px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	.login-container {
 		display: flex;
 		flex-direction: column;
-		.login-title {
-			margin-bottom: 16px;
-			font-size: 20px;
-			text-align: center;
+		align-items: center;
+		align-content: center;
+		justify-content: center;
+		.title {
+			font-size: 30px;
+			margin-bottom: 20px;
 		}
-		.captcha-style {
-			cursor: pointer;
+		.login-box {
+			background: #ffffff;
+			padding: 16px;
+			box-shadow: 5px 1px 10px rgba(190, 190, 190, 0.6);
+			.login-title {
+				margin-bottom: 16px;
+				font-size: 20px;
+				text-align: center;
+			}
+			.captcha-style {
+				cursor: pointer;
+			}
+			.form-box {
+				.login-footer {
+					display: flex;
+					align-items: center;
+					justify-content: space-around;
+				}
+			}
 		}
 	}
 }
