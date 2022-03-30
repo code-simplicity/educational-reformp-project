@@ -127,6 +127,8 @@ import { getChooseFindAll } from "../../api/service/choose";
 import { contentSearchChooseId } from "../../api/service/content";
 import { portPointMapSearchFindOne } from "../../api/service/portpointmap";
 import { getPointByPointMapFindAll } from "../../api/service/point";
+import { getWaveformsSearchPointId } from "../../api/service/waveforms";
+import { getWavestatsSearchPointId } from "../../api/service/wavestats";
 export default {
 	name: "MeasurePointRoute",
 	data() {
@@ -202,26 +204,30 @@ export default {
 
 		// 获取波形图
 		async getWaveformsSearchPointId(point_id) {
-			await this.$api.getWaveformsSearchPointId(point_id).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.waveFormsUrl = res.data.url;
-				} else {
-					ElMessage.error(res.msg);
-					this.waveFormsUrl = "";
-				}
-			});
+			const params = {
+				point_id,
+			};
+			const result = await getWaveformsSearchPointId(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.waveFormsUrl = result.data.url;
+			} else {
+				ElMessage.error(result.msg);
+				this.waveFormsUrl = "";
+			}
 		},
 
 		// 获取波形统计图
 		async getWavestatsSearchPointId(point_id) {
-			await this.$api.getWavestatsSearchPointId(point_id).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.waveStatsUrl = res.data.url;
-				} else {
-					ElMessage.error(res.msg);
-					this.waveStatsUrl = "";
-				}
-			});
+			const params = {
+				point_id,
+			};
+			const result = await getWavestatsSearchPointId(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.waveStatsUrl = result.data.url;
+			} else {
+				ElMessage.waveStatsUrl(result.msg);
+				this.waveFormsUrl = "";
+			}
 		},
 
 		async getUserAddScore() {
@@ -253,6 +259,8 @@ export default {
 			const result = await getPointByPointMapFindAll(params);
 			if (result.code === Constants.status.SUCCESS) {
 				this.pointList = result.data.list;
+				const { list } = result.data;
+				this.changeWaveFormsAndStats(list[0].content, list[0].id);
 			} else {
 				ElMessage.error(result.msg);
 			}
