@@ -1,15 +1,15 @@
 // 港口点位图
-import api from "../../common/interface"
+import request from '@/utils/request';
 
 /**
  * 获取港口点位地图
- * @param {*} params 
+ * @param {*} data 
  * @returns 
  */
-export const getPortPointMapSearch = params => api.post(`/portpointmap/search`, params)
-/**
- * 获取封口点位图
- * @param {*} params 
- * @returns 
- */
-export const portPointMapSearchFindOne = params => api.post(`/portpointmap/search/findOne`, params)
+export const portPointMapSearchFindOne = (data) => {
+    return request({
+        url: "/portal/user/portpointmap/findOne",
+        method: "post",
+        data
+    })
+}

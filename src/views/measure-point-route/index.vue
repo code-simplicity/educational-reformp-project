@@ -125,6 +125,8 @@ import Constants from "../../utils/Constants.js";
 import { addUserScore, getUserInfo } from "../../api/service/user";
 import { getChooseFindAll } from "../../api/service/choose";
 import { contentSearchChooseId } from "../../api/service/content";
+import { portPointMapSearchFindOne } from "../../api/service/portpointmap";
+import { getPointByPointMapFindAll } from "../../api/service/point";
 export default {
 	name: "MeasurePointRoute",
 	data() {
@@ -248,13 +250,12 @@ export default {
 				...this.page,
 				port_point_map_id,
 			};
-			await this.$api.getPointSearch(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.pointList = res.data.list;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await getPointByPointMapFindAll(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.pointList = result.data.list;
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 
 		// 获取测点数据
@@ -283,14 +284,13 @@ export default {
 			const params = {
 				...data,
 			};
-			await this.$api.portPointMapSearchFindOne(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.imageUrl = res.data.url;
-					this.getPointSearch(res.data.id);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await portPointMapSearchFindOne(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.imageUrl = result.data.url;
+				this.getPointSearch(result.data.id);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 
 		// 获取内容介绍
