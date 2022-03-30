@@ -84,6 +84,11 @@
 <script>
 import { ElMessage } from "element-plus";
 import { mapGetters } from "vuex";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { getChooseFindAll } from "../../api/service/choose";
+import { contentSearchChooseId } from "../../api/service/content";
+import { videoSearchFindOne } from "../../api/service/video";
 // 工况选配
 import Player from "xgplayer";
 export default {
@@ -110,7 +115,6 @@ export default {
 			},
 		};
 	},
-	components: {},
 	computed: {
 		...mapGetters("user", {
 			userInfo: "userInfo",
@@ -189,30 +193,30 @@ export default {
 				id: this.userInfo.id,
 				score: 80,
 			};
+			// 获取该用户的分数，如果分数大于等于20，那么不触发加法
 			if (val) {
-				const userInfo = await this.$api.getUserInfo(this.userInfo.id);
-				if (userInfo.data.score >= 60 && userInfo.data.score < 80) {
-					await this.$api.getUserAddScore(params).then((res) => {
-						if (res.status === this.$Constants.status.SUCCESS) {
-							ElMessage.success(res.msg);
-						} else {
-							ElMessage.error(res.msg);
-						}
-					});
+				const { data } = await getUserInfo(this.userInfo.id);
+				if (data.score >= 60 && data.score < 80) {
+					const result = await addUserScore(params);
+					if (result.code === Constants.status.SUCCESS) {
+						ElMessage.success(result.msg);
+					} else {
+						ElMessage.error(result.msg);
+					}
 				}
 			}
 		},
 
 		// 获取左边选择
 		async getChooseFindAll() {
-			await this.$api.getChooseFindAll(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.radioList = res.data.list;
-					this.getContentSearchChooseId(res.data.list[0].id);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const params = { ...this.page };
+			const result = await getChooseFindAll(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.radioList = result.data.list;
+				this.getContentSearchChooseId(result.data.list[0].id);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 
 		// 去现象观察
@@ -231,33 +235,26 @@ export default {
 
 		// 获取演示视频
 		async getVideoSearch(params) {
-			await this.$api.videoSearchFindOne(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					setTimeout(() => {
-						ElMessage.success(res.msg);
-					}, 3000);
-					this.videoSrc = res.data.url;
-					this.getVideo();
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await videoSearchFindOne(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.videoSrc = result.data.url;
+				this.getVideo();
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 
 		// 获取内容介绍
 		async getContentSearchChooseId(choose_id) {
 			const params = {
-				pageNum: 1,
-				pageSize: 10,
 				choose_id,
 			};
-			await this.$api.getContentSearchChooseId(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.content = res.data.list[0].content;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await contentSearchChooseId(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.content = result.data.content;
+			} else {
+				ElMessage.error(result.data);
+			}
 		},
 	},
 };

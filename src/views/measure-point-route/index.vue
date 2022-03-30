@@ -121,6 +121,10 @@
 // 测点数据
 import { ElMessage } from "element-plus";
 import { mapGetters } from "vuex";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { getChooseFindAll } from "../../api/service/choose";
+import { contentSearchChooseId } from "../../api/service/content";
 export default {
 	name: "MeasurePointRoute",
 	data() {
@@ -223,15 +227,14 @@ export default {
 				id: this.userInfo.id,
 				score: 100,
 			};
-			const userInfo = await this.$api.getUserInfo(this.userInfo.id);
+			const userInfo = await getUserInfo(this.userInfo.id);
 			if (userInfo.data.score >= 80 && userInfo.data.score < 100) {
-				await this.$api.getUserAddScore(params).then((res) => {
-					if (res.status === this.$Constants.status.SUCCESS) {
-						ElMessage.success(res.msg);
-					} else {
-						ElMessage.error(res.msg);
-					}
-				});
+				const result = await addUserScore(params);
+				if (result.code === Constants.status.SUCCESS) {
+					ElMessage.success(result.msg);
+				} else {
+					ElMessage.error(result.msg);
+				}
 			}
 		},
 
@@ -266,14 +269,14 @@ export default {
 
 		// 获取左边选择
 		async getChooseFindAll() {
-			await this.$api.getChooseFindAll(this.page).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.radioList = res.data.list;
-					this.getContentSearchChooseId(res.data.list[0].id);
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const params = { ...this.page };
+			const result = await getChooseFindAll(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.radioList = result.data.list;
+				this.getContentSearchChooseId(result.data.list[0].id);
+			} else {
+				ElMessage.error(result.msg);
+			}
 		},
 
 		async getPortPointMapSearch(data) {
@@ -283,7 +286,6 @@ export default {
 			await this.$api.portPointMapSearchFindOne(params).then((res) => {
 				if (res.status === this.$Constants.status.SUCCESS) {
 					this.imageUrl = res.data.url;
-					ElMessage.success(res.msg);
 					this.getPointSearch(res.data.id);
 				} else {
 					ElMessage.error(res.msg);
@@ -294,16 +296,14 @@ export default {
 		// 获取内容介绍
 		async getContentSearchChooseId(choose_id) {
 			const params = {
-				...this.page,
 				choose_id,
 			};
-			await this.$api.getContentSearchChooseId(params).then((res) => {
-				if (res.status === this.$Constants.status.SUCCESS) {
-					this.content = res.data.list[0].content;
-				} else {
-					ElMessage.error(res.msg);
-				}
-			});
+			const result = await contentSearchChooseId(params);
+			if (result.code === Constants.status.SUCCESS) {
+				this.content = result.data.content;
+			} else {
+				ElMessage.error(result.data);
+			}
 		},
 	},
 };
