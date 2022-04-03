@@ -1,5 +1,5 @@
 <template>
-	<div class="user-info flex">
+	<div class="user-info-box flex">
 		<div class="container">
 			<el-form
 				ref="userFormRef"
@@ -40,7 +40,7 @@ const userInfo = computed(() => store.getters["user/userInfo"]);
 userForm.value = userInfo.value;
 </script>
 <style lang="scss" scope>
-.user-info {
+.user-info-box {
 	background: #ffffff;
 	padding: 16px 40px;
 	position: relative;

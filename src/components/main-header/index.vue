@@ -22,10 +22,10 @@
 				</div></el-col
 			>
 			<el-col :span="7"
-				><div class="right flex-between border">
+				><div class="right border">
 					<div class="user-info" v-if="tokenData">
-						<div class="id">{{ userInfo.id }}</div>
-						<div class="user-name">{{ userInfo.user_name }}</div>
+						<span class="id">{{ userInfo.id }}</span>
+						<span class="user-name">{{ userInfo.user_name }}</span>
 					</div>
 					<div class="container flex-nowrap flex" v-if="tokenData">
 						<el-dropdown @command="handleCommand">
@@ -214,6 +214,9 @@ homeItems.value = homeItem;
 		min-height: 30px;
 		padding: 0 16px;
 		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		overflow: hidden;
 		background: #ffffff;
 
@@ -224,14 +227,12 @@ homeItems.value = homeItem;
 		}
 		.user-info {
 			display: flex;
+			justify-content: space-between;
 			flex-wrap: nowrap;
 			align-items: center;
 			.id {
-				font-weight: 500;
 			}
 			.user-name {
-				flex-shrink: 0;
-				font-weight: 500;
 				margin-left: 16px;
 			}
 		}

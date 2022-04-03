@@ -1,5 +1,5 @@
 <template>
-	<div class="user-info">
+	<div class="user-info-box">
 		<div class="container">
 			<el-form
 				ref="userFormRef"
@@ -134,7 +134,7 @@ const submitForm = async (formEl) => {
 };
 </script>
 <style lang="scss" scope>
-.user-info {
+.user-info-box {
 	background: #ffffff;
 	padding: 16px 40px;
 	position: relative;

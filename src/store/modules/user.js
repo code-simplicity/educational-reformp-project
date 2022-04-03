@@ -85,7 +85,6 @@ const actions = {
     commit
   }, id) {
     const result = await getUserInfo(id)
-    console.log("result", result)
     commit("infoChange", result.data);
   },
 

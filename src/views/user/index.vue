@@ -30,8 +30,6 @@
 					background-color="#545c64"
 					text-color="#fff"
 					:collapse="isCollapse"
-					@open="handleOpen"
-					@close="handleClose"
 					:default-active="activeMenu"
 					router
 				>
@@ -86,13 +84,6 @@ resizeHandler();
 onBeforeMount(() => {
 	useEventListener("resize", resizeHandler());
 });
-
-const handleOpen = (key, keyPath) => {
-	console.log(key, keyPath);
-};
-const handleClose = (key, keyPath) => {
-	console.log(key, keyPath);
-};
 </script>
 <style lang="scss" scope>
 .el-header {

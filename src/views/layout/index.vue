@@ -11,7 +11,11 @@
 		<MainHeader></MainHeader>
 		<router-view v-slot="{ Component }">
 			<keep-alive>
-				<component :is="Component" />
+				<component
+					:is="Component"
+					v-if="$route.meta.keepAlive"
+					:key="$route.path"
+				/>
 			</keep-alive>
 		</router-view>
 		<div class="footer">
