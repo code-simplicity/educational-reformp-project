@@ -123,7 +123,7 @@ export default {
 					break;
 				}
 				case "toCenter": {
-					const url = "https://localhost/admin/#/dashboard";
+					const url = "http://101.42.107.166/admin/#/dashboard";
 					window.open(url, "_blank");
 					break;
 				}
