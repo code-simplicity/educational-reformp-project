@@ -49,7 +49,7 @@ instance.interceptors.request.use((config) => {
     }
     return config;
 }, error => {
-    return new Promise.reject(error)
+    return Promise.reject(error)
 })
 
 instance.interceptors.response.use(response => {

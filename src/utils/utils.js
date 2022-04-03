@@ -52,5 +52,16 @@ export default {
                     ";max-age=0";
             }
         }
+    },
+    /**
+     * point对比值排序，升序
+     * @param {*} key 
+     */
+    pointCompare(key) {
+        return function (m, n) {
+            let a = m[key]
+            let b = n[key]
+            return a - b
+        }
     }
 }

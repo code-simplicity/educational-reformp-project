@@ -129,6 +129,7 @@ import { portPointMapSearchFindOne } from "../../api/service/portpointmap";
 import { getPointByPointMapFindAll } from "../../api/service/point";
 import { getWaveformsSearchPointId } from "../../api/service/waveforms";
 import { getWavestatsSearchPointId } from "../../api/service/wavestats";
+import utils from "../../utils/utils";
 export default {
 	name: "MeasurePointRoute",
 	data() {
@@ -151,7 +152,7 @@ export default {
 			waveStatsUrl: "",
 			page: {
 				pageNum: 1,
-				pageSize: 20,
+				pageSize: 50,
 			},
 		};
 	},
@@ -259,6 +260,8 @@ export default {
 			const result = await getPointByPointMapFindAll(params);
 			if (result.code === Constants.status.SUCCESS) {
 				this.pointList = result.data.list;
+				// 对数据进行排序
+				this.pointList.sort(utils.pointCompare("content"));
 				const { list } = result.data;
 				this.changeWaveFormsAndStats(list[0].content, list[0].id);
 			} else {
