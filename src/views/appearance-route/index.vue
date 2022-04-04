@@ -1,7 +1,7 @@
 <template>
 	<div class="appearance-route">
 		<el-row :gutter="12">
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianLeft>
 					<div class="legend">
 						<el-scrollbar>
@@ -57,7 +57,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="12">
 				<MainCenter>
 					<div class="video">
 						<div class="video-location">
@@ -66,7 +66,7 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
@@ -278,13 +278,17 @@ export default {
 		.bottom {
 		}
 		.title {
-			font-size: 1rem;
+			font-size: 1.1rem;
 			font-weight: 600;
 		}
 		.radio-check {
 			display: flex;
 			flex-direction: column;
 			margin-left: 40px;
+			::v-deep .el-radio__label {
+				font-size: 1rem;
+				padding-left: 8px;
+			}
 		}
 		.botton-click {
 			position: absolute;
@@ -297,7 +301,7 @@ export default {
 				background: #f3f3f3;
 				cursor: pointer;
 				font-weight: 600;
-				font-size: 0.8rem;
+				font-size: 0.9rem;
 				&:active {
 					color: #ffffff;
 					background: rgb(111, 125, 255);
@@ -327,12 +331,9 @@ export default {
 	}
 	.content {
 		.content-list {
-			padding: 6px 0 0 6px;
+			padding: 6px 6px;
 			.item {
-				padding: 0 16px 0 0;
 				font-size: 1rem;
-				font-weight: 500;
-				line-height: 20px;
 			}
 		}
 	}

@@ -1,30 +1,60 @@
 <template>
 	<div class="home">
 		<el-row :gutter="12">
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianLeft>
-					<div class="legend">
-						操作说明
-						<div class="content">{{ legend }}</div>
+					<div class="main-left-container">
+						<div class="legend">
+							操作说明
+							<div class="content">{{ legend }}</div>
+						</div>
+						<div class="team-info">
+							<span class="title">建设团队</span>
+							<p class="team-item">
+								系统架构：
+								<span>费翔，杜培义，胡德</span>
+							</p>
+							<p class="team-item">
+								港区漫游：
+								<span>马朋飞，谷雪清，吴潇</span>
+							</p>
+							<p class="team-item">
+								波浪模拟：
+								<span>蒋学炼，米万里，刘文龙</span>
+							</p>
+							<p class="team-item">
+								后台管理：
+								<span>张娜，杨伟超，宋吉宁，杨德健</span>
+							</p>
+							<p class="team-item">
+								技术支持：
+								<span
+									>刘烽，刘轲航，刘亮杰，唐浩，王忠宇，夏和政，余澳，余润晨</span
+								>
+							</p>
+							<p class="team-item">
+								衷心感谢各位成员付出的辛勤努力和充满灵感的创意！
+							</p>
+						</div>
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="12">
 				<MainCenter>
 					<div class="image">
 						<el-image
 							style="height: 100%; width: 100%"
 							:src="imageUrl"
-							fit="fill"
+							fit="cover"
 						></el-image>
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
-							<el-scrollbar height="12rem">
+							<el-scrollbar height="200px">
 								<p class="item">{{ content }}</p>
 							</el-scrollbar>
 						</div>
@@ -60,7 +90,7 @@ const getContentFindAll = async () => {
 	const result = await contentFindAll(params);
 	if (result.code === Constants.status.SUCCESS) {
 		legend.value = result.data.list[0].content;
-		content.value = result.data.list[0].content;
+		content.value = result.data.list[1].content;
 	} else {
 		ElMessage.error(result.msg);
 	}
@@ -105,32 +135,51 @@ const userAddScore = async () => {
 
 <style lang="scss" scoped>
 .home {
-	.legend {
-		padding: 10px 0;
-		height: 80vh;
-		margin-left: 16px;
-		margin-right: 16px;
-		font-size: 1rem;
-		font-weight: 600;
-		.content {
-			font-size: 1rem;
-			font-weight: 500;
-			margin-top: 6px;
+	.main-left-container {
+		padding: 10px;
+		display: flex;
+		flex-direction: column;
+		.legend {
+			font-size: 1.1rem;
+			font-weight: 600;
+			.content {
+				font-size: 1rem;
+				font-weight: 500;
+				margin-top: 6px;
+			}
+		}
+		.team-info {
+			display: flex;
+			flex-direction: column;
+			margin-top: 4rem;
+			.title {
+				font-size: 1.1rem;
+				font-weight: 600;
+				margin-bottom: 6px;
+			}
+			.team-item {
+				display: inline-block;
+				font-size: 1rem;
+				font-weight: 600;
+				margin-bottom: 6px;
+				span {
+					font-size: 0.9rem;
+					font-weight: 500;
+				}
+			}
 		}
 	}
+
 	.image {
+		height: 80vh;
 		width: 100%;
-		height: 100%;
 		background-size: 100%;
 	}
 	.content {
 		.content-list {
-			padding: 6px 0 0 6px;
+			padding: 6px 6px;
 			.item {
-				padding: 0 16px 0 0;
-				font-size: 0.9rem;
-				font-weight: 500;
-				line-height: 20px;
+				font-size: 1rem;
 			}
 		}
 	}

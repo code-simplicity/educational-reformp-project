@@ -1,7 +1,7 @@
 <template>
 	<div class="main-header">
 		<el-row :gutter="12">
-			<el-col :span="7"
+			<el-col :span="6"
 				><div class="left border">
 					<div class="title">
 						<router-link class="active-class flex-nowrap" :to="{ path: 'home' }"
@@ -10,8 +10,8 @@
 					</div>
 				</div></el-col
 			>
-			<el-col :span="10"
-				><div class="center flex-between border">
+			<el-col :span="12"
+				><div class="center border">
 					<router-link
 						v-for="(item, index) in homeItem"
 						:key="index"
@@ -21,7 +21,7 @@
 					>
 				</div></el-col
 			>
-			<el-col :span="7"
+			<el-col :span="6"
 				><div class="right border">
 					<div class="user-info" v-if="tokenData">
 						<span class="id">{{ userInfo.id }}</span>
@@ -165,7 +165,7 @@ homeItems.value = homeItem;
 		align-items: center;
 		justify-content: center;
 		height: 2.5rem;
-		min-height: 30px;
+		min-height: 40px;
 		background: #ffffff;
 
 		.title {
@@ -187,18 +187,20 @@ homeItems.value = homeItem;
 	.center {
 		padding: 0 16px;
 		height: 2.5rem;
-		min-height: 30px;
+		min-height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: space-around;
 		background: #ffffff;
-
 		.active-class {
-			flex-shrink: 0;
+			margin: 0 4px;
 			color: #000000;
 			text-decoration: none;
 			text-align: center;
 			box-shadow: -1px 1px 5px rgb(0, 0, 0);
 			cursor: pointer;
 			padding: 0 20px;
-			font-size: 1.1rem;
+			font-size: 1.2rem;
 			&.router-link-active {
 				color: #ffffff;
 				background: rgb(111, 125, 255);
@@ -211,7 +213,7 @@ homeItems.value = homeItem;
 	}
 	.right {
 		height: 2.5rem;
-		min-height: 30px;
+		min-height: 40px;
 		padding: 0 16px;
 		position: relative;
 		display: flex;
@@ -228,11 +230,14 @@ homeItems.value = homeItem;
 		.user-info {
 			display: flex;
 			justify-content: space-between;
-			flex-wrap: nowrap;
+			flex-wrap: wrap;
 			align-items: center;
+			padding: 6px;
 			.id {
+				font-size: 1.1rem;
 			}
 			.user-name {
+				font-size: 1.1rem;
 				margin-left: 16px;
 			}
 		}

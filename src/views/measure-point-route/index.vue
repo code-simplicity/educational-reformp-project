@@ -1,7 +1,7 @@
 <template>
 	<div class="measure-point-route">
 		<el-row :gutter="12">
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianLeft>
 					<div class="legend">
 						<el-scrollbar>
@@ -58,7 +58,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="12">
 				<MainCenter>
 					<div class="image">
 						<div class="left">
@@ -84,13 +84,13 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianRight>
 					<transition name="slide">
 						<div class="right-box">
 							<div class="content border-bottom">
 								<div class="content-list">
-									<el-scrollbar height="12rem">
+									<el-scrollbar height="200px">
 										<p class="item">{{ content }}</p>
 									</el-scrollbar>
 								</div>
@@ -337,7 +337,6 @@ export default {
 		margin-left: 16px;
 		margin-right: 16px;
 		position: relative;
-		height: 80vh;
 		display: flex;
 		flex-direction: column;
 		.top {
@@ -348,13 +347,17 @@ export default {
 		.bottom {
 		}
 		.title {
-			font-size: 1rem;
+			font-size: 1.1rem;
 			font-weight: 600;
 		}
 		.radio-check {
 			display: flex;
 			flex-direction: column;
 			margin-left: 40px;
+			::v-deep .el-radio__label {
+				font-size: 1rem;
+				padding-left: 8px;
+			}
 		}
 		.botton-click {
 			position: absolute;
@@ -367,7 +370,7 @@ export default {
 				background: #f3f3f3;
 				cursor: pointer;
 				font-weight: 600;
-				font-size: 0.8rem;
+				font-size: 0.9rem;
 				&:active {
 					color: #ffffff;
 					background: rgb(111, 125, 255);
@@ -432,12 +435,9 @@ export default {
 		justify-content: space-between;
 		.content {
 			.content-list {
-				padding: 6px 0 0 6px;
+				padding: 6px 6px;
 				.item {
-					padding: 0 16px 0 0;
 					font-size: 1rem;
-					font-weight: 500;
-					line-height: 20px;
 				}
 			}
 		}

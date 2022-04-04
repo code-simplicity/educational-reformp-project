@@ -1,7 +1,7 @@
 <template>
 	<div class="minato-route">
 		<el-row :gutter="12">
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianLeft>
 					<div class="legend">
 						操作说明
@@ -9,7 +9,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="10">
+			<el-col :span="12">
 				<MainCenter>
 					<div class="video">
 						<div class="video-location">
@@ -18,11 +18,11 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="7">
+			<el-col :span="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
-							<el-scrollbar height="12rem">
+							<el-scrollbar height="200px">
 								<p class="item">{{ content }}</p>
 							</el-scrollbar>
 						</div>
@@ -63,7 +63,7 @@ const getContentFindAll = async () => {
 	const result = await contentFindAll(params);
 	if (result.code === Constants.status.SUCCESS) {
 		legend.value = result.data.list[0].content;
-		content.value = result.data.list[0].content;
+		content.value = result.data.list[1].content;
 	} else {
 		ElMessage.error(result.msg);
 	}
@@ -139,7 +139,7 @@ const getVideo = async () => {
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
-		font-size: 1rem;
+		font-size: 1.1rem;
 		font-weight: 600;
 		.content {
 			font-size: 1rem;
@@ -165,12 +165,9 @@ const getVideo = async () => {
 	}
 	.content {
 		.content-list {
-			padding: 6px 0 0 6px;
+			padding: 6px 6px;
 			.item {
-				padding: 0 16px 0 0;
-				font-size: 0.9rem;
-				font-weight: 500;
-				line-height: 20px;
+				font-size: 1rem;
 			}
 		}
 	}
