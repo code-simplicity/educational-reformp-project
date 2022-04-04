@@ -263,8 +263,8 @@ export default {
 <style lang="scss" scoped>
 .appearance-route {
 	.legend {
-		padding: 10px 0;
 		height: 80vh;
+		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
 		position: relative;
@@ -280,6 +280,7 @@ export default {
 		.title {
 			font-size: 1.1rem;
 			font-weight: 600;
+			margin: 10px 0;
 		}
 		.radio-check {
 			display: flex;
@@ -316,11 +317,10 @@ export default {
 	.video {
 		width: 100%;
 		background: $black;
-		margin: 0 auto;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 100%;
+		height: 80vh;
 		.video-location {
 			width: 100%;
 			.video-style {

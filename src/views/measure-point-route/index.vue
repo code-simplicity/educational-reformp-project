@@ -349,6 +349,7 @@ export default {
 		.title {
 			font-size: 1.1rem;
 			font-weight: 600;
+			margin: 10px 0;
 		}
 		.radio-check {
 			display: flex;
