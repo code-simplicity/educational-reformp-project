@@ -1,5 +1,5 @@
 <template>
-	<div class="main-header">
+	<div class="main-header animate__animated animate__fadeInTopLeft">
 		<el-row :gutter="12">
 			<el-col :span="6"
 				><div class="left border">

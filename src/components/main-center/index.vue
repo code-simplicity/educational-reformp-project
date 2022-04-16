@@ -1,5 +1,5 @@
 <template>
-	<div class="main-center border">
+	<div class="main-center border animate__animated animate__fadeInDown">
 		<slot />
 	</div>
 </template>

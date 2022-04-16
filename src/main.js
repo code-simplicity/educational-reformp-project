@@ -25,6 +25,8 @@ import MianLeft from './components/main-left/index.vue'
 import MainCenter from './components/main-center/index.vue'
 import MianRight from './components/main-right/index.vue'
 
+// 动画库
+import 'animate.css';
 
 // 创建app实例，vue3的写法
 const app = createApp(App)

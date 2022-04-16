@@ -63,6 +63,7 @@
 					<div class="image">
 						<div class="left">
 							<el-image
+								class="animate__animated animate__fadeInDown"
 								style="height: 100%; width: 100%"
 								:src="imageUrl"
 								fit="fill"
@@ -80,6 +81,18 @@
 							>
 								<div class="content">{{ item.content }}</div>
 							</div>
+							<el-row :gutter="12">
+								<el-col :span="24">
+									<el-button type="success" size="small" @click="downloadExcel">
+										<template #icon>
+											<el-icon :size="16">
+												<Download />
+											</el-icon>
+										</template>
+										本工况数据下载</el-button
+									>
+								</el-col>
+							</el-row>
 						</div>
 					</div>
 				</MainCenter>
@@ -90,7 +103,7 @@
 						<div class="right-box">
 							<div class="content border-bottom">
 								<div class="content-list">
-									<el-scrollbar height="200px">
+									<el-scrollbar height="160px">
 										<p class="item">{{ content }}</p>
 									</el-scrollbar>
 								</div>
@@ -99,14 +112,14 @@
 								<el-image
 									style="height: 100%; width: 100%"
 									:src="waveFormsUrl"
-									fit="fill"
+									fit="contain"
 								></el-image>
 							</div>
 							<div class="wave-stats">
 								<el-image
 									style="height: 100%; width: 100%"
 									:src="waveStatsUrl"
-									fit="fill"
+									fit="contain"
 								></el-image>
 							</div>
 						</div>
@@ -129,7 +142,9 @@ import { portPointMapSearchFindOne } from "../../api/service/portpointmap";
 import { getPointByPointMapFindAll } from "../../api/service/point";
 import { getWaveformsSearchPointId } from "../../api/service/waveforms";
 import { getWavestatsSearchPointId } from "../../api/service/wavestats";
+import { getWaveDataExcelByPortMapPointId } from "../../api/service/wavedataexcel";
 import utils from "../../utils/utils";
+import { Download } from "@element-plus/icons-vue";
 export default {
 	name: "MeasurePointRoute",
 	data() {
@@ -154,9 +169,11 @@ export default {
 				pageNum: 1,
 				pageSize: 50,
 			},
+			// 港口点位地图的id
+			portPointMapId: "",
 		};
 	},
-	components: {},
+	components: { Download },
 	computed: {
 		...mapGetters("user", {
 			userInfo: "userInfo",
@@ -194,6 +211,20 @@ export default {
 		}
 	},
 	methods: {
+		// 下载excel
+		async downloadExcel() {
+			const params = {
+				port_point_map_id: this.portPointMapId,
+			};
+			const result = await getWaveDataExcelByPortMapPointId(params);
+			if (result.code === Constants.status.SUCCESS) {
+				// 将url传递出去
+				ElMessage.success(result.msg);
+				window.open(`${result.data.url}`);
+			} else {
+				ElMessage.error(result.msg);
+			}
+		},
 		// 左侧获取图片
 		async changeWaveFormsAndStats(content, point_id) {
 			this.activeContent = content;
@@ -298,6 +329,7 @@ export default {
 			const result = await portPointMapSearchFindOne(params);
 			if (result.code === Constants.status.SUCCESS) {
 				this.imageUrl = result.data.url;
+				this.portPointMapId = result.data.id;
 				this.getPointSearch(result.data.id);
 			} else {
 				ElMessage.error(result.msg);
@@ -401,6 +433,7 @@ export default {
 			height: 100%;
 			padding: 10px 6px;
 			display: flex;
+			align-items: center;
 			flex-flow: row wrap;
 			align-content: flex-start;
 			justify-content: space-between;

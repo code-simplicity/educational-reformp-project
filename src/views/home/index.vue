@@ -9,13 +9,13 @@
 							<div class="content">{{ legend }}</div>
 						</div>
 						<div class="team-info">
-							<span class="title">建设团队</span>
+							<span class="title">水运工程仿真实验系统建设团队</span>
 							<p class="team-item">
 								系统架构：
 								<span>费翔，杜培义，胡德</span>
 							</p>
 							<p class="team-item">
-								港区漫游：
+								BIM建模：
 								<span>马朋飞，谷雪清，吴潇</span>
 							</p>
 							<p class="team-item">
@@ -29,10 +29,14 @@
 							<p class="team-item">
 								技术支持：
 								<span
-									>刘烽，刘轲航，刘亮杰，唐浩，王忠宇，夏和政，余澳，余润晨</span
+									>高刚刚，刘烽，刘珂铖，刘轲航，刘亮杰，刘文婷，唐浩，王忠宇，夏和政，杨建丰，余澳，余润晨，张朋，庄景晨</span
 								>
 							</p>
 							<p class="team-item">
+								反馈邮箱：
+								<span class="link-email"> jiang.xuelian@tcu.edu.cn </span>
+							</p>
+							<p class="team-foot">
 								衷心感谢各位成员付出的辛勤努力和充满灵感的创意！
 							</p>
 						</div>
@@ -151,8 +155,11 @@ const userAddScore = async () => {
 		.team-info {
 			display: flex;
 			flex-direction: column;
-			margin-top: 4rem;
+			margin-top: 20px;
 			.title {
+				display: flex;
+				align-items: center;
+				justify-content: center;
 				font-size: 1.1rem;
 				font-weight: 600;
 				margin-bottom: 6px;
@@ -166,6 +173,18 @@ const userAddScore = async () => {
 					font-size: 0.9rem;
 					font-weight: 500;
 				}
+				.link-email {
+					font-size: 0.9rem;
+					font-weight: 600;
+				}
+			}
+			.team-foot {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 1.1rem;
+				font-weight: 600;
+				margin-top: 6px;
 			}
 		}
 	}
