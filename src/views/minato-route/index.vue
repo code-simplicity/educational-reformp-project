@@ -11,11 +11,16 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
-					<div class="video">
+					<!-- <div class="video">
 						<div class="video-location">
 							<div ref="video"></div>
 						</div>
-					</div>
+					</div> -->
+					<threeView
+						class="three-box"
+						:sceneUrl="sceneUrl"
+						:modelUrl="modelUrl"
+					/>
 				</MainCenter>
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
@@ -39,7 +44,9 @@ import Player from "xgplayer";
 import Constants from "../../utils/Constants.js";
 import { addUserScore, getUserInfo } from "../../api/service/user";
 import { videoFindAll } from "../../api/service/video";
+import { getBimFindAll } from "../../api/service/bim";
 import { contentFindAll } from "../../api/service/content";
+import threeView from "../../components/three-view/three-view.vue";
 
 const store = useStore();
 // 获取用户信息
@@ -128,11 +135,30 @@ const getVideo = async () => {
 		}, 500);
 	});
 };
+
+// 加载模型所需要的场景
+// 场景url
+let sceneUrl = ref("scene/mall.hdr");
+// 模型
+let modelUrl = ref("scene/1702060202-张朋-散货码头-3DView-{三维}.fbx");
+// 获取一个视频
+const getBimAll = async () => {
+	const params = { ...page.value };
+	const result = await getBimFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		modelUrl = result.data.list[0].url;
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+getBimAll();
 </script>
 
 <style lang="scss" scoped>
 .minato-route {
 	.legend {
+		height: 80vh;
+
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
@@ -165,6 +191,14 @@ const getVideo = async () => {
 		.content-list {
 			padding: 6px 6px;
 		}
+	}
+	.three-box {
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		overflow: auto;
 	}
 }
 </style>
