@@ -8,7 +8,6 @@
 					<el-form
 						ref="ruleFormRef"
 						:model="ruleForm"
-						status-icon
 						:rules="rules"
 						label-position="right"
 						label-width="80px"
@@ -20,7 +19,6 @@
 							<el-input
 								v-model="ruleForm.id"
 								type="text"
-								autocomplete="off"
 								autofocus="true"
 								placeholder="请输入学号"
 								clearable
@@ -36,7 +34,6 @@
 								v-model="ruleForm.password"
 								type="password"
 								placeholder="请输入密码"
-								autocomplete="off"
 								clearable
 							>
 								<template #prefix>

@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<el-row :gutter="12">
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianLeft>
 					<div class="main-left-container">
 						<div class="legend">
@@ -43,7 +43,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
 					<div class="image">
 						<el-image
@@ -54,13 +54,11 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
-							<el-scrollbar height="200px">
-								<p class="item">{{ content }}</p>
-							</el-scrollbar>
+							<p class="item">{{ content }}</p>
 						</div>
 					</div>
 				</MianRight>
@@ -144,10 +142,10 @@ const userAddScore = async () => {
 		display: flex;
 		flex-direction: column;
 		.legend {
-			font-size: 1.1rem;
+			font-size: 18px;
 			font-weight: 600;
 			.content {
-				font-size: 1rem;
+				font-size: 16px;
 				font-weight: 500;
 				margin-top: 6px;
 			}
@@ -155,26 +153,24 @@ const userAddScore = async () => {
 		.team-info {
 			display: flex;
 			flex-direction: column;
-			margin-top: 20px;
+			margin-top: 10px;
 			.title {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				font-size: 1.1rem;
 				font-weight: 600;
 				margin-bottom: 6px;
 			}
 			.team-item {
 				display: inline-block;
-				font-size: 1rem;
 				font-weight: 600;
 				margin-bottom: 6px;
 				span {
-					font-size: 0.9rem;
+					font-size: 14px;
 					font-weight: 500;
 				}
 				.link-email {
-					font-size: 0.9rem;
+					font-size: 14px;
 					font-weight: 600;
 				}
 			}
@@ -182,7 +178,7 @@ const userAddScore = async () => {
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				font-size: 1.1rem;
+				font-size: 18px;
 				font-weight: 600;
 				margin-top: 6px;
 			}
@@ -198,7 +194,6 @@ const userAddScore = async () => {
 		.content-list {
 			padding: 6px 6px;
 			.item {
-				font-size: 1rem;
 			}
 		}
 	}

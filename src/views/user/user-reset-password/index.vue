@@ -24,7 +24,7 @@
 				</el-form-item>
 				<el-form-item label="验证码" prop="captcha">
 					<el-row :gutter="24">
-						<el-col :span="16">
+						<el-col :span="12">
 							<el-input
 								v-model="userForm.captcha"
 								placeholder="请输入图灵验证码"
@@ -133,15 +133,19 @@ const submitForm = async (formEl) => {
 	});
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .user-info-box {
-	background: #ffffff;
+	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 	padding: 16px 40px;
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	color: #fff;
 	.container {
 		margin-bottom: 16px;
+		::v-deep .el-form-item__label {
+			color: #fff;
+		}
 	}
 	.user-footer {
 		display: flex;

@@ -4,12 +4,14 @@ import {
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/display.css'
+
 
 import App from './App.vue'
 
 import utils from './utils/utils'
 
-import "./utils/flexible.js";
+// import "./utils/flexible.js";
 
 import './assets/icon/iconfont.css'
 
@@ -27,6 +29,7 @@ import MianRight from './components/main-right/index.vue'
 
 // 动画库
 import 'animate.css';
+
 
 // 粒子动画
 // import Particles from "particles.vue3";

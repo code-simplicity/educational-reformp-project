@@ -6,7 +6,7 @@
 				:model="userForm"
 				:rules="userRules"
 				label-position="right"
-				label-width="80px"
+				label-width="100px"
 				style="max-width: 460px"
 				label-suffix=":"
 			>
@@ -23,8 +23,8 @@
 				></el-form-item>
 				<el-form-item label="性别" prop="sex">
 					<el-radio-group v-model="userForm.sex">
-						<el-radio label="1">男</el-radio>
-						<el-radio label="0">女</el-radio>
+						<el-radio label="男">男</el-radio>
+						<el-radio label="女">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="验证码" prop="captcha">
@@ -148,15 +148,19 @@ const submitForm = async (formEl) => {
 	});
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .user-info-box {
-	background: #ffffff;
+	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 	padding: 16px 40px;
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	color: #fff;
 	.container {
 		margin-bottom: 16px;
+		::v-deep .el-form-item__label {
+			color: #fff;
+		}
 	}
 	.user-footer {
 		display: flex;

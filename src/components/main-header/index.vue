@@ -1,7 +1,7 @@
 <template>
 	<div class="main-header animate__animated animate__fadeInTopLeft">
 		<el-row :gutter="12">
-			<el-col :span="6"
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6"
 				><div class="left border">
 					<div class="title">
 						<router-link class="active-class flex-nowrap" :to="{ path: 'home' }"
@@ -10,7 +10,7 @@
 					</div>
 				</div></el-col
 			>
-			<el-col :span="12"
+			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12"
 				><div class="center border">
 					<router-link
 						v-for="(item, index) in homeItem"
@@ -21,7 +21,7 @@
 					>
 				</div></el-col
 			>
-			<el-col :span="6"
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6"
 				><div class="right border">
 					<div class="user-info" v-if="tokenData">
 						<span class="id">{{ userInfo.id }}</span>
@@ -158,19 +158,17 @@ homeItems.value = homeItem;
 
 <style lang="scss" scoped>
 .main-header {
-	/* min-width: 750px; */
-	margin-bottom: 0.5rem;
 	.left {
+		height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		height: 2.5rem;
-		min-height: 40px;
 		background: #ffffff;
+		margin-bottom: 6px;
 
 		.title {
-			font-size: 1.3rem;
 			text-align: center;
+			font-size: 22px;
 			.active-class {
 				color: $black;
 				text-decoration: none;
@@ -185,22 +183,21 @@ homeItems.value = homeItem;
 		}
 	}
 	.center {
-		padding: 0 16px;
-		height: 2.5rem;
-		min-height: 40px;
+		height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
 		background: #ffffff;
+		margin-bottom: 6px;
+
 		.active-class {
-			margin: 0 4px;
 			color: #000000;
 			text-decoration: none;
 			text-align: center;
 			box-shadow: -1px 1px 5px rgb(0, 0, 0);
 			cursor: pointer;
-			padding: 0 20px;
-			font-size: 1.2rem;
+			padding: 0 18px;
+			font-size: 18px;
 			&.router-link-active {
 				color: #ffffff;
 				background: rgb(111, 125, 255);
@@ -212,21 +209,15 @@ homeItems.value = homeItem;
 		}
 	}
 	.right {
-		height: 2.5rem;
-		min-height: 40px;
-		padding: 0 16px;
+		height: 40px;
 		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		overflow: hidden;
 		background: #ffffff;
+		margin-bottom: 12px;
 
-		.time {
-			font-size: 0.8rem;
-			font-weight: 500;
-			margin-right: 10px;
-		}
 		.user-info {
 			display: flex;
 			justify-content: space-between;
@@ -234,19 +225,16 @@ homeItems.value = homeItem;
 			align-items: center;
 			padding: 6px;
 			.id {
-				font-size: 1.1rem;
+				font-size: 17px;
 			}
 			.user-name {
-				font-size: 1.1rem;
 				margin-left: 16px;
 			}
 		}
 		.container {
-			font-size: 0.8rem;
 			font-weight: 600;
 			margin-left: 10px;
 			.botton {
-				font-size: 0.8rem;
 				cursor: pointer;
 				padding: 0 6px;
 

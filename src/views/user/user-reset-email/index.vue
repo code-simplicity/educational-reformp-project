@@ -6,7 +6,7 @@
 				:model="userForm"
 				:rules="userRules"
 				label-position="right"
-				label-width="100px"
+				label-width="120px"
 				style="max-width: 460px"
 				label-suffix=":"
 			>
@@ -210,15 +210,19 @@ const submitForm = async (formEl) => {
 	});
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .user-info-box {
-	background: #ffffff;
+	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 	padding: 16px 40px;
 	position: relative;
 	display: flex;
 	flex-direction: column;
+	color: #fff;
 	.container {
 		margin-bottom: 16px;
+		::v-deep .el-form-item__label {
+			color: #fff;
+		}
 	}
 	.user-footer {
 		display: flex;

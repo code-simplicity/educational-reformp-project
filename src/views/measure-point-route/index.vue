@@ -1,56 +1,48 @@
 <template>
 	<div class="measure-point-route">
 		<el-row :gutter="12">
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianLeft>
 					<div class="legend">
-						<el-scrollbar>
-							<div class="top">
-								<div class="title">设计水位</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(0, 4)"
-										:key="item.id"
-										v-model="water_level"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						<div class="top">
+							<div class="title">设计水位</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(0, 4)"
+									:key="item.id"
+									v-model="water_level"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-							<div class="center">
-								<div class="title">波浪来向</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(4, 7)"
-										:key="item.id"
-										v-model="wave_direction"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						</div>
+						<div class="center">
+							<div class="title">波浪来向</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(4, 7)"
+									:key="item.id"
+									v-model="wave_direction"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-							<div class="bottom">
-								<div class="title">外堤布置</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(7, 11)"
-										:key="item.id"
-										v-model="embank_ment"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						</div>
+						<div class="bottom">
+							<div class="title">外堤布置</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(7, 11)"
+									:key="item.id"
+									v-model="embank_ment"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-						</el-scrollbar>
+						</div>
 
 						<div class="botton-click">
 							<div class="botton" @click="toMeasurePoint">测点数据</div>
@@ -58,7 +50,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
 					<div class="image">
 						<div class="left">
@@ -70,8 +62,8 @@
 								@click="changePoint"
 							></el-image>
 						</div>
-						<div class="right" v-if="!showPoint"></div>
-						<div class="right-box" v-else>
+
+						<div class="right-box">
 							<div
 								class="point-list border"
 								v-for="item in pointList"
@@ -97,15 +89,13 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
 					<transition name="slide">
 						<div class="right-box">
 							<div class="content border-bottom">
 								<div class="content-list">
-									<el-scrollbar height="160px">
-										<p class="item">{{ content }}</p>
-									</el-scrollbar>
+									<p class="item">{{ content }}</p>
 								</div>
 							</div>
 							<div class="wave-forms">
@@ -115,6 +105,7 @@
 									fit="contain"
 								></el-image>
 							</div>
+							<el-divider />
 							<div class="wave-stats">
 								<el-image
 									style="height: 100%; width: 100%"
@@ -279,7 +270,7 @@ export default {
 		},
 
 		changePoint() {
-			this.showPoint = !this.showPoint;
+			!this.showPoint;
 		},
 
 		// 查询点位
@@ -379,7 +370,7 @@ export default {
 		.bottom {
 		}
 		.title {
-			font-size: 1.1rem;
+			font-size: 18px;
 			font-weight: 600;
 			margin: 10px 0;
 		}
@@ -388,7 +379,7 @@ export default {
 			flex-direction: column;
 			margin-left: 40px;
 			::v-deep .el-radio__label {
-				font-size: 1rem;
+				font-size: 17px;
 				padding-left: 8px;
 			}
 		}
@@ -403,7 +394,7 @@ export default {
 				background: #f3f3f3;
 				cursor: pointer;
 				font-weight: 600;
-				font-size: 0.9rem;
+
 				&:active {
 					color: #ffffff;
 					background: rgb(111, 125, 255);
@@ -423,11 +414,7 @@ export default {
 			width: 80%;
 			height: 100%;
 		}
-		.right {
-			width: 20%;
-			height: 100%;
-			background: url(../../assets/images/港口背景1.jpg);
-		}
+
 		.right-box {
 			width: 20%;
 			height: 100%;
@@ -437,6 +424,7 @@ export default {
 			flex-flow: row wrap;
 			align-content: flex-start;
 			justify-content: space-between;
+			overflow: auto;
 			.point-list {
 				cursor: pointer;
 				text-align: center;
@@ -465,25 +453,21 @@ export default {
 	.right-box {
 		display: flex;
 		flex-direction: column;
-		height: 80vh;
 		justify-content: space-between;
 		.content {
 			.content-list {
 				padding: 6px 6px;
 				.item {
-					font-size: 1rem;
 				}
 			}
 		}
 		.wave-forms {
 			margin-top: 10px;
 			width: 100%;
-			height: 26vh;
 		}
 		.wave-stats {
 			margin-top: 10px;
 			width: 100%;
-			height: 26vh;
 		}
 	}
 }

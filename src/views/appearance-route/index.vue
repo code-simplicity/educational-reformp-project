@@ -1,63 +1,56 @@
 <template>
 	<div class="appearance-route">
 		<el-row :gutter="12">
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianLeft>
 					<div class="legend">
-						<el-scrollbar>
-							<div class="top">
-								<div class="title">设计水位</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(0, 4)"
-										:key="item.id"
-										v-model="water_level"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						<div class="top">
+							<div class="title">设计水位</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(0, 4)"
+									:key="item.id"
+									v-model="water_level"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-							<div class="center">
-								<div class="title">波浪来向</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(4, 7)"
-										:key="item.id"
-										v-model="wave_direction"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						</div>
+						<div class="center">
+							<div class="title">波浪来向</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(4, 7)"
+									:key="item.id"
+									v-model="wave_direction"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-							<div class="bottom">
-								<div class="title">外堤布置</div>
-								<div class="radio-check">
-									<el-radio-group
-										v-for="item in radioList.slice(7, 11)"
-										:key="item.id"
-										v-model="embank_ment"
-										@change="getContentSearchChooseId(item.id)"
-									>
-										<el-radio :label="item.content">{{
-											item.content
-										}}</el-radio>
-									</el-radio-group>
-								</div>
+						</div>
+						<div class="bottom">
+							<div class="title">外堤布置</div>
+							<div class="radio-check">
+								<el-radio-group
+									v-for="item in radioList.slice(7, 11)"
+									:key="item.id"
+									v-model="embank_ment"
+									@change="getContentSearchChooseId(item.id)"
+								>
+									<el-radio :label="item.content">{{ item.content }}</el-radio>
+								</el-radio-group>
 							</div>
-						</el-scrollbar>
+						</div>
+
 						<div class="botton-click">
 							<div class="botton" @click="changeAppearance">现象观察</div>
 						</div>
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
 					<div class="video">
 						<div class="video-location">
@@ -66,13 +59,11 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
-							<el-scrollbar height="12rem">
-								<p class="item">{{ content }}</p>
-							</el-scrollbar>
+							<p class="item">{{ content }}</p>
 						</div>
 					</div>
 				</MianRight>
@@ -264,6 +255,7 @@ export default {
 .appearance-route {
 	.legend {
 		height: 80vh;
+
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
@@ -278,7 +270,7 @@ export default {
 		.bottom {
 		}
 		.title {
-			font-size: 1.1rem;
+			font-size: 18px;
 			font-weight: 600;
 			margin: 10px 0;
 		}
@@ -302,7 +294,7 @@ export default {
 				background: #f3f3f3;
 				cursor: pointer;
 				font-weight: 600;
-				font-size: 0.9rem;
+
 				&:active {
 					color: #ffffff;
 					background: rgb(111, 125, 255);
@@ -316,11 +308,11 @@ export default {
 	}
 	.video {
 		width: 100%;
+		height: 100%;
 		background: $black;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 80vh;
 		.video-location {
 			width: 100%;
 			.video-style {
@@ -333,7 +325,6 @@ export default {
 		.content-list {
 			padding: 6px 6px;
 			.item {
-				font-size: 1rem;
 			}
 		}
 	}

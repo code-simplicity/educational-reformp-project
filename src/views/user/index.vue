@@ -8,6 +8,8 @@
 -->
 <template>
 	<el-container class="container">
+		<Particles></Particles>
+
 		<el-header class="user-header">
 			<div class="user-header-left">
 				<h1>水运仿真平台用户管理中心</h1>
@@ -22,6 +24,7 @@
 				<el-icon :size="18"><User /></el-icon>
 			</div>
 		</el-header>
+
 		<div class="el-menu-aside">
 			<div class="el-menu-container">
 				<el-menu
@@ -57,6 +60,8 @@ import { useStore } from "vuex";
 import { User } from "@element-plus/icons-vue";
 import { useEventListener } from "@vueuse/core";
 import { navItems } from "@/json/navItems";
+import Particles from "../../components/particles";
+
 const store = useStore();
 // 获取用户信息
 const userInfo = computed(() => store.getters["user/userInfo"]);
@@ -85,7 +90,7 @@ onBeforeMount(() => {
 	useEventListener("resize", resizeHandler());
 });
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .el-header {
 	padding-left: 16px;
 	padding-right: 16px;
@@ -94,20 +99,23 @@ onBeforeMount(() => {
 .container {
 	position: relative;
 	.user-header {
+		color: #fff;
 		display: flex;
-		background: #ffffff;
 		height: 50px;
 		align-items: center;
 		justify-content: space-between;
 		margin-bottom: 20px;
+		z-index: 1;
+		border-bottom: 1px solid #ffffff;
 		.user-header-left {
 			display: flex;
 			.to-home {
 				margin-left: 40px;
 				font-size: 18px;
-				border-bottom: 2px solid #123456;
+				border-bottom: 2px solid #fff;
 				.active-class {
-					color: #1000f1;
+					color: #fff;
+
 					text-decoration: none;
 					cursor: pointer;
 					&.router-link-active {
@@ -145,6 +153,8 @@ onBeforeMount(() => {
 				}
 			}
 			.el-menu-vertical {
+				box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+				background-color: rgba(255, 255, 255, 0.8);
 				.menu-name {
 					margin-left: 8px;
 				}

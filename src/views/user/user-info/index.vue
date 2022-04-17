@@ -39,12 +39,16 @@ const userForm = ref({
 const userInfo = computed(() => store.getters["user/userInfo"]);
 userForm.value = userInfo.value;
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .user-info-box {
-	background: #ffffff;
+	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 	padding: 16px 40px;
 	position: relative;
+	color: #fff;
 	.container {
+		::v-deep .el-form-item__label {
+			color: #fff;
+		}
 		.user-footer {
 			margin-top: 40px;
 			.left {

@@ -1,5 +1,5 @@
 <template>
-	<div class="user-register">
+	<div class="user-register animate__animated animate__zoomInDown">
 		<div class="user-container">
 			<h1 class="title">用户注册</h1>
 			<div class="user-form">
@@ -140,6 +140,7 @@ import { sendCaptcha, addUser, sendMailCode } from "@/api/service/user";
 import Constants from "@/utils/Constants.js";
 import { ElMessage } from "element-plus";
 import SparkMD5 from "spark-md5";
+
 const router = useRouter();
 const userForm = reactive({
 	id: "",
@@ -295,7 +296,7 @@ const submitForm = async (formEl) => {
 	}
 };
 </script>
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .user-register {
 	display: flex;
 	justify-content: center;
@@ -303,16 +304,22 @@ const submitForm = async (formEl) => {
 	flex-direction: column;
 	width: 100%;
 	height: 100%;
+
 	.user-container {
-		background: #ffffff;
+		box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
 		padding: 16px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		.title {
 			margin-bottom: 16px;
+			color: #fff;
 		}
 		.user-form {
+			padding: 16px;
+			::v-deep .el-form-item__label {
+				color: #fff;
+			}
 			.el-select {
 				display: inline-block;
 				position: relative;

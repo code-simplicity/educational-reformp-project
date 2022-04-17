@@ -1,7 +1,7 @@
 <template>
 	<div class="minato-route">
 		<el-row :gutter="12">
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianLeft>
 					<div class="legend">
 						操作说明
@@ -9,7 +9,7 @@
 					</div>
 				</MianLeft>
 			</el-col>
-			<el-col :span="12">
+			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
 					<div class="video">
 						<div class="video-location">
@@ -18,13 +18,11 @@
 					</div>
 				</MainCenter>
 			</el-col>
-			<el-col :span="6">
+			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
 					<div class="content border-bottom">
 						<div class="content-list">
-							<el-scrollbar height="200px">
-								<p class="item">{{ content }}</p>
-							</el-scrollbar>
+							<p class="item">{{ content }}</p>
 						</div>
 					</div>
 				</MianRight>
@@ -135,14 +133,13 @@ const getVideo = async () => {
 <style lang="scss" scoped>
 .minato-route {
 	.legend {
-		height: 80vh;
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
-		font-size: 1.1rem;
+		font-size: 18px;
 		font-weight: 600;
 		.content {
-			font-size: 1rem;
+			font-size: 16px;
 			font-weight: 500;
 			margin-top: 6px;
 		}
@@ -154,7 +151,8 @@ const getVideo = async () => {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		height: 100%;
+		height: 80vh;
+
 		.video-location {
 			width: 100%;
 			.video-style {
@@ -166,9 +164,6 @@ const getVideo = async () => {
 	.content {
 		.content-list {
 			padding: 6px 6px;
-			.item {
-				font-size: 1rem;
-			}
 		}
 	}
 }
