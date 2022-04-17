@@ -410,6 +410,7 @@ export default {
 		display: flex;
 		justify-content: space-between;
 		height: 80vh;
+
 		.left {
 			width: 80%;
 			height: 100%;
@@ -454,6 +455,8 @@ export default {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+		height: 80vh;
+		overflow: auto;
 		.content {
 			.content-list {
 				padding: 6px 6px;
