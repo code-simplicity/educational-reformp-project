@@ -46,6 +46,7 @@ export default {
 .layout {
 	width: 100%;
 	padding: 16px;
+	background: #f0f0f0;
 	/* height: 100vh; */
 	/* padding: 10px; */
 	/* min-width: 1080px; */

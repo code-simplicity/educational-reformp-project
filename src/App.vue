@@ -12,15 +12,11 @@
 	</div>
 </template>
 
-<script setup>
-//
-</script>
+<script setup></script>
 
 <style>
 .app {
 	width: 100vw;
 	height: 100vh;
-	background: #f0f0f0;
-	min-width: 1200px;
 }
 </style>

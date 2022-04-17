@@ -1,7 +1,6 @@
 #app {
     width: 100vw;
     height: 100vh;
-    background-color: #ffffff;
     letter-spacing: 3px;
     line-height: 1.4;
 }
@@ -56,6 +55,7 @@
 .border-bottom {
     border-bottom: 1px solid #727272;
 }
+
 .border-radius {
     border-radius: 8px;
 }

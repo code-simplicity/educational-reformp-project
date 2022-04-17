@@ -28,6 +28,9 @@ import MianRight from './components/main-right/index.vue'
 // 动画库
 import 'animate.css';
 
+// 粒子动画
+// import Particles from "particles.vue3";
+
 // 创建app实例，vue3的写法
 const app = createApp(App)
 
@@ -38,6 +41,8 @@ app.use(ElementPlus)
 app.use(router)
 
 app.use(store)
+
+// app.use(Particles)
 
 app.component(
     "MianLeft", MianLeft
