@@ -1,0 +1,30 @@
+{
+	"name": "educational-reformp-project",
+	"private": true,
+	"version": "0.1.0",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@xeokit/xeokit-bim-viewer": "^2.4.7-beta-2",
+		"animate.css": "^4.1.1",
+		"axios": "^0.26.1",
+		"core-js": "^3.22.0",
+		"dat.gui": "^0.7.9",
+		"element-plus": "^2.1.9",
+		"nprogress": "^0.2.0",
+		"sass": "^1.50.0",
+		"spark-md5": "^3.0.2",
+		"three": "^0.139.2",
+		"vue": "^3.2.25",
+		"vue-router": "^4.0.14",
+		"vuex": "^4.0.2",
+		"xgplayer": "^2.31.6"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^2.3.1",
+		"vite": "^2.9.2"
+	}
+}
