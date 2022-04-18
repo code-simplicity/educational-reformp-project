@@ -1,10 +1,18 @@
+<!--
+ * @Author: bugdr
+ * @Date: 2022-04-18 19:25:08
+ * @LastEditors: bugdr
+ * @LastEditTime: 2022-04-18 19:33:27
+ * @FilePath: \educational_reformp-project\src\components\bim-model\bim-model.vue
+ * @Description: bim模型组件
+-->
 <template>
 	<canvas id="myCanvas" class="myCanvas"></canvas>
 	<canvas id="myAxisGizmoCanvas"></canvas>
 	<canvas id="myNavCubeCanvas"></canvas>
 	<div id="myDatGuiContainer"></div>
 </template>
-<script setup>
+<script setup name="BimModel">
 import { onMounted, ref, defineProps, onUnmounted } from "vue";
 import {
 	Viewer,
@@ -16,7 +24,7 @@ import {
 	AmbientLight,
 } from "@xeokit/xeokit-sdk";
 import * as dat from "dat.gui";
-const props = defineProps({
+defineProps({
 	// 模型的地址
 	glftUrl: String,
 });

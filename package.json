@@ -4,10 +4,11 @@
 	"version": "0.1.0",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "vite build --mode=production",
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@element-plus/icons-vue": "^1.1.4",
 		"@xeokit/xeokit-bim-viewer": "^2.4.7-beta-2",
 		"animate.css": "^4.1.1",
 		"axios": "^0.26.1",
