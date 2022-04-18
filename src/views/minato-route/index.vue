@@ -11,7 +11,7 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
-					<BimModel :glftUrl="glftUrl" />
+					<BimModel />
 				</MainCenter>
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
@@ -33,7 +33,6 @@ import { useStore } from "vuex";
 import { ElMessage } from "element-plus";
 import Constants from "../../utils/Constants.js";
 import { addUserScore, getUserInfo } from "../../api/service/user";
-import { getBimFindAll } from "../../api/service/bim";
 import { contentFindAll } from "../../api/service/content";
 import BimModel from "../../components/bim-model/bim-model.vue";
 
@@ -78,29 +77,13 @@ const userAddScore = async () => {
 		}
 	}
 };
-
-// 加载模型所需要的场景
-// 模型
-let glftUrl = ref("");
-// 获取一个视频
-const getBimAll = async () => {
-	const params = { ...page.value };
-	const result = await getBimFindAll(params);
-	if (result.code === Constants.status.SUCCESS) {
-		glftUrl = result.data.list[0].url;
-		userAddScore();
-	} else {
-		ElMessage.error(result.msg);
-	}
-};
-getBimAll();
+userAddScore();
 </script>
 
 <style lang="scss" scoped>
 .minato-route {
 	.legend {
 		height: 80vh;
-
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;
@@ -112,35 +95,11 @@ getBimAll();
 			margin-top: 6px;
 		}
 	}
-	.video {
-		width: 100%;
-		background: #000000;
-		margin: 0 auto;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		height: 80vh;
 
-		.video-location {
-			width: 100%;
-			.video-style {
-				width: 100%;
-				height: 100%;
-			}
-		}
-	}
 	.content {
 		.content-list {
 			padding: 6px 6px;
 		}
-	}
-	.three-box {
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		overflow: auto;
 	}
 }
 </style>

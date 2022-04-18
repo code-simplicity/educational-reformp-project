@@ -19,7 +19,7 @@ export default defineConfig({
     alias,
   },
   server: {
-    port: 3003,
+    port: 3000,
     host: "0.0.0.0",
     open: true,
   },

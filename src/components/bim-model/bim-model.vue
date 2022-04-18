@@ -7,13 +7,15 @@
  * @Description: bim模型组件
 -->
 <template>
-	<canvas id="myCanvas" class="myCanvas"></canvas>
-	<canvas id="myAxisGizmoCanvas"></canvas>
-	<canvas id="myNavCubeCanvas"></canvas>
-	<div id="myDatGuiContainer"></div>
+	<div class="bim-container">
+		<canvas id="myCanvas"></canvas>
+		<canvas id="myAxisGizmoCanvas"></canvas>
+		<canvas id="myNavCubeCanvas"></canvas>
+		<div id="myDatGuiContainer"></div>
+	</div>
 </template>
 <script setup name="BimModel">
-import { onMounted, ref, defineProps, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
 import {
 	Viewer,
 	GLTFLoaderPlugin,
@@ -24,15 +26,32 @@ import {
 	AmbientLight,
 } from "@xeokit/xeokit-sdk";
 import * as dat from "dat.gui";
-defineProps({
-	// 模型的地址
-	glftUrl: String,
+import { getBimFindAll } from "../../api/service/bim";
+import Constants from "../../utils/Constants.js";
+const page = ref({
+	pageNum: 1,
+	pageSize: 20,
 });
+
+// 获取bim模型
+const getBimAll = async () => {
+	const params = { ...page.value };
+	const result = await getBimFindAll(params);
+	if (result.code === Constants.status.SUCCESS) {
+		// 模型地址
+		const gltfUrl = result.data.list[0].url;
+		gltfModelInit(gltfUrl);
+	} else {
+		ElMessage.error(result.msg);
+	}
+};
+getBimAll();
 // 放大初始值
 let glftZoom = ref(0);
+let model = null;
 
 // 模型初始化方法
-const gltfModelInit = () => {
+const gltfModelInit = (gltfUrl) => {
 	// 首先定义viewr视图,传入dom的id
 	const viewer = new Viewer({
 		canvasId: "myCanvas", // dom的id
@@ -121,9 +140,9 @@ const gltfModelInit = () => {
 	});
 	// 缩放比例值
 	// 设置模型，并且加载模型
-	let model = gltfLoader.load({
+	model = gltfLoader.load({
 		id: "myModel",
-		src: "https://bugdr-project-1305152720.cos.ap-beijing.myqcloud.com/helicopter.gltf",
+		src: gltfUrl,
 		// 边缘化
 		edges: true,
 		// 表现化
@@ -159,50 +178,49 @@ const gltfModelInit = () => {
 		color: [0.9, 0.9, 1.0],
 		intensity: 0.8, // 强度
 	});
-	// 销毁模型
-	// gltfModelDestroy(model);
 };
 
-// dom节点生成之后再调用
-onMounted(() => {
-	gltfModelInit();
+// 销毁模型
+onUnmounted(() => {
+	model.destroy();
 });
-
-// 销毁
-onUnmounted(() => {});
 </script>
 <style lang="scss" scoped>
-.myCanvas {
-	position: absolute;
-	z-index: 100;
-	left: 0;
-	top: 0;
+.bim-container {
+	height: 80vh;
 	width: 100%;
-	height: 100%;
-	overflow: auto;
-	background: lightblue;
-	background-image: linear-gradient(lightblue, white);
-}
-#myAxisGizmoCanvas {
-	position: absolute;
-	width: 250px;
-	height: 250px;
-	bottom: 100px;
-	left: 50px;
-	z-index: 200000;
-}
-#myNavCubeCanvas {
-	position: absolute;
-	width: 250px;
-	height: 250px;
-	bottom: 100px;
-	right: 50px;
-	z-index: 200000;
-}
-.myZoom {
-	position: absolute;
-	top: 50px;
-	right: 50px;
-	z-index: 200000;
+	#myCanvas {
+		position: absolute;
+		z-index: 100000;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		background: lightblue;
+		background-image: linear-gradient(lightblue, white);
+	}
+	#myAxisGizmoCanvas {
+		position: absolute;
+		width: 140px;
+		height: 140px;
+		bottom: 20px;
+		left: 20px;
+		z-index: 200000;
+	}
+	#myNavCubeCanvas {
+		position: absolute;
+		width: 140px;
+		height: 140px;
+		bottom: 20px;
+		right: 20px;
+		z-index: 200000;
+	}
+	.myZoom {
+		position: absolute;
+		top: 50px;
+		right: 50px;
+		z-index: 200000;
+	}
 }
 </style>
