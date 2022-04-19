@@ -25,6 +25,7 @@ import {
 	NavCubePlugin,
 	DirLight,
 	AmbientLight,
+	WebIFCLoaderPlugin,
 } from "@xeokit/xeokit-sdk";
 import * as dat from "dat.gui";
 import { getBimFindAll } from "../../api/service/bim";
@@ -136,7 +137,9 @@ const gltfModelInit = (gltfUrl) => {
 	window.viewer = viewer;
 
 	// 加载器插件
-	const gltfLoader = new GLTFLoaderPlugin(viewer);
+	const gltfLoader = new WebIFCLoaderPlugin(viewer, {
+		wasmPath: "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/",
+	});
 
 	// 坐标轴
 	new AxisGizmoPlugin(viewer, {
