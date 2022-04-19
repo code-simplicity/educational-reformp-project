@@ -7,7 +7,7 @@
  * @Description: bim模型组件
 -->
 <template>
-	<div class="bim-container" ref="screenfullRef">
+	<div class="bim-container" ref="screenfullRef" v-loading="loadingModel">
 		<canvas id="myCanvas"></canvas>
 		<canvas id="myAxisGizmoCanvas"></canvas>
 		<canvas id="myNavCubeCanvas"></canvas>
@@ -37,6 +37,8 @@ const page = ref({
 });
 // 父组件全屏的容器
 const screenfullRef = ref();
+// 模型正在加载
+let loadingModel = ref(true);
 
 // 获取bim模型
 const getBimAll = async () => {
@@ -45,7 +47,7 @@ const getBimAll = async () => {
 	if (result.code === Constants.status.SUCCESS) {
 		// 模型地址
 		const gltfUrl = result.data.list[0].url;
-		gltfModelInit(gltfUrl);
+		await gltfModelInit(gltfUrl);
 	} else {
 		ElMessage.error(result.msg);
 	}
@@ -57,6 +59,8 @@ let model = null;
 
 // 模型初始化方法
 const gltfModelInit = (gltfUrl) => {
+	// 正在加载
+	loadingModel.value = true;
 	// 首先定义viewr视图,传入dom的id
 	const viewer = new Viewer({
 		canvasId: "myCanvas", // dom的id
@@ -161,6 +165,7 @@ const gltfModelInit = (gltfUrl) => {
 		sao: true, // 材质
 		smoothNormals: true, // 平滑法线
 	});
+	loadingModel.value = false;
 
 	// 加载模型
 	model.on("loaded", () => {
@@ -168,6 +173,7 @@ const gltfModelInit = (gltfUrl) => {
 		// 相机飞行
 		viewer.cameraFlight.flyTo(model);
 		viewer.cameraControl.on("picked");
+		// 加载成功
 	});
 	// 模型场景化
 	model = viewer.scene.models["myModel"];
