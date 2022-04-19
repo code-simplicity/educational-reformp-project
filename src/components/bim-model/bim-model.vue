@@ -2,16 +2,17 @@
  * @Author: bugdr
  * @Date: 2022-04-18 19:25:08
  * @LastEditors: bugdr
- * @LastEditTime: 2022-04-18 19:33:27
- * @FilePath: \educational_reformp-project\src\components\bim-model\bim-model.vue
+ * @LastEditTime: 2022-04-19 09:12:50
+ * @FilePath: \educational-reformp-project\src\components\bim-model\bim-model.vue
  * @Description: bim模型组件
 -->
 <template>
-	<div class="bim-container">
+	<div class="bim-container" ref="screenfullRef">
 		<canvas id="myCanvas"></canvas>
 		<canvas id="myAxisGizmoCanvas"></canvas>
 		<canvas id="myNavCubeCanvas"></canvas>
 		<div id="myDatGuiContainer"></div>
+		<ScreenFull :screenfullRef="screenfullRef" />
 	</div>
 </template>
 <script setup name="BimModel">
@@ -28,10 +29,13 @@ import {
 import * as dat from "dat.gui";
 import { getBimFindAll } from "../../api/service/bim";
 import Constants from "../../utils/Constants.js";
+import ScreenFull from "../screenfull/index.vue";
 const page = ref({
 	pageNum: 1,
 	pageSize: 20,
 });
+// 父组件全屏的容器
+const screenfullRef = ref();
 
 // 获取bim模型
 const getBimAll = async () => {
@@ -151,7 +155,8 @@ const gltfModelInit = (gltfUrl) => {
 		scale: [0.5, 0.5, 0.5], // 缩放
 		position: [glftZoom.value * 100, 0, 0], // 放大
 		pbr: true, // 加载多个模型
-		sao: true, // 加载多个模型
+		sao: true, // 材质
+		smoothNormals: true, // 平滑法线
 	});
 
 	// 加载模型
@@ -159,9 +164,7 @@ const gltfModelInit = (gltfUrl) => {
 		// 设置元模型
 		// 相机飞行
 		viewer.cameraFlight.flyTo(model);
-		viewer.cameraControl.on("picked", function (e) {
-			console.log(e.entity.id);
-		});
+		viewer.cameraControl.on("picked");
 	});
 	// 模型场景化
 	model = viewer.scene.models["myModel"];
@@ -198,7 +201,7 @@ onUnmounted(() => {
 		height: 100%;
 		overflow: auto;
 		background: lightblue;
-		background-image: linear-gradient(lightblue, white);
+		background-image: linear-gradient(rgb(123, 191, 213), rgb(204, 255, 222));
 	}
 	#myAxisGizmoCanvas {
 		position: absolute;

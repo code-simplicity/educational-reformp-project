@@ -27,6 +27,9 @@
 						<span class="id">{{ userInfo.id }}</span>
 						<span class="user-name">{{ userInfo.user_name }}</span>
 					</div>
+					<div class="screenfull-style">
+						<ScreenFull />
+					</div>
 					<div class="container flex-nowrap flex" v-if="tokenData">
 						<el-dropdown @command="handleCommand">
 							<div class="botton">
@@ -139,6 +142,7 @@ export default {
 <script setup>
 import { ref } from "vue";
 import { homeItem } from "../../json/homeItem";
+import ScreenFull from "../screenfull/index.vue";
 
 const homeItems = ref([]);
 homeItems.value = homeItem;
@@ -219,6 +223,11 @@ homeItems.value = homeItem;
 				margin-left: 16px;
 			}
 		}
+		.screenfull-style {
+			position: absolute;
+			top: -8px;
+			right: 90px;
+		}
 		.container {
 			font-weight: 600;
 			margin-left: 10px;
@@ -227,15 +236,15 @@ homeItems.value = homeItem;
 				padding: 0 6px;
 
 				.el-icon-right {
-					color: #192eee;
+					color: #d7d8db;
 				}
 				&:active {
 					color: #ffffff;
-					background: rgb(111, 125, 255);
+					background: rgb(255, 223, 182);
 				}
 				&:hover {
 					color: #ffffff;
-					background: rgb(111, 125, 255);
+					background: rgb(27, 27, 27);
 				}
 			}
 		}
@@ -248,7 +257,7 @@ homeItems.value = homeItem;
 				margin-right: 4px;
 			}
 			&:hover {
-				color: #192eee;
+				color: #cfd4ff;
 			}
 		}
 	}

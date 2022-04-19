@@ -1,8 +1,10 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2922284 */
-  src: url('iconfont.woff2?t=1648435719204') format('woff2'),
-       url('iconfont.woff?t=1648435719204') format('woff'),
-       url('iconfont.ttf?t=1648435719204') format('truetype');
+  /* Color fonts */
+  src: 
+       url('iconfont.woff2?t=1650332002289') format('woff2'),
+       url('iconfont.woff?t=1650332002289') format('woff'),
+       url('iconfont.ttf?t=1650332002289') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +13,14 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-quanping:before {
+  content: "\ec13";
+}
+
+.icon-tuichuquanping-02:before {
+  content: "\e636";
 }
 
 .icon-user_info:before {

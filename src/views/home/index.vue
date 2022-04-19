@@ -141,6 +141,7 @@ const userAddScore = async () => {
 		padding: 10px;
 		display: flex;
 		flex-direction: column;
+		overflow: auto;
 		.legend {
 			font-size: 18px;
 			font-weight: 600;
