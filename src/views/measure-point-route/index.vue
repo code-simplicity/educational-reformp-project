@@ -81,7 +81,7 @@
 												<Download />
 											</el-icon>
 										</template>
-										本工况数据下载</el-button
+										工况数据下载</el-button
 									>
 								</el-col>
 							</el-row>

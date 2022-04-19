@@ -182,7 +182,7 @@ homeItems.value = homeItem;
 		justify-content: space-around;
 		background: #ffffff;
 		margin-bottom: 6px;
-
+		font-size: 18px;
 		.active-class {
 			color: #000000;
 			text-decoration: none;
