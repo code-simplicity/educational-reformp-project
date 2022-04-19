@@ -1,8 +1,7 @@
 #app {
-    width: 100vw;
-    height: 100vh;
     letter-spacing: 3px;
     line-height: 1.4;
+
 }
 
 .flex {
@@ -60,8 +59,24 @@
     border-radius: 8px;
 }
 
-@media screen and (max-width: 1200px) {
-    #app {
-        overflow-y: scroll;
+
+@media screen and (max-width: 1400px) {
+    html, body, #app {
+        overflow: auto;
+        font-size: 12px;
+    }
+}
+
+@media screen and (min-width: 1980px) {
+    html, body, #app {
+        overflow: hidden;
+        font-size: 18px;
+    }
+}
+
+@media screen and (min-width: 2400px) {
+    html, body, #app {
+        overflow: hidden;
+        font-size: 22px;
     }
 }

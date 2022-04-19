@@ -317,7 +317,7 @@ const submitForm = async (formEl) => {
 		}
 		.user-form {
 			padding: 16px;
-			:v-deep .el-form-item__label {
+			::v-deep .el-form-item__label {
 				color: #fff;
 			}
 			.el-select {

@@ -46,7 +46,7 @@ userForm.value = userInfo.value;
 	position: relative;
 	color: #fff;
 	.container {
-		:v-deep .el-form-item__label {
+		::v-deep .el-form-item__label {
 			color: #fff;
 		}
 		.user-footer {

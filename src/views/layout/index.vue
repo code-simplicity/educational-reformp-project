@@ -9,7 +9,7 @@
 <template>
 	<div class="layout">
 		<MainHeader></MainHeader>
-		<router-view v-slot="{ Component }">
+		<router-view v-slot="{ Component }" class="router-style">
 			<keep-alive>
 				<component
 					:is="Component"
@@ -44,11 +44,14 @@ export default {
 
 <style lang="scss" scoped>
 .layout {
+	height: 100%;
 	width: 100%;
-	padding: 16px;
-	background: #f0f0f0;
+	padding: 12px;
+	.router-style {
+		height: 80%;
+	}
 	.footer {
-		margin-top: 0.5rem;
+		margin-top: 10px;
 	}
 }
 </style>

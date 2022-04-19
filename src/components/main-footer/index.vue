@@ -22,15 +22,12 @@ export default {
 <style lang="scss" scoped>
 .main-footer {
 	background-color: #ffffff;
-
 	.container {
 		padding: 6px 0;
 		.version {
-			font-size: 1rem;
 			cursor: pointer;
 		}
 		.maintain {
-			font-size: 1rem;
 			cursor: pointer;
 		}
 	}

@@ -143,7 +143,7 @@ const submitForm = async (formEl) => {
 	color: #fff;
 	.container {
 		margin-bottom: 16px;
-		:v-deep .el-form-item__label {
+		::v-deep .el-form-item__label {
 			color: #fff;
 		}
 	}

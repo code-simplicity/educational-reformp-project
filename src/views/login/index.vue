@@ -172,7 +172,7 @@ const registerUser = () => {
 <style lang="scss" scoped>
 .login {
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -202,7 +202,7 @@ const registerUser = () => {
 					justify-content: space-between;
 					width: 100%;
 				}
-				:v-deep .el-form-item__label {
+				::v-deep .el-form-item__label {
 					color: #fff;
 				}
 			}

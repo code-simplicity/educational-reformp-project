@@ -378,7 +378,7 @@ export default {
 			display: flex;
 			flex-direction: column;
 			margin-left: 40px;
-			:v-deep .el-radio__label {
+			::v-deep .el-radio__label {
 				font-size: 17px;
 				padding-left: 8px;
 			}

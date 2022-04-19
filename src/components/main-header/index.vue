@@ -150,6 +150,7 @@ homeItems.value = homeItem;
 
 <style lang="scss" scoped>
 .main-header {
+	width: 100%;
 	.left {
 		height: 40px;
 		display: flex;
@@ -157,10 +158,10 @@ homeItems.value = homeItem;
 		justify-content: center;
 		background: #ffffff;
 		margin-bottom: 6px;
+		font-size: 22px;
 
 		.title {
 			text-align: center;
-			font-size: 22px;
 			.active-class {
 				color: #000000;
 				text-decoration: none;
@@ -189,7 +190,6 @@ homeItems.value = homeItem;
 			box-shadow: -1px 1px 5px rgb(0, 0, 0);
 			cursor: pointer;
 			padding: 0 18px;
-			font-size: 18px;
 			&.router-link-active {
 				color: #ffffff;
 				background: rgb(111, 125, 255);
