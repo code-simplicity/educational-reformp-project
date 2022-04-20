@@ -97,6 +97,8 @@ onBeforeMount(() => {
 }
 
 .container {
+	height: 100vh;
+	width: 100vw;
 	position: relative;
 	.user-header {
 		color: #fff;
@@ -109,8 +111,9 @@ onBeforeMount(() => {
 		border-bottom: 1px solid #ffffff;
 		.user-header-left {
 			display: flex;
+			align-items: center;
 			.to-home {
-				margin-left: 40px;
+				margin: 0 6px 0 36px;
 				font-size: 18px;
 				border-bottom: 2px solid #fff;
 				.active-class {

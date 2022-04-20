@@ -11,11 +11,11 @@
 				</div></el-col
 			>
 			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12"
-				><div class="center border">
+				><div class="center border router-link-size">
 					<router-link
 						v-for="(item, index) in homeItem"
 						:key="index"
-						class="active-class"
+						class="active-class router-link-class"
 						:to="{ path: item.path }"
 						>{{ item.name }}</router-link
 					>
@@ -23,7 +23,7 @@
 			>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6"
 				><div class="right border">
-					<div class="user-info" v-if="tokenData">
+					<div class="user-info router-link-size" v-if="tokenData">
 						<span class="id">{{ userInfo.id }}</span>
 						<span class="user-name">{{ userInfo.user_name }}</span>
 					</div>
@@ -176,20 +176,19 @@ homeItems.value = homeItem;
 		}
 	}
 	.center {
-		height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
 		background: #ffffff;
+		height: 40px;
 		margin-bottom: 6px;
-		font-size: 18px;
+
 		.active-class {
 			color: #000000;
 			text-decoration: none;
 			text-align: center;
 			box-shadow: -1px 1px 5px rgb(0, 0, 0);
 			cursor: pointer;
-			padding: 0 18px;
 			&.router-link-active {
 				color: #ffffff;
 				background: rgb(111, 125, 255);
@@ -215,12 +214,11 @@ homeItems.value = homeItem;
 			justify-content: space-between;
 			flex-wrap: wrap;
 			align-items: center;
-			padding: 6px;
-			.id {
-				font-size: 17px;
-			}
+			margin-left: 6px;
+			color: rgb(46, 94, 255);
+
 			.user-name {
-				margin-left: 16px;
+				margin-left: 12px;
 			}
 		}
 		.screenfull-style {

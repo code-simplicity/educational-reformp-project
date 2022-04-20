@@ -1,7 +1,6 @@
 #app {
     letter-spacing: 3px;
     line-height: 1.4;
-
 }
 
 .flex {
@@ -59,11 +58,27 @@
     border-radius: 8px;
 }
 
+/* 这里是导航栏的样式 */
+.router-link-size {
+    font-size: 18px;
+}
+
+.router-link-class {
+    padding: 0 18px;
+}
 
 @media screen and (max-width: 1400px) {
     html, body, #app {
         overflow: auto;
         font-size: 12px;
+    }
+
+    .router-link-size {
+        font-size: 12px;
+    }
+
+    .router-link-class {
+        padding: 0 12px;
     }
 }
 
@@ -78,5 +93,13 @@
     html, body, #app {
         overflow: hidden;
         font-size: 22px;
+    }
+
+    .router-link-size {
+        font-size: 22px;
+    }
+
+    .router-link-class {
+        padding: 0 22px;
     }
 }

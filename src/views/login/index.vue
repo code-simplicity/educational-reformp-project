@@ -22,6 +22,7 @@
 								autofocus="true"
 								placeholder="请输入学号"
 								clearable
+								@keyup.enter="submitForm(ruleFormRef)"
 							>
 								<template #prefix>
 									<el-icon class="el-input__icon"
@@ -35,6 +36,7 @@
 								type="password"
 								placeholder="请输入密码"
 								clearable
+								@keyup.enter="submitForm(ruleFormRef)"
 							>
 								<template #prefix>
 									<el-icon class="el-input__icon"
@@ -44,14 +46,13 @@
 						</el-form-item>
 						<el-form-item label="验证码" prop="captcha">
 							<el-row :gutter="12">
-								<el-col :span="15"
+								<el-col :span="16"
 									><el-input
 										v-model="ruleForm.captcha"
 										type="text"
 										placeholder="请输入图灵验证码"
 										autocomplete="off"
-										clearable
-										@click="submitForm(ruleFormRef)"
+										@keyup.enter="submitForm(ruleFormRef)"
 									>
 										<template #prefix>
 											<el-icon class="el-input__icon"
@@ -69,10 +70,13 @@
 						</el-form-item>
 						<el-form-item>
 							<div class="login-footer">
-								<el-button type="primary" @click="submitForm(ruleFormRef)"
+								<el-button
+									type="primary"
+									size="large"
+									@click="submitForm(ruleFormRef)"
 									>登录</el-button
 								>
-								<el-button @click="registerUser">注册</el-button>
+								<el-button size="large" @click="registerUser">注册</el-button>
 							</div>
 						</el-form-item>
 					</el-form>
@@ -147,6 +151,7 @@ const submitForm = async (formEl) => {
 				captcha: ruleForm.captcha,
 			};
 			store.dispatch("user/login", params).then((res) => {
+				console.log("res :>> ", res);
 				if (res.code === Constants.status.SUCCESS) {
 					router.replace({
 						path: "/home",

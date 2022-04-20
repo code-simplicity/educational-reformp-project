@@ -48,10 +48,10 @@ export default {
 	methods: {
 		init: function () {
 			const SEPARATION = 100;
-			const SCREEN_WIDTH = window.innerWidth;
-			const SCREEN_HEIGHT = window.innerHeight;
+			const SCREEN_WIDTH = window.clientWidth;
+			const SCREEN_HEIGHT = window.clientHeight;
 			const container = document.createElement("div");
-			windowHalfX = window.innerWidth / 2;
+			windowHalfX = window.clientHeight / 2;
 			container.style.position = "relative";
 			container.style.top = `${this.top}px`;
 			container.style.height = `${SCREEN_HEIGHT - this.top}px`;

@@ -73,12 +73,12 @@ const actions = {
       ElMessage.success({
         message: result.msg
       });
-      return result
     } else {
       ElMessage.error({
         message: result.msg
       })
     }
+    return result
   },
 
   async getUserInfoById({

@@ -1,5 +1,6 @@
 <template>
 	<div class="user-register animate__animated animate__zoomInDown">
+		<Particles />
 		<div class="user-container">
 			<h1 class="title">用户注册</h1>
 			<div class="user-form">
@@ -8,10 +9,9 @@
 					:rules="rulesForm"
 					label-width="120px"
 					:model="userForm"
-					label-suffix=":"
 				>
 					<el-row :gutter="12">
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="学号" prop="id">
 								<el-input
 									v-model="userForm.id"
@@ -21,7 +21,7 @@
 								></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="用户名" prop="user_name">
 								<el-input
 									v-model="userForm.user_name"
@@ -33,7 +33,7 @@
 						</el-col>
 					</el-row>
 					<el-row :gutter="12">
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="密码" prop="password">
 								<el-input
 									v-model="userForm.password"
@@ -45,7 +45,7 @@
 								></el-input>
 							</el-form-item>
 						</el-col>
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="性别" prop="sex">
 								<el-select
 									v-model="userForm.sex"
@@ -60,10 +60,10 @@
 						</el-col>
 					</el-row>
 					<el-row :gutter="12">
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="邮箱" prop="email">
-								<el-row :gutter="12">
-									<el-col :span="14">
+								<el-row :gutter="6">
+									<el-col :span="17">
 										<el-input
 											v-model="userForm.email"
 											placeholder="请输入邮箱吧"
@@ -71,7 +71,7 @@
 											@blur="checkEmailValue"
 										></el-input>
 									</el-col>
-									<el-col :span="10">
+									<el-col :span="6">
 										<el-button
 											:disabled="isEmailText"
 											type="primary"
@@ -82,7 +82,7 @@
 								</el-row>
 							</el-form-item>
 						</el-col>
-						<el-col :span="12">
+						<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 							<el-form-item label="邮箱验证码" prop="emailCode">
 								<el-input
 									v-model="userForm.emailCode"
@@ -95,15 +95,15 @@
 					</el-row>
 					<el-form-item label="图灵验证码" prop="captcha">
 						<el-row :gutter="6">
-							<el-col :span="13">
+							<el-col :span="11">
 								<el-input
 									v-model="userForm.captcha"
-									placeholder="请输入图灵验证码"
+									placeholder="图灵验证码"
 									@blur="checkValue"
 									clearable
 								></el-input>
 							</el-col>
-							<el-col :span="10">
+							<el-col :span="2">
 								<div v-html="captchaUrl" @click="updateCaptchaCode"></div>
 							</el-col>
 						</el-row>
@@ -140,7 +140,7 @@ import { sendCaptcha, addUser, sendMailCode } from "@/api/service/user";
 import Constants from "@/utils/Constants.js";
 import { ElMessage } from "element-plus";
 import SparkMD5 from "spark-md5";
-
+import Particles from "../../../components/particles/index.vue";
 const router = useRouter();
 const userForm = reactive({
 	id: "",
@@ -212,7 +212,7 @@ const doLogin = () => {
 		name: "login",
 	});
 };
-const sendEmailTxtBtn = ref("发送验证码");
+const sendEmailTxtBtn = ref("发送");
 const isEmailText = ref(true);
 // 检验邮箱是否输入成功
 const checkEmailValue = () => {
@@ -227,7 +227,7 @@ const countDown = () => {
 		time--;
 		if (time < 0) {
 			clearInterval(sendTime);
-			sendEmailTxtBtn.value = `发送验证码`;
+			sendEmailTxtBtn.value = `发送`;
 			isEmailText.value = false;
 		} else {
 			sendEmailTxtBtn.value = `${time}s`;
@@ -301,19 +301,20 @@ const submitForm = async (formEl) => {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	flex-direction: column;
 	width: 100%;
-	height: 100%;
+	height: 100vh;
 
 	.user-container {
-		box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-		padding: 16px;
+		box-shadow: 0 0 50px rgba(29, 29, 29, 0.732);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		color: #fff;
+		z-index: 1;
+		padding: 16px;
+
 		.title {
 			margin-bottom: 16px;
-			color: #fff;
 		}
 		.user-form {
 			padding: 16px;
