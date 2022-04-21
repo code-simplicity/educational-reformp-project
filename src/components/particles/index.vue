@@ -46,12 +46,12 @@ export default {
 		this.animate();
 	},
 	methods: {
-		init: function () {
+		init() {
 			const SEPARATION = 100;
-			const SCREEN_WIDTH = window.clientWidth;
-			const SCREEN_HEIGHT = window.clientHeight;
+			const SCREEN_WIDTH = window.innerWidth;
+			const SCREEN_HEIGHT = window.innerHeight;
 			const container = document.createElement("div");
-			windowHalfX = window.clientHeight / 2;
+			windowHalfX = window.innerHeight / 2;
 			container.style.position = "relative";
 			container.style.top = `${this.top}px`;
 			container.style.height = `${SCREEN_HEIGHT - this.top}px`;
@@ -134,7 +134,7 @@ export default {
 				passive: false,
 			});
 		},
-		render: function () {
+		render() {
 			camera.position.x += (mouseX - camera.position.x) * 0.05;
 			camera.position.y = 400;
 			camera.lookAt(scene.position);
@@ -161,14 +161,14 @@ export default {
 			renderer.render(scene, camera);
 			count += 0.1;
 		},
-		animate: function () {
+		animate() {
 			requestAnimationFrame(this.animate);
 			this.render();
 		},
-		onDocumentMouseMove: function (event) {
+		onDocumentMouseMove(event) {
 			mouseX = event.clientX - windowHalfX;
 		},
-		onDocumentTouchStart: function (event) {
+		onDocumentTouchStart(event) {
 			if (event.touches.length === 1) {
 				mouseX = event.touches[0].pageX - windowHalfX;
 			}
@@ -179,7 +179,7 @@ export default {
 				mouseX = event.touches[0].pageX - windowHalfX;
 			}
 		},
-		onWindowResize: function () {
+		onWindowResize() {
 			windowHalfX = window.innerWidth / 2;
 			camera.aspect = window.innerWidth / window.innerHeight;
 			camera.updateProjectionMatrix();
@@ -192,11 +192,12 @@ export default {
 <style lang="scss" scoped>
 .point-style {
 	background-color: #141a48;
-	height: 100vh;
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
 	z-index: 0;
 }
 </style>
