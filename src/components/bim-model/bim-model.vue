@@ -2,7 +2,7 @@
  * @Author: bugdr
  * @Date: 2022-04-18 19:25:08
  * @LastEditors: bugdr
- * @LastEditTime: 2022-04-19 09:12:50
+ * @LastEditTime: 2022-04-24 09:34:48
  * @FilePath: \educational-reformp-project\src\components\bim-model\bim-model.vue
  * @Description: bim模型组件
 -->
@@ -141,9 +141,11 @@ const gltfModelInit = (gltfUrl) => {
 	window.viewer = viewer;
 
 	// 加载器插件
-	const gltfLoader = new WebIFCLoaderPlugin(viewer, {
-		wasmPath: "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/",
-	});
+	// const gltfLoader = new WebIFCLoaderPlugin(viewer, {
+	// 	wasmPath: "https://cdn.jsdelivr.net/npm/@xeokit/xeokit-sdk/dist/",
+	// });
+
+	const gltfLoader = new GLTFLoaderPlugin(viewer);
 
 	// 坐标轴
 	new AxisGizmoPlugin(viewer, {

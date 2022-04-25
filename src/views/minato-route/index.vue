@@ -11,7 +11,8 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12">
 				<MainCenter>
-					<BimModel />
+					<!-- <BimModel /> -->
+					<GltfModel />
 				</MainCenter>
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
@@ -35,6 +36,7 @@ import Constants from "../../utils/Constants.js";
 import { addUserScore, getUserInfo } from "../../api/service/user";
 import { contentFindAll } from "../../api/service/content";
 import BimModel from "../../components/bim-model/bim-model.vue";
+import GltfModel from "../../components/gltf-model/gltf-model.vue";
 
 const store = useStore();
 // 获取用户信息
