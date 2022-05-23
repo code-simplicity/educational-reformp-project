@@ -135,11 +135,11 @@ export default {
 			this.getVideoSearch(this.queryObj);
 		} else {
 			this.water_level = "极端高水位";
-			this.wave_direction = "NW";
+			this.wave_direction = "SW";
 			this.embank_ment = "无堤";
 			const params = {
 				water_level: "极端高水位",
-				wave_direction: "NW",
+				wave_direction: "SW",
 				embank_ment: "无堤",
 			};
 			this.getVideoSearch(params);

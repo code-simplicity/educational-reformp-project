@@ -97,7 +97,7 @@ const imageUrl = ref("");
 const radioList = ref([]);
 // 选择框的值,分别是水位，波浪方向，堤坝布置
 const water_level = ref("极端高水位");
-const wave_direction = ref("NW");
+const wave_direction = ref("SW");
 const embank_ment = ref("无堤");
 
 // 获取港口地图

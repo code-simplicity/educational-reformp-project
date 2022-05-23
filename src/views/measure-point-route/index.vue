@@ -191,7 +191,7 @@ export default {
 			this.getPortPointMapSearch(queryObj);
 		} else {
 			this.water_level = "极端高水位";
-			this.wave_direction = "NW";
+			this.wave_direction = "SW";
 			this.embank_ment = "无堤";
 			const params = {
 				water_level: this.water_level,
