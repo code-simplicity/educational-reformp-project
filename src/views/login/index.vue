@@ -1,6 +1,5 @@
 <template>
 	<div class="login">
-		<Particles />
 		<div class="login-container animate__animated animate__zoomInDown">
 			<div class="title">欢迎登陆水运工程仿真实验系统</div>
 			<div class="login-box order">
@@ -181,6 +180,9 @@ const registerUser = () => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-image: url("../../assets/images/bg.jpg");
 	.login-container {
 		box-shadow: 0 0 50px rgba(29, 29, 29, 0.732);
 		padding: 50px 35px;
@@ -189,7 +191,7 @@ const registerUser = () => {
 		align-items: center;
 		align-content: center;
 		justify-content: center;
-		color: #fff;
+		background: rgb(250, 250, 250);
 		.title {
 			font-size: 30px;
 			margin-bottom: 20px;
@@ -206,9 +208,6 @@ const registerUser = () => {
 					align-items: center;
 					justify-content: space-between;
 					width: 100%;
-				}
-				::v-deep .el-form-item__label {
-					color: #fff;
 				}
 			}
 		}

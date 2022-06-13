@@ -42,12 +42,11 @@ userForm.value = userInfo.value;
 <style lang="scss" scoped>
 .user-info-box {
 	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+	background: rgb(188, 188, 188);
 	padding: 16px 40px;
 	position: relative;
-	color: #fff;
 	.container {
 		::v-deep .el-form-item__label {
-			color: #fff;
 		}
 		.user-footer {
 			margin-top: 40px;

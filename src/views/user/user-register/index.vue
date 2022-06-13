@@ -1,6 +1,5 @@
 <template>
 	<div class="user-register animate__animated animate__zoomInDown">
-		<Particles />
 		<div class="user-container">
 			<h1 class="title">用户注册</h1>
 			<div class="user-form">
@@ -303,9 +302,14 @@ const submitForm = async (formEl) => {
 	align-items: center;
 	width: 100%;
 	height: 100vh;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-image: url("../../../assets/images/bg.jpg");
 
 	.user-container {
 		box-shadow: 0 0 50px rgba(29, 29, 29, 0.732);
+		background: rgb(64, 64, 64);
+
 		display: flex;
 		flex-direction: column;
 		align-items: center;

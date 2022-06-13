@@ -114,7 +114,7 @@ export default {
 					break;
 				}
 				case "toCenter": {
-					const url = "http://101.42.107.166/admin/#/dashboard";
+					const url = "http://106.13.233.140/admin/#/dashboard";
 					window.open(url, "_blank");
 					break;
 				}

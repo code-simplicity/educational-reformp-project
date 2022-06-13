@@ -140,11 +140,11 @@ const submitForm = async (formEl) => {
 	position: relative;
 	display: flex;
 	flex-direction: column;
-	color: #fff;
+	background: rgb(188, 188, 188);
+
 	.container {
 		margin-bottom: 16px;
 		::v-deep .el-form-item__label {
-			color: #fff;
 		}
 	}
 	.user-footer {

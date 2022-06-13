@@ -2,14 +2,12 @@
  * @Author: bugdr
  * @Date: 2022-03-27 11:45:29
  * @LastEditors: bugdr
- * @LastEditTime: 2022-03-28 09:46:10
- * @FilePath: \educational_reformp-project\src\views\user\index.vue
+ * @LastEditTime: 2022-06-07 23:20:56
+ * @FilePath: \educational-reformp-project\src\views\user\index.vue
  * @Description: 
 -->
 <template>
 	<el-container class="container">
-		<Particles></Particles>
-
 		<el-header class="user-header">
 			<div class="user-header-left">
 				<h1>水运仿真平台用户管理中心</h1>
@@ -100,6 +98,9 @@ onBeforeMount(() => {
 	height: 100vh;
 	width: 100vw;
 	position: relative;
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	background-image: url("../../assets/images/bg.jpg");
 	.user-header {
 		color: #fff;
 		display: flex;
@@ -147,17 +148,19 @@ onBeforeMount(() => {
 			height: 400px;
 			.el-menu {
 				background-color: #ffffff;
+
 				.el-menu-item {
-					color: #000000;
+					color: #fff;
+
 					&.is-active {
 						color: #ffffff;
-						background-color: #3a3a3a;
+						background-color: #67658a;
 					}
 				}
 			}
 			.el-menu-vertical {
 				box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-				background-color: rgba(255, 255, 255, 0.8);
+				background-color: rgba(44, 44, 44, 0.8);
 				.menu-name {
 					margin-left: 8px;
 				}
