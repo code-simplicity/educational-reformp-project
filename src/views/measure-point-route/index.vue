@@ -93,7 +93,7 @@
 				<MianRight>
 					<transition name="slide">
 						<div class="right-box">
-							<div class="content border-bottom">
+							<div class="content border-bottom" v-if="content">
 								<div class="content-list">
 									<p class="item">{{ content }}</p>
 								</div>
@@ -409,7 +409,7 @@ export default {
 	.image {
 		display: flex;
 		justify-content: space-between;
-		height: 80vh;
+		height: 100%;
 
 		.left {
 			width: 80%;
@@ -455,7 +455,7 @@ export default {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		height: 80vh;
+		height: 100%;
 		overflow: auto;
 		.content {
 			.content-list {

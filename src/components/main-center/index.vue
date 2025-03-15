@@ -1,5 +1,5 @@
 <template>
-	<div class="main-center border animate__animated animate__fadeInDown">
+	<div class="main-center border">
 		<slot />
 	</div>
 </template>
@@ -21,5 +21,6 @@ export default {
 .main-center {
 	height: 100%;
 	background: #ffffff;
+	position: relative;
 }
 </style>

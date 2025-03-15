@@ -1,6 +1,7 @@
 #app {
     letter-spacing: 3px;
     line-height: 1.4;
+    height: 100%;
 }
 
 .flex {
@@ -47,7 +48,8 @@
 }
 
 .border {
-    border: 1px solid #727272;
+    border: 1px solid rgb(228, 228, 228);
+    border-radius: 8px;
 }
 
 .border-bottom {
@@ -64,7 +66,8 @@
 }
 
 .router-link-class {
-    padding: 0 18px;
+    padding: 6px 18px;
+    border-radius: 8px;
 }
 
 @media screen and (max-width: 1400px) {
@@ -78,7 +81,7 @@
     }
 
     .router-link-class {
-        padding: 0 12px;
+        padding: 6px 12px;
     }
 }
 
@@ -100,6 +103,6 @@
     }
 
     .router-link-class {
-        padding: 0 22px;
+        padding: 6px 22px;
     }
 }

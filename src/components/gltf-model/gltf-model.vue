@@ -29,11 +29,11 @@
 				<el-icon v-else class="pauseIcon" size="40px"><video-pause /></el-icon>
 			</div>
 		</div>
-		<ScreenFull :screenfullRef="screenfullRef" />
+		<ScreenFull class="custom-scree-full" :screenfullRef="screenfullRef" />
 	</div>
 </template>
 <script setup name="GltfModel">
-import { onMounted, reactive, ref, toRefs, defineProps } from "vue";
+import { onMounted, reactive, ref, toRefs, defineProps } from 'vue';
 import {
 	Color, // 颜色构造器
 	DirectionalLight, // 平行光
@@ -43,18 +43,18 @@ import {
 	PerspectiveCamera, // 透视相机
 	Scene, // 场景构造器
 	WebGLRenderer, // 使用webGl渲染场景
-} from "three";
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // 对场景进行控制 缩放 平移 旋转 等
-import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js"; // 第一人称
-import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js"; // 3D视觉
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // 用于加载3D模型
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js"; // 用于加载3D模型
-import { VideoPause, VideoPlay } from "@element-plus/icons-vue";
-import Stats from "stats.js"; // 帧率
-import { getBimFindAll } from "../../api/service/bim";
-import Constants from "../../utils/Constants.js";
-import ScreenFull from "../screenfull/index.vue";
+} from 'three';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // 对场景进行控制 缩放 平移 旋转 等
+import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js'; // 第一人称
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'; // 3D视觉
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'; // 用于加载3D模型
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'; // 用于加载3D模型
+import { VideoPause, VideoPlay } from '@element-plus/icons-vue';
+import Stats from 'stats.js'; // 帧率
+import { getBimFindAll } from '../../api/service/bim';
+import Constants from '../../utils/Constants.js';
+import ScreenFull from '../screenfull/index.vue';
 const page = ref({
 	pageNum: 1,
 	pageSize: 20,
@@ -62,7 +62,7 @@ const page = ref({
 // 父组件全屏的容器
 const screenfullRef = ref();
 // 路径
-let gltfUrl = ref("");
+let gltfUrl = ref('');
 // 获取bim模型
 const getBimAll = async () => {
 	const params = { ...page.value };
@@ -116,7 +116,7 @@ const setScene = () => {
 	scene = new Scene();
 	renderer = new WebGLRenderer({ antialias: true });
 	renderer.setSize(innerWidth, innerHeight);
-	document.querySelector(".myCanvas").appendChild(renderer.domElement);
+	document.querySelector('.myCanvas').appendChild(renderer.domElement);
 };
 // 创建相机
 const setCamera = () => {
@@ -137,7 +137,7 @@ const setControls = () => {
 	controls.autoRotate = false; // 是否自动旋转
 	controls.dampingFactor = 0.2; // 阻尼因子
 	controls.rotateSpeed = 0.25; // 手动旋转速度
-	controls.addEventListener("change", render);
+	controls.addEventListener('change', render);
 };
 //返回坐标信息
 const render = () => {
@@ -185,7 +185,7 @@ const updateStats = () => {
 	statsjs = new Stats();
 	//设置统计模式
 	statsjs.setMode(0); // 0: fps, 1: ms
-	document.getElementById("stats-panel").appendChild(statsjs.dom);
+	document.getElementById('stats-panel').appendChild(statsjs.dom);
 };
 
 // 动画
@@ -221,7 +221,7 @@ const init = async () => {
 	setLight();
 	setControls();
 	updateStats();
-	loadRGBELoaderScene("scene/cloudySkyBox.jpg");
+	loadRGBELoaderScene('scene/cloudySkyBox.jpg');
 	animation();
 	const gltf = await getBimAll();
 	// 传入url
@@ -238,9 +238,14 @@ onMounted(() => {
 <style lang="scss" scoped>
 .concatioa {
 	width: 100%;
+	height: 100%;
+	position: relative;
 	#stats-panel {
 		position: absolute;
 		z-index: 9999;
+		div {
+			position: absolute !important;
+		}
 	}
 	#myCanvas {
 		position: absolute;
@@ -253,7 +258,7 @@ onMounted(() => {
 		cursor: pointer;
 	}
 	.maskLoading {
-		position: fixed;
+		position: absolute;
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -262,6 +267,7 @@ onMounted(() => {
 		bottom: 0;
 		right: 0;
 		z-index: 99999;
+		background: #fff;
 
 		.loading {
 			width: 300px;
@@ -303,6 +309,21 @@ onMounted(() => {
 					color: rgb(4, 92, 255);
 				}
 			}
+		}
+	}
+	.custom-scree-full {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		z-index: 999999;
+	}
+}
+</style>
+<style lang="scss">
+.concatioa {
+	#stats-panel {
+		div {
+			position: absolute !important;
 		}
 	}
 }

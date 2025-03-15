@@ -44,10 +44,7 @@ const screenfullChange = () => {
 </script>
 <style lang="scss" scoped>
 .screenfull-container {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	z-index: 999999;
 	cursor: pointer;
+	color: #fff;
 }
 </style>

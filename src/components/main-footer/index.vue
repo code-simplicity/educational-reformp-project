@@ -1,3 +1,11 @@
+<!--
+ * @Author: bugdr
+ * @Date: 2022-04-19 13:08:58
+ * @LastEditors: bugdr
+ * @LastEditTime: 2025-03-15 23:10:15
+ * @FilePath: /educational-reformp-project/src/components/main-footer/index.vue
+ * @Description: 
+-->
 <template>
 	<div class="main-footer border animate__animated animate__fadeInBottomRight">
 		<div class="container flex-column">
@@ -24,11 +32,13 @@ export default {
 	background-color: #ffffff;
 	.container {
 		padding: 6px 0;
+		line-height: 24px;
 		.version {
 			cursor: pointer;
 		}
 		.maintain {
 			cursor: pointer;
+			line-height: 24px;
 		}
 	}
 }

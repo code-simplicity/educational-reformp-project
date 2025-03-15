@@ -17,7 +17,7 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
-					<div class="content border-bottom">
+					<div class="content border-bottom" v-if="content">
 						<div class="content-list">
 							<p class="item">{{ content }}</p>
 						</div>
@@ -85,7 +85,7 @@ userAddScore();
 <style lang="scss" scoped>
 .minato-route {
 	.legend {
-		height: 80vh;
+		height: 100%;
 		padding: 10px 0;
 		margin-left: 16px;
 		margin-right: 16px;

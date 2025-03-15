@@ -61,7 +61,7 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
-					<div class="content border-bottom">
+					<div class="content border-bottom" v-if="content">
 						<div class="content-list">
 							<p class="item">{{ content }}</p>
 						</div>
@@ -254,7 +254,7 @@ export default {
 <style lang="scss" scoped>
 .appearance-route {
 	.legend {
-		height: 80vh;
+		height: 100%;
 
 		padding: 10px 0;
 		margin-left: 16px;
@@ -290,7 +290,7 @@ export default {
 			.botton {
 				padding: 4px 8px;
 				text-align: center;
-				box-shadow: -1px 1px 5px rgb(0, 0, 0);
+				box-shadow: -1px 1px 5px rgb(179, 176, 176);
 				background: #f3f3f3;
 				cursor: pointer;
 				font-weight: 600;

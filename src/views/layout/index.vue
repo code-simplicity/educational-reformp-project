@@ -2,8 +2,8 @@
  * @Author: bugdr
  * @Date: 2021-11-16 16:54:25
  * @LastEditors: bugdr
- * @LastEditTime: 2022-03-27 23:10:19
- * @FilePath: \educational_reformp-project\src\views\layout\index.vue
+ * @LastEditTime: 2025-03-15 23:07:58
+ * @FilePath: /educational-reformp-project/src/views/layout/index.vue
  * @Description: 
 -->
 <template>
@@ -47,11 +47,24 @@ export default {
 	height: 100%;
 	width: 100%;
 	padding: 12px;
+	display: flex;
+	flex-direction: column;
 	.router-style {
-		height: 80%;
+		flex: 1 0 0;
+		height: 100%;
 	}
 	.footer {
 		margin-top: 10px;
+	}
+}
+</style>
+
+<style lang="scss">
+.layout {
+	.router-style {
+		.el-row {
+			height: 100%;
+		}
 	}
 }
 </style>

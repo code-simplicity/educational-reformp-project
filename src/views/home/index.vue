@@ -56,7 +56,7 @@
 			</el-col>
 			<el-col :xs="24" :sm="24" :md="24" :lg="6" :xl="6">
 				<MianRight>
-					<div class="content border-bottom">
+					<div class="content border-bottom" v-if="content">
 						<div class="content-list">
 							<p class="item">{{ content }}</p>
 						</div>
@@ -137,6 +137,7 @@ const userAddScore = async () => {
 
 <style lang="scss" scoped>
 .home {
+	height: 100%;
 	.main-left-container {
 		padding: 10px;
 		display: flex;
@@ -187,7 +188,7 @@ const userAddScore = async () => {
 	}
 
 	.image {
-		height: 80vh;
+		height: 100%;
 		width: 100%;
 		background-size: 100%;
 	}

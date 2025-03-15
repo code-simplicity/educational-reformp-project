@@ -27,10 +27,10 @@
 						<span class="id">{{ userInfo.id }}</span>
 						<span class="user-name">{{ userInfo.user_name }}</span>
 					</div>
-					<div class="screenfull-style">
-						<ScreenFull />
-					</div>
 					<div class="container flex-nowrap flex" v-if="tokenData">
+						<div class="screenfull-style">
+							<ScreenFull />
+						</div>
 						<el-dropdown @command="handleCommand">
 							<div class="botton">
 								模块功能<el-icon class="el-icon-right"><CaretBottom /></el-icon>
@@ -60,13 +60,13 @@
 </template>
 
 <script>
-import { CaretBottom, Coordinate } from "@element-plus/icons-vue";
-import { mapGetters } from "vuex";
+import { CaretBottom, Coordinate } from '@element-plus/icons-vue';
+import { mapGetters } from 'vuex';
 export default {
-	name: "main-header",
+	name: 'main-header',
 	data() {
 		return {
-			dateTime: "",
+			dateTime: '',
 			isShowDateTime: true,
 			// 屏幕宽度
 			fullWidth: 0,
@@ -77,14 +77,14 @@ export default {
 		Coordinate,
 	},
 	computed: {
-		...mapGetters("user", {
-			tokenData: "tokenData",
-			userInfo: "userInfo",
+		...mapGetters('user', {
+			tokenData: 'tokenData',
+			userInfo: 'userInfo',
 		}),
 	},
 
 	mounted() {
-		window.addEventListener("resize", this.handleResize);
+		window.addEventListener('resize', this.handleResize);
 	},
 	methods: {
 		handleResize() {
@@ -99,23 +99,23 @@ export default {
 		// 控制下拉菜单功能
 		async handleCommand(command) {
 			switch (command) {
-				case "logout": {
-					this.$store.dispatch("user/loginOut").then(() => {
+				case 'logout': {
+					this.$store.dispatch('user/loginOut').then(() => {
 						this.$router.replace({
-							name: "login",
+							name: 'login',
 						});
 					});
 					break;
 				}
-				case "usersetting": {
+				case 'usersetting': {
 					this.$router.push({
-						name: "user",
+						name: 'user',
 					});
 					break;
 				}
-				case "toCenter": {
-					const url = "http://106.13.233.140/admin/#/dashboard";
-					window.open(url, "_blank");
+				case 'toCenter': {
+					const url = 'http://106.13.233.140/admin/#/dashboard';
+					window.open(url, '_blank');
 					break;
 				}
 			}
@@ -124,7 +124,7 @@ export default {
 		// 去登录页面
 		doLogin() {
 			this.$router.replace({
-				name: "login",
+				name: 'login',
 			});
 		},
 	},
@@ -134,15 +134,15 @@ export default {
 			// 注意在vue实例销毁前，清除我们的定时器
 			clearInterval(this.timer);
 		}
-		window.addEventListener("resize", this.handleResize);
+		window.addEventListener('resize', this.handleResize);
 	},
 };
 </script>
 
 <script setup>
-import { ref } from "vue";
-import { homeItem } from "../../json/homeItem";
-import ScreenFull from "../screenfull/index.vue";
+import { ref } from 'vue';
+import { homeItem } from '../../json/homeItem';
+import ScreenFull from '../screenfull/index.vue';
 
 const homeItems = ref([]);
 homeItems.value = homeItem;
@@ -152,7 +152,7 @@ homeItems.value = homeItem;
 .main-header {
 	width: 100%;
 	.left {
-		height: 40px;
+		height: 56px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -179,8 +179,8 @@ homeItems.value = homeItem;
 		display: flex;
 		align-items: center;
 		justify-content: space-around;
+		height: 56px;
 		background: #ffffff;
-		height: 40px;
 		margin-bottom: 6px;
 
 		.active-class {
@@ -191,16 +191,16 @@ homeItems.value = homeItem;
 			cursor: pointer;
 			&.router-link-active {
 				color: #ffffff;
-				background: rgb(111, 125, 255);
+				background: #192eee;
 			}
 			&:hover {
 				color: #ffffff;
-				background: rgb(111, 125, 255);
+				background: #192eee;
 			}
 		}
 	}
 	.right {
-		height: 40px;
+		height: 56px;
 		position: relative;
 		display: flex;
 		align-items: center;
@@ -214,17 +214,15 @@ homeItems.value = homeItem;
 			justify-content: space-between;
 			flex-wrap: wrap;
 			align-items: center;
-			margin-left: 6px;
-			color: rgb(46, 94, 255);
+			margin-left: 8px;
+			font-weight: 600;
+			color: rgb(0, 55, 255);
 
 			.user-name {
-				margin-left: 12px;
+				margin-left: 8px;
 			}
 		}
 		.screenfull-style {
-			position: absolute;
-			top: -8px;
-			right: 90px;
 		}
 		.container {
 			font-weight: 600;
