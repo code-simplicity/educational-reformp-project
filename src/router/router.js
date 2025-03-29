@@ -45,6 +45,7 @@ export const mainRoutes = [
 				meta: {
 					title: '首页',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/home/index.vue'),
 			},
@@ -54,6 +55,7 @@ export const mainRoutes = [
 				meta: {
 					title: '工程场景',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/minato-route/index.vue'),
 			},
@@ -63,6 +65,7 @@ export const mainRoutes = [
 				meta: {
 					title: '工况选配',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/project-route/index.vue'),
 			},
@@ -72,6 +75,7 @@ export const mainRoutes = [
 				meta: {
 					title: '现象观察',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/appearance-route/index.vue'),
 			},
@@ -81,6 +85,7 @@ export const mainRoutes = [
 				meta: {
 					title: '测点数据',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/measure-point-route/index.vue'),
 			},
@@ -90,6 +95,7 @@ export const mainRoutes = [
 				meta: {
 					title: '用户信息',
 					keepAlive: true,
+					requiresAuth: true,
 				},
 				component: () => import('../views/user/index.vue'),
 			},

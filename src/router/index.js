@@ -1,27 +1,29 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { routes } from './router'
+import { createRouter, createWebHistory } from 'vue-router';
+import { routes } from './router';
+import store from '../store'; // 导入 Vuex store
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
-	routes
-})
+	routes,
+});
 
 // 路由守卫 - 设置页面标题等
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
 	// 设置页面标题
-	document.title = to.meta?.title || '水运工程仿真实验系统'
-	
-	// 可以在这里添加身份验证逻辑
-	// const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-	// const isAuthenticated = localStorage.getItem('token')
-	
-	// if (requiresAuth && !isAuthenticated) {
-	//   next('/login')
-	// } else {
-	//   next()
-	// }
-	
-	next()
-})
+	document.title = to.meta?.title || '水运工程仿真实验系统';
 
-export default router
+	// 检查用户会话状态
+	const isAuthenticated = store.getters['user/isLoggedIn'];
+
+	// 如果路由需要认证
+	const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+	if (requiresAuth && !isAuthenticated) {
+		// 用户未登录且需要认证，重定向到登录页
+		next('/login');
+	} else {
+		// 用户已登录或页面不需要认证
+		next();
+	}
+});
+
+export default router;
