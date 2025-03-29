@@ -35,7 +35,7 @@ export default {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background-color: var(--bg-primary);
+	background-color: #f5f7fa;
 }
 
 .fade-enter-active,

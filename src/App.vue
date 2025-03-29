@@ -277,13 +277,6 @@ body {
 	color: var(--primary-color);
 }
 
-/* 主内容区域样式 */
-.main-content {
-	margin-top: 64px;
-	min-height: calc(100vh - 64px - 300px);
-	padding: var(--spacing-lg) var(--spacing-md);
-}
-
 /* 页脚样式 */
 .footer {
 	background-color: var(--bg-secondary);

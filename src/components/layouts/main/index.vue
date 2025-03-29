@@ -16,10 +16,11 @@ export default {
 
 <style lang="scss" scoped>
 .main-content {
+	margin-top: 56px;
 	background-color: #f5f7fa;
 	padding: 12px;
 	position: relative;
-	height: calc(100% - 64px - 68px);
+	height: calc(100% - 56px - 68px);
 	overflow: hidden;
 	.content-container {
 		width: 100%;
