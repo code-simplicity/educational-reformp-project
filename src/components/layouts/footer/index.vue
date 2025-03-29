@@ -44,7 +44,7 @@ export default {
 		align-items: center;
 
 		.main-info {
-			font-size: 0.875rem;
+			font-size: 14px;
 			color: #6b7280;
 			line-height: 1.3;
 			text-align: center;
@@ -56,7 +56,7 @@ export default {
 		}
 
 		.copyright {
-			font-size: 0.75rem;
+			font-size: 12px;
 			color: #9ca3af;
 			margin-top: 1px;
 			line-height: 1.3;
