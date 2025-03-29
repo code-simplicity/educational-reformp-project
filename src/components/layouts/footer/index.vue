@@ -33,7 +33,7 @@ export default {
 	bottom:  0;
 	left: 0;
 	right: 0;
-	z-index: 1000;
+	z-index: 100;
 	height: 68px;
 
 	&-content {
