@@ -68,11 +68,6 @@ export default {
 				{ name: '首页', path: '/home', icon: 'home-icon' },
 				{ name: '工程场景', path: '/minato-route', icon: 'engineering-icon' },
 				{ name: '工况选配', path: '/project-route', icon: 'conditions-icon' },
-				{
-					name: '现象观察',
-					path: '/appearance-route',
-					icon: 'observation-icon',
-				},
 				{ name: '测点数据', path: '/measure-point-route', icon: 'data-icon' },
 			],
 		};
