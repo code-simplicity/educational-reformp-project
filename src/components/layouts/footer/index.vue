@@ -62,46 +62,5 @@ export default {
 			line-height: 1.3;
 		}
 	}
-
-	@media (max-width: 768px) {
-		padding: 8px 0;
-
-		&-content {
-			padding: 0 16px;
-
-			.main-info {
-				font-size: 0.75rem;
-			}
-
-			.copyright {
-				font-size: 0.7rem;
-			}
-		}
-	}
-
-	@media (max-width: 640px) {
-		&-content .main-info {
-			.separator {
-				margin: 0 6px;
-			}
-		}
-	}
-
-	@media (max-width: 540px) {
-		&-content .main-info {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			line-height: 1.2;
-
-			.separator {
-				display: none;
-			}
-		}
-
-		&-content .copyright {
-			margin-top: 2px;
-		}
-	}
 }
 </style>

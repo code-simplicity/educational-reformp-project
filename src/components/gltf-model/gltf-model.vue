@@ -242,7 +242,7 @@ onMounted(() => {
 	position: relative;
 	#stats-panel {
 		position: absolute;
-		z-index: 9999;
+		z-index: 101;
 		div {
 			position: absolute !important;
 		}
@@ -266,7 +266,7 @@ onMounted(() => {
 		left: 0;
 		bottom: 0;
 		right: 0;
-		z-index: 99999;
+		z-index: 100;
 		background: #fff;
 
 		.loading {
@@ -324,6 +324,7 @@ onMounted(() => {
 	#stats-panel {
 		div {
 			position: absolute !important;
+			z-index: 101 !important;
 		}
 	}
 }
