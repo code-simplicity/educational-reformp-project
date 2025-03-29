@@ -311,7 +311,6 @@ onUpdated(() => {
 			}
 
 			.instruction-content {
-				padding: 12px;
 				color: #334155;
 				line-height: 1.6;
 				font-size: 14px;
