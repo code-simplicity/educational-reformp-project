@@ -7,6 +7,7 @@ export const standaloneRoutes = [
 		name: 'login',
 		meta: {
 			title: '登录',
+			keepAlive: true,
 		},
 		component: () => import('../views/login/index.vue'),
 	},
@@ -24,6 +25,7 @@ export const standaloneRoutes = [
 		name: '404',
 		meta: {
 			title: '404-您访问的页面不存在',
+			keepAlive: true,
 		},
 		component: () => import('../views/error/index.vue'),
 	},

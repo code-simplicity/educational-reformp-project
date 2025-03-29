@@ -233,6 +233,9 @@ const handleImageError = () => {
 
 // 添加用户等分 - 保持原有逻辑不变
 const userAddScore = async () => {
+	if (!userInfo.value?.id) {
+		return;
+	}
 	const params = {
 		id: userInfo.value.id,
 		score: 20,

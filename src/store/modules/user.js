@@ -54,7 +54,7 @@ const mutations = {
 	},
 	// 清除用户状态 (新增)
 	clearUserState(state) {
-		state.userInfo = null;
+		state.userInfo = {};
 		state.tokenData = '';
 		removeUserInfo();
 		removeToken();
@@ -90,6 +90,7 @@ const actions = {
 	},
 
 	async getUserInfoById({ commit }, id) {
+    console.log('1', 1)
 		try {
 			const result = await getUserInfo(id);
 			commit('infoChange', result.data);

@@ -212,6 +212,7 @@ export default {
 		});
 	},
 	beforeUnmount() {
+		// 确保清理所有事件监听
 		window.removeEventListener('scroll', this.handleScroll);
 		window.removeEventListener('resize', this.handleResize);
 	},
@@ -238,11 +239,18 @@ export default {
 
 			switch (command) {
 				case 'logout': {
-					this.$store.dispatch('user/loginOut').then(() => {
-						this.$router.replace({
-							name: 'login',
+					this.$store
+						.dispatch('user/loginOut')
+						.then(() => {
+							this.$router.replace({
+								name: 'login',
+							});
+						})
+						.catch((error) => {
+							this.$router.replace({
+								name: 'login',
+							});
 						});
-					});
 					break;
 				}
 				case 'userSetting': {
