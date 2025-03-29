@@ -144,7 +144,6 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">
-								<el-icon><Map /></el-icon>
 								港口平面测点分布
 							</span>
 							<div class="params-summary">
@@ -179,7 +178,6 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">
-								<el-icon><DataLine /></el-icon>
 								测点数据分析
 							</span>
 							<el-button type="success" size="small" @click="downloadExcel">

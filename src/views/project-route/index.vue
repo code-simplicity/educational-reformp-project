@@ -113,7 +113,6 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">
-								<el-icon><Document /></el-icon>
 								工况说明
 							</span>
 							<el-tag size="small" :type="contentChanged ? 'success' : 'info'">
@@ -149,7 +148,6 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">
-								<el-icon><VideoCameraFilled /></el-icon>
 								仿真模拟现象
 							</span>
 							<div class="params-summary">
