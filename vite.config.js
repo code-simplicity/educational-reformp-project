@@ -5,6 +5,8 @@ import {
 import {
   resolve
 } from "path";
+import { visualizer } from 'rollup-plugin-visualizer';
+
 const pathResolve = (dir) => {
   return resolve(__dirname, ".", dir);
 };
@@ -30,9 +32,17 @@ export default defineConfig({
       },
     },
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    visualizer({
+      open: true,
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   css: {
-    cssPreprocessOptions: {
+    preprocessorOptions: {
       scss: {
         additionalData: '@import "@/assets/style/variable.scss";' // 添加公共样式
       }
