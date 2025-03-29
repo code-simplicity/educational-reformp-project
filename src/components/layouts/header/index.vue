@@ -39,7 +39,7 @@
 										command="toCenter"
 										>管理中心</el-dropdown-item
 									>
-									<el-dropdown-item command="usersetting"
+									<el-dropdown-item command="userSetting"
 										>用户设置</el-dropdown-item
 									>
 									<el-dropdown-item divided command="logout"
@@ -119,7 +119,7 @@
 							<div class="mobile-nav-links">
 								<div
 									class="mobile-nav-link"
-									@click="handleCommand('usersetting')"
+									@click="handleCommand('userSetting')"
 								>
 									<el-icon><User /></el-icon>
 									<span>用户设置</span>
@@ -231,6 +231,7 @@ export default {
 			done();
 		},
 		handleCommand(command) {
+			console.log(command);
 			if (this.isMobile) {
 				this.drawerVisible = false;
 			}
@@ -244,7 +245,7 @@ export default {
 					});
 					break;
 				}
-				case 'usersetting': {
+				case 'userSetting': {
 					this.$router.push({
 						name: 'user',
 					});

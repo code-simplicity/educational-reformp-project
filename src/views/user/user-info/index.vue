@@ -1,65 +1,124 @@
 <template>
-	<div class="user-info-box flex">
-		<div class="container">
+	<div class="user-info-module">
+		<el-card shadow="hover" class="info-card">
+			<template #header>
+				<div class="card-header">
+					<span>基本信息</span>
+				</div>
+			</template>
+
 			<el-form
 				ref="userFormRef"
 				:model="userForm"
-				label-position="left"
-				label-width="60px"
-				style="max-width: 460px"
-				label-suffix=":"
+				label-position="right"
+				label-width="80px"
+				class="info-form"
 			>
 				<el-form-item label="学号">
 					<el-input v-model="userForm.id" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="姓名"
-					><el-input v-model="userForm.user_name" disabled></el-input
-				></el-form-item>
-				<el-form-item label="性别">
-					<h2>{{ userInfo.sex }}</h2>
+
+				<el-form-item label="姓名">
+					<el-input v-model="userForm.user_name" disabled></el-input>
 				</el-form-item>
+
+				<el-form-item label="性别">
+					<el-tag
+						:type="userInfo.sex === '男' ? 'primary' : 'danger'"
+						size="default"
+					>
+						{{ userInfo.sex }}
+					</el-tag>
+				</el-form-item>
+
 				<el-form-item label="邮箱">
-					<h2>{{ userInfo.email }}</h2>
+					<div class="email-display">
+						<el-icon><Message /></el-icon>
+						<span>{{ userInfo.email }}</span>
+					</div>
 				</el-form-item>
 			</el-form>
-		</div>
+
+			<div class="info-footer">
+				<el-alert
+					title="这里展示您的个人信息，若需修改请使用其他功能页面"
+					type="info"
+					:closable="false"
+					show-icon
+				/>
+			</div>
+		</el-card>
 	</div>
 </template>
-<script setup>
-import { computed, ref } from "vue";
-import { useStore } from "vuex";
-const store = useStore();
-const userForm = ref({
-	id: "",
-	user_name: "",
-	sex: "",
-	email: "",
-});
-// 获取用户信息
-const userInfo = computed(() => store.getters["user/userInfo"]);
-userForm.value = userInfo.value;
+
+<script>
+import { computed, ref } from 'vue';
+import { useStore } from 'vuex';
+import { Message } from '@element-plus/icons-vue';
+
+export default {
+	name: 'UserInfo',
+	components: { Message },
+	setup() {
+		const store = useStore();
+		const userForm = ref({
+			id: '',
+			user_name: '',
+			sex: '',
+			email: '',
+		});
+
+		// 获取用户信息
+		const userInfo = computed(() => store.getters['user/userInfo']);
+
+		// 使用新对象，避免引用问题
+		userForm.value = { ...userInfo.value };
+
+		return {
+			userForm,
+			userInfo,
+		};
+	},
+};
 </script>
+
 <style lang="scss" scoped>
-.user-info-box {
-	box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
-	background: rgb(188, 188, 188);
-	padding: 16px 40px;
-	position: relative;
-	.container {
-		::v-deep .el-form-item__label {
+.user-info-module {
+	width: 100%;
+
+	.info-card {
+		border-radius: 8px;
+		background-color: #fff;
+
+		.card-header {
+			display: flex;
+			align-items: center;
+			font-size: 16px;
+			font-weight: 500;
+			color: #1d2129;
 		}
-		.user-footer {
-			margin-top: 40px;
-			.left {
-				position: absolute;
-				left: 76px;
-				bottom: 20px;
+
+		.info-form {
+			padding: 10px 0;
+
+			.el-form-item {
+				margin-bottom: 20px;
 			}
-			.right {
-				position: absolute;
-				right: 76px;
-				bottom: 20px;
+
+			.email-display {
+				display: flex;
+				align-items: center;
+				color: #155bd4;
+
+				.el-icon {
+					margin-right: 6px;
+					font-size: 16px;
+				}
 			}
+		}
+
+		.info-footer {
+			margin-top: 20px;
 		}
 	}
 }

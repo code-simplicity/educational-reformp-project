@@ -7,169 +7,244 @@
  * @Description: 
 -->
 <template>
-	<el-container class="container">
-		<el-header class="user-header">
-			<div class="user-header-left">
-				<h1>水运仿真平台用户管理中心</h1>
-				<div class="to-home">
-					<router-link class="active-class flex-nowrap" :to="{ name: 'home' }"
-						>首页</router-link
-					>
+	<div class="user-center-container">
+		<div class="user-center-content">
+			<div class="profile-card">
+				<div class="avatar-section">
+					<div class="avatar">{{ userInitial }}</div>
+					<div class="user-meta">
+						<h3 class="username">{{ userInfo.user_name }}</h3>
+						<p class="user-id">ID: {{ userInfo.id }}</p>
+					</div>
+				</div>
+				<div class="user-roles" v-if="userInfo.roles">
+					<el-tag type="success" effect="dark" size="small">{{
+						userInfo.roles
+					}}</el-tag>
 				</div>
 			</div>
-			<div class="user-header-right">
-				<h2>{{ userInfo.id }}</h2>
-				<el-icon :size="18"><User /></el-icon>
-			</div>
-		</el-header>
 
-		<div class="el-menu-aside">
-			<div class="el-menu-container">
-				<el-menu
-					class="el-menu-vertical"
-					active-text-color="#dddd4b"
-					background-color="#545c64"
-					text-color="#fff"
-					:collapse="isCollapse"
-					:default-active="activeMenu"
-					router
-				>
-					<el-menu-item
-						v-for="(item, index) in navItems"
-						:key="index"
-						:index="item.path"
+			<div class="tabs-section">
+				<el-tabs v-model="activeTab" class="user-tabs">
+					<el-tab-pane
+						v-for="item in navItems"
+						:key="item.path"
+						:label="item.name"
+						:name="item.path"
 					>
-						<i class="iconfont" :class="item.icon"></i>
-						<template v-slot:title>
-							<span class="menu-name">{{ item.name }}</span>
+						<template #label>
+							<span class="tab-label">
+								<i class="iconfont" :class="item.icon"></i>
+								<span>{{ item.name }}</span>
+							</span>
 						</template>
-					</el-menu-item>
-				</el-menu>
-			</div>
-			<div class="user-router">
-				<router-view></router-view>
+					</el-tab-pane>
+				</el-tabs>
+
+				<div class="tab-content">
+					<!-- 用户信息 -->
+					<UserInfo v-if="activeTab === 'user-info'" />
+					<!-- 信息修改 -->
+					<UserUpdate v-if="activeTab === 'user-update'" />
+					<!-- 重置邮箱 -->
+					<UserResetEmail v-if="activeTab === 'user-reset-email'" />
+					<!-- 重置密码 -->
+					<UserResetPassword v-if="activeTab === 'user-reset-password'" />
+				</div>
 			</div>
 		</div>
-	</el-container>
+	</div>
 </template>
-<script setup>
-import { computed, ref, onBeforeMount } from "vue";
-import { useStore } from "vuex";
-import { User } from "@element-plus/icons-vue";
-import { useEventListener } from "@vueuse/core";
-import { navItems } from "../../json/navItems";
-import Particles from "../../components/particles/index.vue";
 
-const store = useStore();
-// 获取用户信息
-const userInfo = computed(() => store.getters["user/userInfo"]);
-// 获取路由信息
-const navItem = ref([]);
-navItem.value = navItems;
-// 默认激活菜单
-const activeMenu = computed(() => {
-	const { path } = navItems[0];
-	return path;
-});
-const isCollapse = computed(() => store.state.app.isCollapse);
+<script>
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
+import { User } from '@element-plus/icons-vue';
+import { navItems } from '@/json/navItems';
+import UserInfo from './user-info/index.vue';
+import UserUpdate from './user-update/index.vue';
+import UserResetEmail from './user-reset-email/index.vue';
+import UserResetPassword from './user-reset-password/index.vue';
 
-// 页面监听
-const resizeHandler = () => {
-	if (document.body.clientWidth <= 1000 && !isCollapse.value) {
-		store.commit("app/isCollapseChange", true);
-	} else if (document.body.clientWidth > 1000 && isCollapse.value) {
-		store.commit("app/isCollapseChange", false);
-	}
+export default {
+	name: 'UserCenter',
+
+	components: {
+		User,
+		UserInfo,
+		UserUpdate,
+		UserResetEmail,
+		UserResetPassword,
+	},
+
+	setup() {
+		const store = useStore();
+
+		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInitial = computed(() => {
+			if (userInfo.value && userInfo.value.user_name) {
+				return userInfo.value.user_name.charAt(0).toUpperCase();
+			}
+			return 'U';
+		});
+
+		// 默认活动标签
+		const activeTab = ref('user-info');
+
+		return {
+			userInfo,
+			userInitial,
+			navItems,
+			activeTab,
+		};
+	},
 };
-// 初始化调用
-resizeHandler();
-// 监听页面的变化，beforeMount
-onBeforeMount(() => {
-	useEventListener("resize", resizeHandler());
-});
 </script>
+
 <style lang="scss" scoped>
-.el-header {
-	padding-left: 16px;
-	padding-right: 16px;
+.user-center-container {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	background-color: #f5f7fa;
+	border-radius: 8px;
+}
+.user-center-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 12px;
+	width: 100%;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+
+	.profile-card {
+		background-color: white;
+		border-radius: 8px;
+		padding: 20px;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		.avatar-section {
+			display: flex;
+			align-items: center;
+
+			.avatar {
+				width: 56px;
+				height: 56px;
+				border-radius: 50%;
+				background-color: #155bd4;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				color: white;
+				font-size: 22px;
+				font-weight: 600;
+				margin-right: 16px;
+				box-shadow: 0 2px 8px rgba(21, 91, 212, 0.3);
+			}
+
+			.user-meta {
+				.username {
+					font-size: 18px;
+					margin: 0 0 4px;
+					font-weight: 600;
+					color: #1d2129;
+				}
+
+				.user-id {
+					font-size: 14px;
+					color: #86909c;
+					margin: 0;
+				}
+			}
+		}
+	}
+
+	.tabs-section {
+		background-color: white;
+		border-radius: 8px;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+		overflow: hidden;
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+
+		.user-tabs {
+			padding: 0 16px;
+
+			:deep(.el-tabs__header) {
+				margin-bottom: 0;
+				border-bottom-color: #e5e6eb;
+			}
+
+			:deep(.el-tabs__item) {
+				padding: 0 20px;
+				height: 48px;
+				line-height: 48px;
+				font-weight: 500;
+
+				&.is-active {
+					color: #155bd4;
+				}
+
+				&:hover {
+					color: #155bd4;
+				}
+			}
+
+			.tab-label {
+				display: flex;
+				align-items: center;
+
+				.iconfont {
+					margin-right: 8px;
+					font-size: 16px;
+				}
+			}
+		}
+
+		.tab-content {
+			padding: 20px;
+			flex-grow: 1;
+			background-color: #ffffff;
+		}
+	}
 }
 
-.container {
-	height: 100vh;
-	width: 100vw;
-	position: relative;
-	background-size: 100% 100%;
-	background-repeat: no-repeat;
-	background-image: url("../../assets/images/bg.jpg");
-	.user-header {
-		color: #fff;
-		display: flex;
-		height: 50px;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 20px;
-		z-index: 1;
-		border-bottom: 1px solid #ffffff;
-		.user-header-left {
-			display: flex;
-			align-items: center;
-			.to-home {
-				margin: 0 6px 0 36px;
-				font-size: 18px;
-				border-bottom: 2px solid #fff;
-				.active-class {
-					color: #fff;
+@media (max-width: 768px) {
+	.user-center-content {
+		padding: 12px;
+		gap: 12px;
 
-					text-decoration: none;
-					cursor: pointer;
-					&.router-link-active {
-						color: #192eee;
-					}
-					&:hover {
-						color: #192eee;
-					}
-				}
-			}
-		}
-		.user-header-right {
-			display: flex;
-			align-items: center;
-			h2 {
-				margin-right: 6px;
-			}
-		}
-	}
-	.el-menu-aside {
-		display: flex;
-		justify-content: center;
-		position: relative;
-		.el-menu-container {
-			display: flex;
-			height: 400px;
-			.el-menu {
-				background-color: #ffffff;
-
-				.el-menu-item {
-					color: #fff;
-
-					&.is-active {
-						color: #ffffff;
-						background-color: #67658a;
-					}
-				}
-			}
-			.el-menu-vertical {
-				box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-				background-color: rgba(44, 44, 44, 0.8);
-				.menu-name {
-					margin-left: 8px;
-				}
-			}
-		}
-		.user-router {
-			display: flex;
+		.profile-card {
+			flex-direction: column;
 			align-items: flex-start;
-			margin-left: 20px;
+			gap: 12px;
+			padding: 16px;
+
+			.user-roles {
+				align-self: flex-start;
+			}
+		}
+
+		.tabs-section {
+			.user-tabs {
+				padding: 0 8px;
+
+				:deep(.el-tabs__item) {
+					padding: 0 12px;
+					height: 40px;
+					line-height: 40px;
+				}
+			}
+
+			.tab-content {
+				padding: 16px;
+			}
 		}
 	}
 }

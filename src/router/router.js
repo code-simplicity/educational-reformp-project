@@ -86,47 +86,12 @@ export const mainRoutes = [
 			},
 			{
 				path: 'user',
+				name: 'user',
+				meta: {
+					title: '用户信息',
+					keepAlive: true,
+				},
 				component: () => import('../views/user/index.vue'),
-				redirect: { name: 'user-info' },
-				children: [
-					{
-						path: 'user-info',
-						name: 'user-info',
-						meta: {
-							title: '用户中心',
-							keepAlive: true,
-						},
-						component: () => import('../views/user/user-info/index.vue'),
-					},
-					{
-						path: 'user-update',
-						name: 'user-update',
-						meta: {
-							title: '信息修改',
-							keepAlive: true,
-						},
-						component: () => import('../views/user/user-update/index.vue'),
-					},
-					{
-						path: 'user-reset-email',
-						name: 'user-reset-email',
-						meta: {
-							title: '重置邮箱',
-							keepAlive: true,
-						},
-						component: () => import('../views/user/user-reset-email/index.vue'),
-					},
-					{
-						path: 'user-reset-password',
-						name: 'user-reset-password',
-						meta: {
-							title: '重置密码',
-							keepAlive: true,
-						},
-						component: () =>
-							import('../views/user/user-reset-password/index.vue'),
-					},
-				],
 			},
 		],
 	},
