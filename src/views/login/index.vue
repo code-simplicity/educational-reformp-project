@@ -199,20 +199,16 @@ export default {
 						const response = await store.dispatch('user/login', params);
 
 						if (response.code === Constants.status.SUCCESS) {
-							ElMessage.success('登录成功，正在进入系统...');
 							router.replace({ path: '/home' });
 						} else {
 							updateCaptchaCode();
 							loginForm.captcha = '';
 						}
 					} catch (error) {
-						ElMessage.error('登录失败，请检查网络连接');
 						updateCaptchaCode();
 					} finally {
 						loading.value = false;
 					}
-				} else {
-					ElMessage.warning('请填写所有必填项');
 				}
 			});
 		};
