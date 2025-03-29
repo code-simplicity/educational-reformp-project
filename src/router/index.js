@@ -1,40 +1,27 @@
-import {
-  createRouter,
-  createWebHashHistory
-} from "vue-router";
-import {
-  changeTitle
-} from "../utils/title";
-import {
-  routes
-} from "./router.js";
-import NProgress from "../utils/nprogress";
-
-import {
-  getToken
-} from "../utils/token"
+import { createRouter, createWebHistory } from 'vue-router'
+import { routes } from './router'
 
 const router = createRouter({
-  history: createWebHashHistory(),
-  routes,
-});
+	history: createWebHistory(import.meta.env.BASE_URL),
+	routes
+})
 
-// 做登录拦截
-router.beforeEach(async (to, from, next) => {
-  NProgress.start();
-  // 生成动态的title
-  to.meta.title ? changeTitle(to.meta.title) : "";
-  const tokenkey = getToken()
-  if (tokenkey) {
-    next()
-  } else {
-    next()
-  }
-});
+// 路由守卫 - 设置页面标题等
+router.beforeEach((to, from, next) => {
+	// 设置页面标题
+	document.title = to.meta?.title || '水运工程仿真实验系统'
+	
+	// 可以在这里添加身份验证逻辑
+	// const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+	// const isAuthenticated = localStorage.getItem('token')
+	
+	// if (requiresAuth && !isAuthenticated) {
+	//   next('/login')
+	// } else {
+	//   next()
+	// }
+	
+	next()
+})
 
-router.afterEach(() => {
-  //后置路由,顶部加载进度
-  NProgress.done();
-});
-
-export default router;
+export default router
