@@ -1,7 +1,9 @@
 import axios from 'axios';
 import qs from 'qs';
 // 引入接口地址
-const baseURL = `${import.meta.env.VITE_SERVICE_BASE_URL}:${import.meta.env.VITE_PORT}`;
+const baseURL = `${import.meta.env.VITE_SERVICE_BASE_URL}:${
+	import.meta.env.VITE_PORT
+}`;
 import { ElMessage } from 'element-plus';
 import { getToken } from './token';
 import router from '../router/index';
@@ -59,17 +61,19 @@ instance.interceptors.response.use(
 		return Promise.reject(data);
 	},
 	(error) => {
-		console.log('error', error.response);
 		const badMessage = error.message || error;
 		const code = parseInt(
 			badMessage
 				.toString()
 				.replace('Error: Request failed with status code ', '')
 		);
-		showError({
-			code,
-			message: badMessage,
-		});
+		if (code) {
+			showError({
+				code,
+				message: badMessage,
+			});
+		}
+
 		return Promise.reject(error);
 	}
 );
