@@ -64,7 +64,7 @@ import Constants from '../../utils/Constants.js';
 import { addUserScore, getUserInfo } from '../../api/service/user';
 import { contentFindAll } from '../../api/service/content';
 import BimModel from '../../components/bim-model/bim-model.vue';
-import GltfModel from '../../components/gltf-model/gltf-model.vue';
+import GltfModel from '../../components/gltf-model/index.vue';
 
 const store = useStore();
 // 获取用户信息
