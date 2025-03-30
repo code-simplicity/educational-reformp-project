@@ -232,7 +232,6 @@ export default {
 			done();
 		},
 		handleCommand(command) {
-			console.log(command);
 			if (this.isMobile) {
 				this.drawerVisible = false;
 			}
@@ -260,7 +259,8 @@ export default {
 					break;
 				}
 				case 'toCenter': {
-					const url = 'http://106.13.233.140/admin/#/dashboard';
+					const baseURL = import.meta.env.VITE_SERVICE_BASE_URL;
+					const url = `${baseURL}/admin/#/dashboard`;
 					window.open(url, '_blank');
 					break;
 				}
