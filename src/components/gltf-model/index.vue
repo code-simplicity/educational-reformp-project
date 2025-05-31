@@ -271,6 +271,21 @@ const initializeViewer = async () => {
 		// 初始化加载管理器
 		loadingManager = new THREE.LoadingManager();
 
+		// 设置加载进度回调 - 确保在加载模型前设置
+		loadingManager.onProgress = (url, loaded, total) => {
+			// 计算原始进度 (0-100%)
+			const progress = Math.min(Math.round((loaded / total) * 100), 100);
+
+			// 将资源加载进度映射到总进度的0-30%范围
+			// 这样URL获取占0-10%，资源加载占10-30%，模型处理占30-100%
+			const mappedProgress = Math.max(Math.round(progress * 0.3), state.loadingWidth); // 0-30%
+			state.loadingWidth = mappedProgress;
+
+			console.log(
+				`资源加载进度: ${progress}%, 映射进度: ${mappedProgress}%, 已加载: ${loaded}, 总大小: ${total}`,
+			);
+		};
+
 		// 设置加载错误回调
 		loadingManager.onError = (url) => {
 			console.error("加载资源失败:", url);
@@ -282,13 +297,6 @@ const initializeViewer = async () => {
 
 		// 加载模型
 		await loadModel();
-
-		// 设置加载进度回调
-		loadingManager.onProgress = (url, loaded, total) => {
-			const progress = Math.min(Math.round((loaded / total) * 100), 100);
-			state.loadingWidth = progress;
-			console.log(`加载进度: ${progress}%, 已加载: ${loaded}, 总大小: ${total}`);
-		};
 
 		// 添加到清理函数
 		cleanupFunctions.push(cleanupInteraction);
@@ -532,13 +540,16 @@ const loadModel = async () => {
 	}
 
 	state.isLoading = true;
-	state.loadingWidth = 0;
 	state.loadingFailed = false;
 
 	try {
 		console.log("开始获取模型URL...");
+
 		// 获取模型URL
 		const modelUrl = await getBimModelUrl();
+
+		console.log("模型URL获取完成");
+
 		if (!modelUrl) {
 			console.error("获取模型URL失败: 返回值为空");
 			throw new Error("未提供模型URL");
@@ -582,16 +593,21 @@ const loadModel = async () => {
 
 					resolve(gltf);
 				},
-				// 进度回调 - 直接更新进度，确保实时显示
+				// 进度回调 - 更新进度，确保实时显示
 				(event) => {
 					if (event.lengthComputable) {
-						const progress = Math.min(Math.round((event.loaded / event.total) * 100), 100);
+						// 计算模型加载的原始进度（0-100）
+						const modelProgress = Math.min(Math.round((event.loaded / event.total) * 100), 100);
+
+						// 将模型加载进度（0-100）缩放到总进度的30%-90%范围
+						// 公式: 总进度 = 初始进度(30) + 模型进度 * 剩余进度比例(60/100)
+						const totalProgress = 30 + Math.round(modelProgress * 0.6);
 
 						// 更新加载进度
-						state.loadingWidth = progress;
+						state.loadingWidth = totalProgress;
 
 						console.log(
-							`模型加载进度: ${progress}%, 已加载: ${(event.loaded / 1024 / 1024).toFixed(2)}MB, 总大小: ${(event.total / 1024 / 1024).toFixed(2)}MB`,
+							`模型加载进度: ${modelProgress}%, 总进度: ${totalProgress}%, 已加载: ${(event.loaded / 1024 / 1024).toFixed(2)}MB, 总大小: ${(event.total / 1024 / 1024).toFixed(2)}MB`,
 						);
 
 						// 强制渲染一次，确保进度条更新
@@ -600,6 +616,8 @@ const loadModel = async () => {
 						}
 					} else {
 						console.log("模型加载进行中，但无法计算进度");
+						// 即使无法计算进度，也显示一个进度值，避免进度条停滞
+						state.loadingWidth = 50; // 设置为中间值
 					}
 				},
 				// 错误回调
@@ -699,15 +717,28 @@ const loadModel = async () => {
 		// 保存原始位置用于爆炸视图
 		saveOriginalPositions(model);
 
+		// 设置进度为90%，表示模型已加载，正在进行最后处理
+		state.loadingWidth = 90;
+		console.log("模型已加载，进度更新至90%，正在进行最后处理");
+		if (throttleRender) {
+			throttleRender.requestRender();
+		}
+
 		// 自动调整相机位置以适应模型大小
 		autoFitCameraToObject(model, 1.5);
 
 		// 记录相机位置到控制面板
 		handleRecordCameraPosition();
 
+		// 设置进度为100%，表示加载完成
+		state.loadingWidth = 100;
+		console.log("模型处理完成，进度更新至100%");
+		if (throttleRender) {
+			throttleRender.requestRender();
+		}
+
 		// 完成加载
 		state.isLoading = false;
-		state.loadingWidth = 100;
 		throttleRender.requestRender();
 
 		// 显示模型信息

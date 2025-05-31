@@ -37,7 +37,7 @@ export default function useThrottleRender(options = {}) {
 		autoRotate: false,
 		onBeforeRender: null,
 		onAfterRender: null,
-		idleFrameRate: 10,
+		idleFrameRate: 5, // 降低静止状态下的帧率以提高性能
 	};
 
 	// 合并选项
@@ -107,8 +107,8 @@ export default function useThrottleRender(options = {}) {
 	};
 
 	/**
-	 * 渲染循环 - 优化版本
-	 * 使用帧率限制和渲染节流来提高性能
+	 * 渲染循环 - 高度优化版本
+	 * 使用帧率限制、渲染节流和帧跳过来显著提高性能
 	 */
 	const animate = () => {
 		// 使用防抖方式请求下一帧
@@ -117,20 +117,34 @@ export default function useThrottleRender(options = {}) {
 		const currentTime = performance.now();
 		const deltaTime = currentTime - lastRenderTime;
 
-		// 帧率限制 - 静止状态下降低刷新率
-		const minFrameInterval = isUserInteracting.value ? 0 : idleInterval;
-		if (deltaTime < minFrameInterval && !needsRender.value) {
-			return; // 跳过这一帧，降低静止状态下的渲染频率
+		// 静态场景优化：使用帧跳过技术
+		// 如果没有交互且没有动画，大幅降低渲染频率
+		const isStatic = !isUserInteracting.value && !autoRotate.value && animationCallbacks.length === 0;
+		if (isStatic) {
+			// 静态场景每秒只渲染几次
+			if (deltaTime < 200 && !needsRender.value) { // 5fps for static scenes
+				return;
+			}
+		} else {
+			// 动态场景但非交互状态，适度降低帧率
+			const minFrameInterval = isUserInteracting.value ? 0 : idleInterval;
+			if (deltaTime < minFrameInterval && !needsRender.value) {
+				return;
+			}
 		}
 
 		// 更新控制器 - 只在必要时更新
-		if (config.controls && (isUserInteracting.value || autoRotate.value)) {
-			config.controls.update();
+		if (config.controls) {
+			// 只在自动旋转或用户交互时更新控制器
+			if (isUserInteracting.value || autoRotate.value) {
+				config.controls.update();
+			}
 		}
 
 		// 执行动画回调 - 使用try-catch包装每个回调以提高稳定性
 		let animationNeedsRender = false;
 		if (animationCallbacks.length > 0) {
+			// 使用for循环而不是forEach以提高性能
 			for (let i = 0; i < animationCallbacks.length; i++) {
 				try {
 					if (animationCallbacks[i](deltaTime) === true) {
@@ -143,6 +157,11 @@ export default function useThrottleRender(options = {}) {
 		}
 
 		// 判断是否需要渲染 - 使用更严格的条件
+		// 1. 显式请求渲染
+		// 2. 用户正在交互且已经过了足够时间
+		// 3. 自动旋转已启用
+		// 4. 动画回调请求渲染
+		// 5. 已经过了最大帧间隔时间
 		const shouldRender =
 			needsRender.value ||
 			(isUserInteracting.value && deltaTime > 16) || // 约60fps
@@ -179,52 +198,90 @@ export default function useThrottleRender(options = {}) {
 	};
 
 	/**
-	 * 设置交互事件监听
+	 * 设置交互事件监听 - 高度优化版本
+	 * 使用事件节流和被动事件监听器提高性能
 	 */
 	const setupInteractionListeners = () => {
 		if (!config.renderer || !config.renderer.domElement) return;
 
 		const canvas = config.renderer.domElement;
 		let interactionTimer = null;
+		let lastInteractionTime = 0;
+		let mouseMoveThrottleTimer = null;
+		const INTERACTION_TIMEOUT = 300; // 降低交互超时时间以提高响应性
+		const MOUSE_MOVE_THROTTLE = 50; // 鼠标移动事件节流时间（毫秒）
 
-		// 开始交互
+		// 节流函数 - 限制高频事件的触发频率
+		const throttle = (callback, delay) => {
+			let lastCallTime = 0;
+
+			return function (...args) {
+				const now = performance.now();
+				if (now - lastCallTime >= delay) {
+					lastCallTime = now;
+					callback.apply(this, args);
+				}
+			};
+		};
+
+		// 开始交互 - 基础版本，用于mousedown等低频事件
 		const startInteraction = () => {
 			isUserInteracting.value = true;
 			needsRender.value = true;
+			lastInteractionTime = performance.now();
 
 			clearTimeout(interactionTimer);
 		};
 
-		// 结束交互
+		// 鼠标移动交互 - 节流版本，减少触发频率
+		const handleMouseMove = throttle(() => {
+			isUserInteracting.value = true;
+			needsRender.value = true;
+			lastInteractionTime = performance.now();
+
+			clearTimeout(interactionTimer);
+
+			// 设置新定时器，在交互结束后停止持续渲染
+			interactionTimer = setTimeout(() => {
+				// 只有在没有新交互的情况下才结束交互状态
+				if (performance.now() - lastInteractionTime >= INTERACTION_TIMEOUT) {
+					isUserInteracting.value = false;
+					needsRender.value = true; // 交互结束时再渲染一帧
+				}
+			}, INTERACTION_TIMEOUT);
+		}, MOUSE_MOVE_THROTTLE);
+
+		// 结束交互 - 使用更短的超时时间提高响应性
 		const endInteraction = () => {
 			clearTimeout(interactionTimer);
 
 			interactionTimer = setTimeout(() => {
 				isUserInteracting.value = false;
-				needsRender.value = true; // 交互结束后再渲染一帧
-			}, 500);
+				needsRender.value = true; // 交互结束时再渲染一帧
+			}, INTERACTION_TIMEOUT);
 		};
 
-		// 添加事件监听
-		canvas.addEventListener("mousedown", startInteraction);
-		canvas.addEventListener("mousemove", startInteraction);
-		canvas.addEventListener("mouseup", endInteraction);
-		canvas.addEventListener("touchstart", startInteraction);
-		canvas.addEventListener("touchmove", startInteraction);
-		canvas.addEventListener("touchend", endInteraction);
-		canvas.addEventListener("wheel", startInteraction);
+		// 添加事件监听 - 使用被动事件监听器提高滚动性能
+		canvas.addEventListener("mousedown", startInteraction, { passive: true });
+		canvas.addEventListener("mousemove", handleMouseMove, { passive: true });
+		canvas.addEventListener("mouseup", endInteraction, { passive: true });
+		canvas.addEventListener("touchstart", startInteraction, { passive: true });
+		canvas.addEventListener("touchmove", handleMouseMove, { passive: true });
+		canvas.addEventListener("touchend", endInteraction, { passive: true });
+		canvas.addEventListener("wheel", startInteraction, { passive: true });
 
 		// 返回清理函数
 		return () => {
 			canvas.removeEventListener("mousedown", startInteraction);
-			canvas.removeEventListener("mousemove", startInteraction);
+			canvas.removeEventListener("mousemove", handleMouseMove);
 			canvas.removeEventListener("mouseup", endInteraction);
 			canvas.removeEventListener("touchstart", startInteraction);
-			canvas.removeEventListener("touchmove", startInteraction);
+			canvas.removeEventListener("touchmove", handleMouseMove);
 			canvas.removeEventListener("touchend", endInteraction);
 			canvas.removeEventListener("wheel", startInteraction);
 
 			clearTimeout(interactionTimer);
+			clearTimeout(mouseMoveThrottleTimer);
 		};
 	};
 
@@ -309,5 +366,12 @@ export default function useThrottleRender(options = {}) {
 		setAutoRotate,
 		addAnimationCallback,
 		dispose,
+		// 添加新方法，允许外部设置帧率
+		setIdleFrameRate: (rate) => {
+			if (rate > 0) {
+				config.idleFrameRate = rate;
+				idleInterval = 1000 / rate;
+			}
+		},
 	};
 }
