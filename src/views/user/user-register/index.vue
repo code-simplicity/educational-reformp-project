@@ -54,10 +54,7 @@
 						</el-form-item>
 
 						<el-form-item label="性别" prop="sex">
-							<el-radio-group
-								v-model="registerForm.sex"
-								@change="checkFormComplete"
-							>
+							<el-radio-group v-model="registerForm.sex" @change="checkFormComplete">
 								<el-radio label="男">男</el-radio>
 								<el-radio label="女">女</el-radio>
 							</el-radio-group>
@@ -150,15 +147,15 @@
 </template>
 
 <script>
-import { reactive, ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
-import { sendCaptcha, addUser, sendMailCode } from '@/api/service/user';
-import Constants from '@/utils/Constants.js';
-import SparkMD5 from 'spark-md5';
+import { reactive, ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+import { sendCaptcha, addUser, sendMailCode } from "@/api/service/user";
+import Constants from "@/utils/Constants.js";
+import SparkMD5 from "spark-md5";
 
 export default {
-	name: 'UserRegister',
+	name: "UserRegister",
 	components: {},
 	setup() {
 		const router = useRouter();
@@ -168,52 +165,50 @@ export default {
 
 		// 注册表单
 		const registerForm = reactive({
-			id: '',
-			user_name: '',
-			password: '',
-			sex: '',
-			email: '',
-			emailCode: '',
-			captcha: '',
+			id: "",
+			user_name: "",
+			password: "",
+			sex: "",
+			email: "",
+			emailCode: "",
+			captcha: "",
 		});
 
 		// 表单验证规则
 		const registerRules = reactive({
 			id: [
-				{ required: true, message: '请输入学号', trigger: 'blur' },
+				{ required: true, message: "请输入学号", trigger: "blur" },
 				{
 					min: 3,
 					max: 20,
-					message: '长度应在3到20个字符之间',
-					trigger: 'blur',
+					message: "长度应在3到20个字符之间",
+					trigger: "blur",
 				},
 			],
 			user_name: [
-				{ required: true, message: '请输入用户名', trigger: 'blur' },
+				{ required: true, message: "请输入用户名", trigger: "blur" },
 				{
 					min: 2,
 					max: 20,
-					message: '长度应在2到20个字符之间',
-					trigger: 'blur',
+					message: "长度应在2到20个字符之间",
+					trigger: "blur",
 				},
 			],
 			password: [
-				{ required: true, message: '请输入密码', trigger: 'blur' },
-				{ min: 6, message: '密码长度至少为6个字符', trigger: 'blur' },
+				{ required: true, message: "请输入密码", trigger: "blur" },
+				{ min: 6, message: "密码长度至少为6个字符", trigger: "blur" },
 			],
-			sex: [{ required: true, message: '请选择性别', trigger: 'change' }],
+			sex: [{ required: true, message: "请选择性别", trigger: "change" }],
 			email: [
-				{ required: true, message: '请输入邮箱', trigger: 'blur' },
-				{ type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' },
+				{ required: true, message: "请输入邮箱", trigger: "blur" },
+				{ type: "email", message: "请输入正确的邮箱格式", trigger: "blur" },
 			],
-			emailCode: [
-				{ required: true, message: '请输入邮箱验证码', trigger: 'blur' },
-			],
-			captcha: [{ required: true, message: '请输入验证码', trigger: 'blur' }],
+			emailCode: [{ required: true, message: "请输入邮箱验证码", trigger: "blur" }],
+			captcha: [{ required: true, message: "请输入验证码", trigger: "blur" }],
 		});
 
 		// 验证码图片
-		const captchaUrl = ref('');
+		const captchaUrl = ref("");
 
 		// 获取验证码
 		const updateCaptchaCode = async () => {
@@ -221,20 +216,18 @@ export default {
 				const data = await sendCaptcha();
 				captchaUrl.value = data;
 			} catch (error) {
-				ElMessage.error('获取验证码失败，请刷新页面重试');
+				ElMessage.error("获取验证码失败，请刷新页面重试");
 			}
 		};
 
 		// 邮箱发送按钮
-		const sendEmailTxtBtn = ref('发送验证码');
+		const sendEmailTxtBtn = ref("发送验证码");
 		const isEmailBtnDisabled = ref(true);
 
 		// 验证邮箱
 		const checkEmailValue = () => {
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			isEmailBtnDisabled.value = !(
-				registerForm.email && emailRegex.test(registerForm.email)
-			);
+			isEmailBtnDisabled.value = !(registerForm.email && emailRegex.test(registerForm.email));
 			checkFormComplete();
 		};
 
@@ -247,7 +240,7 @@ export default {
 				time--;
 				if (time < 0) {
 					clearInterval(sendTime);
-					sendEmailTxtBtn.value = '发送验证码';
+					sendEmailTxtBtn.value = "发送验证码";
 					checkEmailValue();
 				} else {
 					sendEmailTxtBtn.value = `${time}s`;
@@ -269,13 +262,13 @@ export default {
 				const result = await sendMailCode(params);
 
 				if (result.code === Constants.status.SUCCESS) {
-					ElMessage.success(result.msg || '验证码发送成功');
+					ElMessage.success(result.msg || "验证码发送成功");
 					countDown();
 				} else {
-					ElMessage.error(result.msg || '验证码发送失败');
+					ElMessage.error(result.msg || "验证码发送失败");
 				}
 			} catch (error) {
-				ElMessage.error('发送验证码失败，请检查网络连接');
+				ElMessage.error("发送验证码失败，请检查网络连接");
 			} finally {
 				emailLoading.value = false;
 			}
@@ -303,7 +296,7 @@ export default {
 		// 去登录页
 		const goToLogin = () => {
 			router.push({
-				name: 'login',
+				name: "login",
 			});
 		};
 
@@ -329,25 +322,25 @@ export default {
 						const result = await addUser(params);
 
 						if (result.code === Constants.status.SUCCESS) {
-							ElMessage.success(result.msg || '注册成功');
+							ElMessage.success(result.msg || "注册成功");
 							dialogVisible.value = true;
 
 							// 清空表单
 							Object.keys(registerForm).forEach((key) => {
-								registerForm[key] = '';
+								registerForm[key] = "";
 							});
 							isRegisterBtnDisabled.value = true;
 						} else {
-							ElMessage.error(result.msg || '注册失败');
+							ElMessage.error(result.msg || "注册失败");
 						}
 					} catch (error) {
-						ElMessage.error('注册失败，请检查网络连接');
+						ElMessage.error("注册失败，请检查网络连接");
 					} finally {
 						registerLoading.value = false;
 						updateCaptchaCode();
 					}
 				} else {
-					ElMessage.warning('请正确填写所有必填项');
+					ElMessage.warning("请正确填写所有必填项");
 				}
 			});
 		};

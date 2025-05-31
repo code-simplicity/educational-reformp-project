@@ -67,23 +67,23 @@
 </template>
 
 <script>
-import { computed, ref, reactive, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import { sendCaptcha } from '@/api/service/user';
+import { computed, ref, reactive, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import { sendCaptcha } from "@/api/service/user";
 
 export default {
-	name: 'UserUpdate',
+	name: "UserUpdate",
 	setup() {
 		const store = useStore();
 		const userFormRef = ref(null);
 		const loading = ref(false);
 
 		const userForm = ref({
-			id: '',
-			user_name: '',
-			sex: '',
-			captcha: '',
+			id: "",
+			user_name: "",
+			sex: "",
+			captcha: "",
 		});
 
 		// 验证规则
@@ -91,38 +91,38 @@ export default {
 			user_name: [
 				{
 					required: true,
-					message: '用户名不能为空',
-					trigger: 'blur',
+					message: "用户名不能为空",
+					trigger: "blur",
 				},
 				{
 					min: 2,
 					max: 20,
-					message: '用户名长度应在2-20个字符之间',
-					trigger: 'blur',
+					message: "用户名长度应在2-20个字符之间",
+					trigger: "blur",
 				},
 			],
 			sex: [
 				{
 					required: true,
-					message: '请选择性别',
-					trigger: 'change',
+					message: "请选择性别",
+					trigger: "change",
 				},
 			],
 			captcha: [
 				{
 					required: true,
-					message: '验证码不能为空',
-					trigger: 'blur',
+					message: "验证码不能为空",
+					trigger: "blur",
 				},
 			],
 		});
 
 		// 获取用户信息
-		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInfo = computed(() => store.getters["user/userInfo"]);
 
 		// 初始化表单数据
 		onMounted(() => {
-			userForm.value = { ...userInfo.value, captcha: '' };
+			userForm.value = { ...userInfo.value, captcha: "" };
 			updateCaptchaCode();
 		});
 
@@ -135,7 +135,7 @@ export default {
 				const data = await sendCaptcha();
 				captchaUrl.value = data;
 			} catch (error) {
-				ElMessage.error('获取验证码失败，请刷新页面重试');
+				ElMessage.error("获取验证码失败，请刷新页面重试");
 			}
 		};
 
@@ -145,9 +145,9 @@ export default {
 		// 验证表单完整性
 		const validateForm = () => {
 			if (
-				userForm.value.user_name.trim() !== '' &&
-				userForm.value.sex !== '' &&
-				userForm.value.captcha.trim() !== ''
+				userForm.value.user_name.trim() !== "" &&
+				userForm.value.sex !== "" &&
+				userForm.value.captcha.trim() !== ""
 			) {
 				isDisabled.value = false;
 			} else {
@@ -172,17 +172,17 @@ export default {
 							captcha: userForm.value.captcha,
 						};
 
-						await store.dispatch('user/updateUser', params);
-						ElMessage.success('更新信息成功');
-						userForm.value.captcha = '';
+						await store.dispatch("user/updateUser", params);
+						ElMessage.success("更新信息成功");
+						userForm.value.captcha = "";
 					} catch (error) {
-						ElMessage.error('更新失败: ' + error.message || '未知错误');
+						ElMessage.error("更新失败: " + error.message || "未知错误");
 					} finally {
 						loading.value = false;
 						updateCaptchaCode();
 					}
 				} else {
-					ElMessage.warning('请正确填写所有必填项');
+					ElMessage.warning("请正确填写所有必填项");
 				}
 			});
 		};

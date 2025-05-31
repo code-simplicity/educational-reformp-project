@@ -34,17 +34,11 @@
 							</div>
 							<template #dropdown>
 								<el-dropdown-menu>
-									<el-dropdown-item
-										v-if="userInfo.roles === 'admin'"
-										command="toCenter"
+									<el-dropdown-item v-if="userInfo.roles === 'admin'" command="toCenter"
 										>管理中心</el-dropdown-item
 									>
-									<el-dropdown-item command="userSetting"
-										>用户设置</el-dropdown-item
-									>
-									<el-dropdown-item divided command="logout"
-										>退出登录</el-dropdown-item
-									>
+									<el-dropdown-item command="userSetting">用户设置</el-dropdown-item>
+									<el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
 								</el-dropdown-menu>
 							</template>
 						</el-dropdown>
@@ -52,11 +46,7 @@
 					<router-link v-else to="/login" class="login-link">登录</router-link>
 				</div>
 
-				<div
-					class="mobile-toggle"
-					v-if="isMobile"
-					@click="drawerVisible = true"
-				>
+				<div class="mobile-toggle" v-if="isMobile" @click="drawerVisible = true">
 					<el-icon size="22"><Menu /></el-icon>
 				</div>
 			</div>
@@ -117,10 +107,7 @@
 						<div class="mobile-nav-section user-actions-section">
 							<div class="section-title">用户操作</div>
 							<div class="mobile-nav-links">
-								<div
-									class="mobile-nav-link"
-									@click="handleCommand('userSetting')"
-								>
+								<div class="mobile-nav-link" @click="handleCommand('userSetting')">
 									<el-icon><User /></el-icon>
 									<span>用户设置</span>
 								</div>
@@ -132,10 +119,7 @@
 									<el-icon><SetUp /></el-icon>
 									<span>管理中心</span>
 								</div>
-								<div
-									class="mobile-nav-link logout"
-									@click="handleCommand('logout')"
-								>
+								<div class="mobile-nav-link logout" @click="handleCommand('logout')">
 									<el-icon><SwitchButton /></el-icon>
 									<span>退出登录</span>
 								</div>
@@ -160,13 +144,13 @@ import {
 	User,
 	SetUp,
 	SwitchButton,
-} from '@element-plus/icons-vue';
-import { mapGetters } from 'vuex';
-import { homeItem } from '@/json/homeItem';
-import logo from '@/assets/logo.png';
+} from "@element-plus/icons-vue";
+import { mapGetters } from "vuex";
+import { homeItem } from "@/json/homeItem";
+import logo from "@/assets/logo.png";
 
 export default {
-	name: 'HeaderComponent',
+	name: "HeaderComponent",
 	components: {
 		CaretBottom,
 		Menu,
@@ -190,31 +174,31 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters('user', {
-			tokenData: 'tokenData',
-			userInfo: 'userInfo',
+		...mapGetters("user", {
+			tokenData: "tokenData",
+			userInfo: "userInfo",
 		}),
 		userInitial() {
 			if (this.userInfo && this.userInfo.user_name) {
 				return this.userInfo.user_name.charAt(0).toUpperCase();
 			}
-			return 'U';
+			return "U";
 		},
 	},
 	mounted() {
-		window.addEventListener('scroll', this.handleScroll);
-		window.addEventListener('resize', this.handleResize);
+		window.addEventListener("scroll", this.handleScroll);
+		window.addEventListener("resize", this.handleResize);
 		this.handleResize(); // 初始化时执行一次
 
 		// 通知 main 内容调整上边距
 		this.$nextTick(() => {
-			document.documentElement.style.setProperty('--header-height', '54px');
+			document.documentElement.style.setProperty("--header-height", "54px");
 		});
 	},
 	beforeUnmount() {
 		// 确保清理所有事件监听
-		window.removeEventListener('scroll', this.handleScroll);
-		window.removeEventListener('resize', this.handleResize);
+		window.removeEventListener("scroll", this.handleScroll);
+		window.removeEventListener("resize", this.handleResize);
 	},
 	methods: {
 		handleScroll() {
@@ -237,31 +221,31 @@ export default {
 			}
 
 			switch (command) {
-				case 'logout': {
+				case "logout": {
 					this.$store
-						.dispatch('user/loginOut')
+						.dispatch("user/loginOut")
 						.then(() => {
 							this.$router.replace({
-								name: 'login',
+								name: "login",
 							});
 						})
 						.catch((error) => {
 							this.$router.replace({
-								name: 'login',
+								name: "login",
 							});
 						});
 					break;
 				}
-				case 'userSetting': {
+				case "userSetting": {
 					this.$router.push({
-						name: 'user',
+						name: "user",
 					});
 					break;
 				}
-				case 'toCenter': {
+				case "toCenter": {
 					const baseURL = import.meta.env.VITE_SERVICE_BASE_URL;
 					const url = `${baseURL}/admin/#/dashboard`;
-					window.open(url, '_blank');
+					window.open(url, "_blank");
 					break;
 				}
 			}
@@ -269,13 +253,13 @@ export default {
 		getIconForPath(path) {
 			// 根据路径返回对应的图标组件名
 			const iconMap = {
-				home: 'House',
-				'minato-route': 'Monitor',
-				'project-route': 'Setting',
-				'measure-point-route': 'DataLine',
+				home: "House",
+				"minato-route": "Monitor",
+				"project-route": "Setting",
+				"measure-point-route": "DataLine",
 			};
 
-			return iconMap[path] || 'Document'; // 默认返回 Document 图标
+			return iconMap[path] || "Document"; // 默认返回 Document 图标
 		},
 	},
 };

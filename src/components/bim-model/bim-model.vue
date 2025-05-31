@@ -16,7 +16,7 @@
 	</div>
 </template>
 <script setup name="BimModel">
-import { ref, onUnmounted } from 'vue';
+import { ref, onUnmounted } from "vue";
 import {
 	Viewer,
 	GLTFLoaderPlugin,
@@ -26,11 +26,11 @@ import {
 	DirLight,
 	AmbientLight,
 	WebIFCLoaderPlugin,
-} from '@xeokit/xeokit-sdk';
-import * as dat from 'dat.gui';
-import { getBimFindAll } from '../../api/service/bim';
-import Constants from '../../utils/Constants.js';
-import ScreenFull from '../screenfull/index.vue';
+} from "@xeokit/xeokit-sdk";
+import * as dat from "dat.gui";
+import { getBimFindAll } from "../../api/service/bim";
+import Constants from "../../utils/Constants.js";
+import ScreenFull from "../screenfull/index.vue";
 const page = ref({
 	pageNum: 1,
 	pageSize: 20,
@@ -63,7 +63,7 @@ const gltfModelInit = (gltfUrl) => {
 	loadingModel.value = true;
 	// 首先定义viewr视图,传入dom的id
 	const viewer = new Viewer({
-		canvasId: 'myCanvas', // dom的id
+		canvasId: "myCanvas", // dom的id
 		transparent: true, // 属性值为透明
 		// 语言服务，提供方向
 		localeService: new LocaleService({
@@ -71,20 +71,20 @@ const gltfModelInit = (gltfUrl) => {
 				en: {
 					// English
 					NavCube: {
-						front: '前',
-						back: '后',
-						top: '上',
-						bottom: '下',
-						left: '左',
-						right: '右',
+						front: "前",
+						back: "后",
+						top: "上",
+						bottom: "下",
+						left: "左",
+						right: "右",
 					},
 				},
 			},
-			locale: 'en',
+			locale: "en",
 		}),
 	});
 	// 默认的语言服务
-	viewer.localeService.locale = 'en';
+	viewer.localeService.locale = "en";
 	// 以视图驱动相机
 	viewer.camera.orbitPitch(0); // 轨道间距为20
 	viewer.camera.orbitYaw(0); // 轨道偏航
@@ -105,8 +105,8 @@ const gltfModelInit = (gltfUrl) => {
 
 	// 开启右侧方向控制
 	new NavCubePlugin(viewer, {
-		canvasId: 'myNavCubeCanvas',
-		color: 'lightblue',
+		canvasId: "myNavCubeCanvas",
+		color: "lightblue",
 		visible: true,
 		size: 250,
 		cameraFly: true,
@@ -115,27 +115,23 @@ const gltfModelInit = (gltfUrl) => {
 	});
 
 	const guiParams = new (function () {
-		this['Current Locale'] = viewer.localeService.locale;
+		this["Current Locale"] = viewer.localeService.locale;
 	})();
 
 	const update = function () {
-		viewer.localeService.locale = guiParams['Current Locale'];
+		viewer.localeService.locale = guiParams["Current Locale"];
 		requestAnimationFrame(update);
 	};
 
 	update();
 	// 数据gui加速
-	const gui = new dat.GUI({ autoPlace: false, width: '100%' });
+	const gui = new dat.GUI({ autoPlace: false, width: "100%" });
 
-	const localizationFolder = gui.addFolder('Localization');
-	localizationFolder.add(
-		guiParams,
-		'Current Locale',
-		viewer.localeService.locales
-	);
+	const localizationFolder = gui.addFolder("Localization");
+	localizationFolder.add(guiParams, "Current Locale", viewer.localeService.locales);
 	localizationFolder.open();
 
-	const customContainer = document.getElementById('myDatGuiContainer');
+	const customContainer = document.getElementById("myDatGuiContainer");
 	customContainer.appendChild(gui.domElement);
 
 	window.viewer = viewer;
@@ -149,12 +145,12 @@ const gltfModelInit = (gltfUrl) => {
 
 	// 坐标轴
 	new AxisGizmoPlugin(viewer, {
-		canvasId: 'myAxisGizmoCanvas',
+		canvasId: "myAxisGizmoCanvas",
 	});
 	// 缩放比例值
 	// 设置模型，并且加载模型
 	model = gltfLoader.load({
-		id: 'myModel',
+		id: "myModel",
 		src: gltfUrl,
 		// 边缘化
 		edges: true,
@@ -170,22 +166,22 @@ const gltfModelInit = (gltfUrl) => {
 	loadingModel.value = false;
 
 	// 加载模型
-	model.on('loaded', () => {
+	model.on("loaded", () => {
 		// 设置元模型
 		// 相机飞行
 		viewer.cameraFlight.flyTo(model);
-		viewer.cameraControl.on('picked');
+		viewer.cameraControl.on("picked");
 		// 加载成功
 	});
 	// 模型场景化
-	model = viewer.scene.models['myModel'];
+	model = viewer.scene.models["myModel"];
 
 	// 方向光
 	new DirLight(viewer.scene, {
 		dir: [-0.8, -0.6, -0.8],
 		color: [1.0, 1.0, 0.9],
 		intensity: 1.0,
-		space: 'world',
+		space: "world",
 	});
 	// 环境光
 	new AmbientLight(viewer.scene, {

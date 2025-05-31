@@ -7,11 +7,7 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">仿真参数设置</span>
-							<el-button
-								type="primary"
-								class="action-button"
-								@click="changeAppearance"
-							>
+							<el-button type="primary" class="action-button" @click="changeAppearance">
 								<el-icon><VideoPlay /></el-icon>
 								现象观察
 							</el-button>
@@ -112,49 +108,35 @@
 				<el-card class="content-card" shadow="hover" v-loading="contentLoading">
 					<template #header>
 						<div class="card-header">
-							<span class="header-title">
-								工况说明
-							</span>
+							<span class="header-title"> 工况说明 </span>
 							<el-tag size="small" :type="contentChanged ? 'success' : 'info'">
-								{{ contentChanged ? '内容已更新' : '当前工况' }}
+								{{ contentChanged ? "内容已更新" : "当前工况" }}
 							</el-tag>
 						</div>
 					</template>
 					<div v-if="content" class="content-area">
 						<div class="content-list">
 							<div class="current-params">
-								<el-tag size="small" type="primary" effect="plain"
-									>水位：{{ water_level }}</el-tag
-								>
+								<el-tag size="small" type="primary" effect="plain">水位：{{ water_level }}</el-tag>
 								<el-tag size="small" type="success" effect="plain"
 									>波向：{{ wave_direction }}</el-tag
 								>
-								<el-tag size="small" type="warning" effect="plain"
-									>外堤：{{ embank_ment }}</el-tag
-								>
+								<el-tag size="small" type="warning" effect="plain">外堤：{{ embank_ment }}</el-tag>
 							</div>
 							<div class="content-text">{{ content }}</div>
 						</div>
 					</div>
-					<el-empty
-						v-else
-						description="暂无工况说明"
-						:image-size="80"
-					></el-empty>
+					<el-empty v-else description="暂无工况说明" :image-size="80"></el-empty>
 				</el-card>
 
 				<!-- 视频区域 -->
 				<el-card class="video-card" shadow="hover" v-loading="videoLoading">
 					<template #header>
 						<div class="card-header">
-							<span class="header-title">
-								仿真模拟现象
-							</span>
+							<span class="header-title"> 仿真模拟现象 </span>
 							<div class="params-summary">
 								<el-tag size="small" type="primary">{{ water_level }}</el-tag>
-								<el-tag size="small" type="success">{{
-									wave_direction
-								}}</el-tag>
+								<el-tag size="small" type="success">{{ wave_direction }}</el-tag>
 								<el-tag size="small" type="warning">{{ embank_ment }}</el-tag>
 							</div>
 						</div>
@@ -179,16 +161,16 @@
 </template>
 
 <script>
-import { ElMessage } from 'element-plus';
-import { mapGetters } from 'vuex';
-import Constants from '../../utils/Constants.js';
-import { addUserScore, getUserInfo } from '../../api/service/user';
-import { getChooseFindAll } from '../../api/service/choose';
-import { contentSearchChooseId } from '../../api/service/content';
-import { getPortMapFindAll } from '../../api/service/portmap';
-import { videoSearchFindOne } from '../../api/service/video';
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { getChooseFindAll } from "../../api/service/choose";
+import { contentSearchChooseId } from "../../api/service/content";
+import { getPortMapFindAll } from "../../api/service/portmap";
+import { videoSearchFindOne } from "../../api/service/video";
 // 引入西瓜播放器
-import Player from 'xgplayer';
+import Player from "xgplayer";
 import {
 	VideoPlay,
 	Odometer,
@@ -196,10 +178,10 @@ import {
 	Setting,
 	Document,
 	VideoCameraFilled,
-} from '@element-plus/icons-vue';
+} from "@element-plus/icons-vue";
 
 export default {
-	name: 'ProjectRoute',
+	name: "ProjectRoute",
 	components: {
 		VideoPlay,
 		Odometer,
@@ -210,7 +192,7 @@ export default {
 	},
 	data() {
 		return {
-			content: '',
+			content: "",
 			radioList: [],
 			contentLoading: false,
 			videoLoading: false,
@@ -218,12 +200,12 @@ export default {
 			currentParamId: null,
 
 			// 选择框的值
-			water_level: '极端高水位',
-			wave_direction: 'SW',
-			embank_ment: '无堤',
+			water_level: "极端高水位",
+			wave_direction: "SW",
+			embank_ment: "无堤",
 
 			// 视频相关
-			videoSrc: '',
+			videoSrc: "",
 			videoPlayer: null,
 			destroy: true,
 
@@ -235,8 +217,8 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters('user', {
-			userInfo: 'userInfo',
+		...mapGetters("user", {
+			userInfo: "userInfo",
 		}),
 	},
 	mounted() {
@@ -246,7 +228,7 @@ export default {
 
 		// 获取浏览器宽度处理响应式
 		this.updateSize();
-		window.addEventListener('resize', this.updateSize);
+		window.addEventListener("resize", this.updateSize);
 	},
 	beforeUnmount() {
 		// 组件卸载时清理播放器
@@ -254,18 +236,18 @@ export default {
 			this.videoPlayer.destroy();
 			this.videoPlayer = null;
 		}
-		window.removeEventListener('resize', this.updateSize);
+		window.removeEventListener("resize", this.updateSize);
 	},
 	methods: {
 		// 按类型分组的单选按钮
 		getRadiosByType(type) {
 			if (!this.radioList || this.radioList.length === 0) return [];
 
-			if (type === 'water_level') {
+			if (type === "water_level") {
 				return this.radioList.slice(0, 4);
-			} else if (type === 'wave_direction') {
+			} else if (type === "wave_direction") {
 				return this.radioList.slice(4, 7);
-			} else if (type === 'embank_ment') {
+			} else if (type === "embank_ment") {
 				return this.radioList.slice(7, 11);
 			}
 			return [];
@@ -284,8 +266,8 @@ export default {
 					ElMessage.error(result.msg);
 				}
 			} catch (error) {
-				console.error('获取图像错误:', error);
-				ElMessage.error('获取图像出错，请稍后再试');
+				console.error("获取图像错误:", error);
+				ElMessage.error("获取图像出错，请稍后再试");
 			}
 		},
 
@@ -307,7 +289,7 @@ export default {
 					}
 				}
 			} catch (error) {
-				console.error('更新分数错误:', error);
+				console.error("更新分数错误:", error);
 			}
 		},
 
@@ -321,7 +303,7 @@ export default {
 					if (result.data.list && result.data.list.length > 0) {
 						// 根据默认选择的water_level找到对应的ID
 						const waterLevelItem = result.data.list.find(
-							(item) => item.content === this.water_level
+							(item) => item.content === this.water_level,
 						);
 						if (waterLevelItem) {
 							this.getContentSearchChooseId(waterLevelItem.id);
@@ -333,8 +315,8 @@ export default {
 					ElMessage.error(result.msg);
 				}
 			} catch (error) {
-				console.error('获取选项错误:', error);
-				ElMessage.error('获取选项出错，请稍后再试');
+				console.error("获取选项错误:", error);
+				ElMessage.error("获取选项出错，请稍后再试");
 			}
 		},
 
@@ -349,17 +331,17 @@ export default {
 				const result = await contentSearchChooseId(params);
 				if (result.code === Constants.status.SUCCESS) {
 					// 使用动画效果显示内容更新
-					this.content = result.data.content || '';
+					this.content = result.data.content || "";
 					this.contentChanged = true;
 					setTimeout(() => {
 						this.contentChanged = false;
 					}, 2000);
 				} else {
-					ElMessage.error(result.msg || '获取内容失败');
+					ElMessage.error(result.msg || "获取内容失败");
 				}
 			} catch (error) {
-				console.error('获取内容错误:', error);
-				ElMessage.error('获取内容出错，请稍后再试');
+				console.error("获取内容错误:", error);
+				ElMessage.error("获取内容出错，请稍后再试");
 			} finally {
 				this.contentLoading = false;
 			}
@@ -369,17 +351,17 @@ export default {
 		handleParamChange(paramType) {
 			let selectedItem;
 
-			if (paramType === 'water_level') {
-				selectedItem = this.getRadiosByType('water_level').find(
-					(item) => item.content === this.water_level
+			if (paramType === "water_level") {
+				selectedItem = this.getRadiosByType("water_level").find(
+					(item) => item.content === this.water_level,
 				);
-			} else if (paramType === 'wave_direction') {
-				selectedItem = this.getRadiosByType('wave_direction').find(
-					(item) => item.content === this.wave_direction
+			} else if (paramType === "wave_direction") {
+				selectedItem = this.getRadiosByType("wave_direction").find(
+					(item) => item.content === this.wave_direction,
 				);
-			} else if (paramType === 'embank_ment') {
-				selectedItem = this.getRadiosByType('embank_ment').find(
-					(item) => item.content === this.embank_ment
+			} else if (paramType === "embank_ment") {
+				selectedItem = this.getRadiosByType("embank_ment").find(
+					(item) => item.content === this.embank_ment,
 				);
 			}
 
@@ -403,8 +385,8 @@ export default {
 					ElMessage.error(result.msg);
 				}
 			} catch (error) {
-				console.error('获取视频错误:', error);
-				ElMessage.error('获取视频出错，请稍后再试');
+				console.error("获取视频错误:", error);
+				ElMessage.error("获取视频出错，请稍后再试");
 			} finally {
 				this.videoLoading = false;
 			}
@@ -424,7 +406,7 @@ export default {
 					el: this.$refs.videoEl,
 					url: this.videoSrc,
 					// 流式布局
-					fitVideoSize: 'auto',
+					fitVideoSize: "auto",
 					fluid: true,
 					preloadTime: 10,
 					// 初始音量
@@ -444,7 +426,7 @@ export default {
 				});
 
 				// 注册视频结束事件，视频播放完成，学生成绩加分
-				this.videoPlayer.once('ended', () => {
+				this.videoPlayer.once("ended", () => {
 					setTimeout(() => {
 						if (this.videoPlayer.ended) {
 							this.userAddScore(80, 60);
@@ -476,9 +458,9 @@ export default {
 		checkUrlParams() {
 			const query = this.$route.query;
 			if (Object.keys(query).length > 0) {
-				this.water_level = query.water_level || '极端高水位';
-				this.wave_direction = query.wave_direction || 'SW';
-				this.embank_ment = query.embank_ment || '无堤';
+				this.water_level = query.water_level || "极端高水位";
+				this.wave_direction = query.wave_direction || "SW";
+				this.embank_ment = query.embank_ment || "无堤";
 
 				// 更新内容
 				this.chooseFindAll();
@@ -489,15 +471,15 @@ export default {
 		updateSize() {
 			const viewportWidth = document.documentElement.clientWidth;
 			if (viewportWidth >= 1920) {
-				this.$store.dispatch('app/changeState', { key: 'size', val: 'xl' });
+				this.$store.dispatch("app/changeState", { key: "size", val: "xl" });
 			} else if (viewportWidth < 1920 && viewportWidth >= 1200) {
-				this.$store.dispatch('app/changeState', { key: 'size', val: 'lg' });
+				this.$store.dispatch("app/changeState", { key: "size", val: "lg" });
 			} else if (viewportWidth < 1200 && viewportWidth >= 992) {
-				this.$store.dispatch('app/changeState', { key: 'size', val: 'md' });
+				this.$store.dispatch("app/changeState", { key: "size", val: "md" });
 			} else if (viewportWidth < 992 && viewportWidth >= 768) {
-				this.$store.dispatch('app/changeState', { key: 'size', val: 'sm' });
+				this.$store.dispatch("app/changeState", { key: "size", val: "sm" });
 			} else {
-				this.$store.dispatch('app/changeState', { key: 'size', val: 'xs' });
+				this.$store.dispatch("app/changeState", { key: "size", val: "xs" });
 			}
 		},
 	},
@@ -779,45 +761,45 @@ export default {
 
 	/* 添加自定义图标样式 */
 	.el-icon-video-play:before {
-		content: '\e6e0';
+		content: "\e6e0";
 	}
 
 	.el-icon-water-level:before {
-		content: '\e79a'; /* 使用合适的水平/测量图标 */
+		content: "\e79a"; /* 使用合适的水平/测量图标 */
 	}
 
 	.el-icon-location:before {
-		content: '\e7f1';
+		content: "\e7f1";
 	}
 
 	.el-icon-setting:before {
-		content: '\e6ca';
+		content: "\e6ca";
 	}
 
 	.el-icon-document:before {
-		content: '\e6b4';
+		content: "\e6b4";
 	}
 
 	.el-icon-video-camera:before {
-		content: '\e6e7';
+		content: "\e6e7";
 	}
 
 	/* 图标通用样式 */
-	[class^='el-icon-'] {
+	[class^="el-icon-"] {
 		margin-right: 5px;
 		font-size: 16px;
 	}
 
 	/* 参数设置面板 */
 	.params-panel {
-		.section-title [class^='el-icon-'] {
+		.section-title [class^="el-icon-"] {
 			color: #1e40af;
 		}
 	}
 
 	/* 内容和视频面板 */
 	.content-image-panel {
-		.header-title [class^='el-icon-'] {
+		.header-title [class^="el-icon-"] {
 			color: #0369a1;
 		}
 	}

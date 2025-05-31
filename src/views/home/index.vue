@@ -4,22 +4,14 @@
 			<!-- 左侧区域 -->
 			<div class="left-section">
 				<!-- 操作说明区域 -->
-				<el-card
-					class="instruction-card"
-					shadow="hover"
-					v-loading="loading.content"
-				>
+				<el-card class="instruction-card" shadow="hover" v-loading="loading.content">
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">操作说明</span>
 						</div>
 					</template>
 					<div v-if="legend" class="instruction-content">{{ legend }}</div>
-					<el-empty
-						v-else
-						description="暂无操作说明"
-						:image-size="80"
-					></el-empty>
+					<el-empty v-else description="暂无操作说明" :image-size="80"></el-empty>
 				</el-card>
 
 				<!-- 团队信息区域 -->
@@ -28,29 +20,19 @@
 						<div class="card-header">
 							<div class="header-title-container">
 								<span class="header-title">水运工程仿真实验系统建设团队</span>
-								<div class="thanks-text">
-									衷心感谢各位成员付出的辛勤努力和充满灵感的创意！
-								</div>
+								<div class="thanks-text">衷心感谢各位成员付出的辛勤努力和充满灵感的创意！</div>
 							</div>
 						</div>
 					</template>
 					<el-scrollbar height="calc(100% - 20px)" class="team-scrollbar">
 						<div class="team-list">
-							<div
-								v-for="(item, index) in teamInfo"
-								:key="index"
-								class="team-item"
-							>
+							<div v-for="(item, index) in teamInfo" :key="index" class="team-item">
 								<div class="team-role">{{ item.role }}：</div>
 								<div class="team-members">{{ item.members }}</div>
 							</div>
 							<div class="team-item">
 								<div class="team-role">反馈邮箱：</div>
-								<el-link
-									type="primary"
-									:href="`mailto:${contactEmail}`"
-									class="email-link"
-								>
+								<el-link type="primary" :href="`mailto:${contactEmail}`" class="email-link">
 									{{ contactEmail }}
 								</el-link>
 							</div>
@@ -107,22 +89,22 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed, nextTick, onUpdated } from 'vue';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import { Picture, Loading } from '@element-plus/icons-vue';
-import Constants from '../../utils/Constants.js';
-import { addUserScore, getUserInfo } from '../../api/service/user';
-import { contentFindAll } from '../../api/service/content';
-import { getPortMapFindAll } from '../../api/service/portmap';
+import { ref, reactive, onMounted, computed, nextTick, onUpdated } from "vue";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import { Picture, Loading } from "@element-plus/icons-vue";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { contentFindAll } from "../../api/service/content";
+import { getPortMapFindAll } from "../../api/service/portmap";
 
 const store = useStore();
 // 获取用户信息
-const userInfo = computed(() => store.getters['user/userInfo']);
-const legend = ref('');
-const content = ref('');
-const imageUrl = ref('');
-const contactEmail = 'jiang.xuelian@tcu.edu.cn';
+const userInfo = computed(() => store.getters["user/userInfo"]);
+const legend = ref("");
+const content = ref("");
+const imageUrl = ref("");
+const contactEmail = "jiang.xuelian@tcu.edu.cn";
 const waterLevelRef = ref(null);
 const waterLevelHeight = ref(0);
 
@@ -130,10 +112,8 @@ const waterLevelHeight = ref(0);
 const imageContainerStyle = computed(() => {
 	return {
 		height:
-			waterLevelHeight.value > 0
-				? `calc(100% - ${waterLevelHeight.value}px)`
-				: 'calc(100% - 80px)', // 默认至少预留80px给水位说明
-		minHeight: '300px', // 保持最小高度
+			waterLevelHeight.value > 0 ? `calc(100% - ${waterLevelHeight.value}px)` : "calc(100% - 80px)", // 默认至少预留80px给水位说明
+		minHeight: "300px", // 保持最小高度
 	};
 });
 
@@ -148,14 +128,14 @@ const updateWaterLevelHeight = () => {
 
 // 团队信息数据结构
 const teamInfo = [
-	{ role: '系统架构', members: '费翔，杜培义，胡德' },
-	{ role: 'BIM建模', members: '马朋飞，谷雪清，吴潇' },
-	{ role: '波浪模拟', members: '蒋学炼，米万里，刘文龙' },
-	{ role: '后台管理', members: '张娜，杨伟超，宋吉宁，杨德健' },
+	{ role: "系统架构", members: "费翔，杜培义，胡德" },
+	{ role: "BIM建模", members: "马朋飞，谷雪清，吴潇" },
+	{ role: "波浪模拟", members: "蒋学炼，米万里，刘文龙" },
+	{ role: "后台管理", members: "张娜，杨伟超，宋吉宁，杨德健" },
 	{
-		role: '技术支持',
+		role: "技术支持",
 		members:
-			'高刚刚，刘烽，刘珂铖，刘轲航，刘亮杰，刘文婷，唐浩，王忠宇，夏和政，杨建丰，余澳，余润晨，张朋，庄景晨',
+			"高刚刚，刘烽，刘珂铖，刘轲航，刘亮杰，刘文婷，唐浩，王忠宇，夏和政，杨建丰，余澳，余润晨，张朋，庄景晨",
 	},
 ];
 
@@ -180,8 +160,8 @@ const getContentFindAll = async () => {
 		};
 		const result = await contentFindAll(params);
 		if (result.code === Constants.status.SUCCESS) {
-			legend.value = result.data.list[0]?.content || '';
-			content.value = result.data.list[1]?.content || '';
+			legend.value = result.data.list[0]?.content || "";
+			content.value = result.data.list[1]?.content || "";
 
 			// 等待DOM更新后计算水位说明高度
 			nextTick(() => {
@@ -191,8 +171,8 @@ const getContentFindAll = async () => {
 			ElMessage.error(result.msg);
 		}
 	} catch (error) {
-		console.error('获取内容错误:', error);
-		ElMessage.error('获取内容出错，请稍后再试');
+		console.error("获取内容错误:", error);
+		ElMessage.error("获取内容出错，请稍后再试");
 	} finally {
 		loading.content = false;
 	}
@@ -207,13 +187,13 @@ const portMapFindAll = async () => {
 		};
 		const result = await getPortMapFindAll(params);
 		if (result.code === Constants.status.SUCCESS) {
-			imageUrl.value = result.data.list[0]?.url || '';
+			imageUrl.value = result.data.list[0]?.url || "";
 		} else {
 			ElMessage.error(result.msg);
 		}
 	} catch (error) {
-		console.error('获取地图错误:', error);
-		ElMessage.error('获取地图出错，请稍后再试');
+		console.error("获取地图错误:", error);
+		ElMessage.error("获取地图出错，请稍后再试");
 	} finally {
 		loading.image = false;
 	}
@@ -228,7 +208,7 @@ const handleImageLoad = () => {
 
 // 图片加载错误处理
 const handleImageError = () => {
-	ElMessage.warning('图片加载失败');
+	ElMessage.warning("图片加载失败");
 };
 
 // 添加用户等分 - 保持原有逻辑不变
@@ -253,7 +233,7 @@ const userAddScore = async () => {
 };
 
 // 窗口大小改变时重新计算高度
-window.addEventListener('resize', updateWaterLevelHeight);
+window.addEventListener("resize", updateWaterLevelHeight);
 
 onMounted(() => {
 	Promise.all([getContentFindAll(), portMapFindAll()]);

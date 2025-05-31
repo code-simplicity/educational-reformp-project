@@ -1,18 +1,15 @@
-import {
-    createStore,
-    createLogger
-} from 'vuex'
+import { createStore, createLogger } from "vuex";
 
-import user from './modules/user'
-import app from './modules/app'
+import user from "./modules/user";
+import app from "./modules/app";
 
-const debug = process.env.NODE_ENV !== 'production'
+const debug = process.env.NODE_ENV !== "production";
 
 export default createStore({
-    modules: {
-        user,
-        app
-    },
-    strict: debug,
-    plugins: debug ? [createLogger()] : []
-})
+	modules: {
+		user,
+		app,
+	},
+	strict: debug,
+	plugins: debug ? [createLogger()] : [],
+});

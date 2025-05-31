@@ -78,14 +78,14 @@
 </template>
 
 <script>
-import { computed, ref, reactive, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import { sendCaptcha, sendMailCode, resetEmailUser } from '@/api/service/user';
-import Constants from '@/utils/Constants';
+import { computed, ref, reactive, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import { sendCaptcha, sendMailCode, resetEmailUser } from "@/api/service/user";
+import Constants from "@/utils/Constants";
 
 export default {
-	name: 'UserResetEmail',
+	name: "UserResetEmail",
 	setup() {
 		const store = useStore();
 		const userFormRef = ref(null);
@@ -93,10 +93,10 @@ export default {
 		const emailLoading = ref(false);
 
 		const userForm = ref({
-			id: '',
-			email: '',
-			emailCode: '',
-			captcha: '',
+			id: "",
+			email: "",
+			emailCode: "",
+			captcha: "",
 		});
 
 		// 验证规则
@@ -104,41 +104,41 @@ export default {
 			email: [
 				{
 					required: true,
-					message: '邮箱不能为空',
-					trigger: 'blur',
+					message: "邮箱不能为空",
+					trigger: "blur",
 				},
 				{
-					type: 'email',
-					message: '请输入正确的邮箱格式',
-					trigger: 'blur',
+					type: "email",
+					message: "请输入正确的邮箱格式",
+					trigger: "blur",
 				},
 			],
 			emailCode: [
 				{
 					required: true,
-					message: '邮箱验证码不能为空',
-					trigger: 'blur',
+					message: "邮箱验证码不能为空",
+					trigger: "blur",
 				},
 			],
 			captcha: [
 				{
 					required: true,
-					message: '验证码不能为空',
-					trigger: 'blur',
+					message: "验证码不能为空",
+					trigger: "blur",
 				},
 			],
 		});
 
 		// 获取用户信息
-		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInfo = computed(() => store.getters["user/userInfo"]);
 
 		// 初始化表单数据
 		onMounted(() => {
 			userForm.value = {
 				id: userInfo.value.id,
-				email: '',
-				emailCode: '',
-				captcha: '',
+				email: "",
+				emailCode: "",
+				captcha: "",
 			};
 			updateCaptchaCode();
 		});
@@ -152,21 +152,18 @@ export default {
 				const data = await sendCaptcha();
 				captchaUrl.value = data;
 			} catch (error) {
-				ElMessage.error('获取验证码失败，请刷新页面重试');
+				ElMessage.error("获取验证码失败，请刷新页面重试");
 			}
 		};
 
 		// 邮箱验证码相关
-		const emailTextBtn = ref('获取验证码');
+		const emailTextBtn = ref("获取验证码");
 		const isEmailText = ref(true);
 
 		// 验证邮箱
 		const checkEmailValue = () => {
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-			if (
-				userForm.value.email.trim() !== '' &&
-				emailRegex.test(userForm.value.email)
-			) {
+			if (userForm.value.email.trim() !== "" && emailRegex.test(userForm.value.email)) {
 				isEmailText.value = false;
 			} else {
 				isEmailText.value = true;
@@ -183,7 +180,7 @@ export default {
 				time--;
 				if (time < 0) {
 					clearInterval(sendTime);
-					emailTextBtn.value = '获取验证码';
+					emailTextBtn.value = "获取验证码";
 					isEmailText.value = false;
 				} else {
 					emailTextBtn.value = `重新发送(${time})`;
@@ -203,13 +200,13 @@ export default {
 				const result = await sendMailCode(params);
 
 				if (result.code === Constants.status.SUCCESS) {
-					ElMessage.success(result.msg || '验证码发送成功');
+					ElMessage.success(result.msg || "验证码发送成功");
 					countDown();
 				} else {
-					ElMessage.error(result.msg || '验证码发送失败');
+					ElMessage.error(result.msg || "验证码发送失败");
 				}
 			} catch (error) {
-				ElMessage.error('发送验证码失败: ' + error.message || '服务异常');
+				ElMessage.error("发送验证码失败: " + error.message || "服务异常");
 			} finally {
 				emailLoading.value = false;
 			}
@@ -222,10 +219,10 @@ export default {
 		const validateForm = () => {
 			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 			if (
-				userForm.value.email.trim() !== '' &&
+				userForm.value.email.trim() !== "" &&
 				emailRegex.test(userForm.value.email) &&
-				userForm.value.emailCode.trim() !== '' &&
-				userForm.value.captcha.trim() !== ''
+				userForm.value.emailCode.trim() !== "" &&
+				userForm.value.captcha.trim() !== ""
 			) {
 				isDisabled.value = false;
 			} else {
@@ -252,23 +249,23 @@ export default {
 						const result = await resetEmailUser(params);
 
 						if (result.code === Constants.status.SUCCESS) {
-							await store.dispatch('user/updateUser', userForm.value.id);
-							ElMessage.success(result.msg || '邮箱更新成功');
-							userForm.value.email = '';
-							userForm.value.emailCode = '';
-							userForm.value.captcha = '';
+							await store.dispatch("user/updateUser", userForm.value.id);
+							ElMessage.success(result.msg || "邮箱更新成功");
+							userForm.value.email = "";
+							userForm.value.emailCode = "";
+							userForm.value.captcha = "";
 							isDisabled.value = true;
 						} else {
-							ElMessage.error(result.msg || '更新失败');
+							ElMessage.error(result.msg || "更新失败");
 						}
 					} catch (error) {
-						ElMessage.error('邮箱更新失败: ' + error.message || '服务异常');
+						ElMessage.error("邮箱更新失败: " + error.message || "服务异常");
 					} finally {
 						loading.value = false;
 						updateCaptchaCode();
 					}
 				} else {
-					ElMessage.warning('请正确填写所有必填项');
+					ElMessage.warning("请正确填写所有必填项");
 				}
 			});
 		};

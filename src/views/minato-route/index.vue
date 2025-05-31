@@ -11,11 +11,7 @@
 						</div>
 					</template>
 					<div v-if="legend" class="instruction-content">{{ legend }}</div>
-					<el-empty
-						v-else
-						description="暂无操作说明"
-						:image-size="80"
-					></el-empty>
+					<el-empty v-else description="暂无操作说明" :image-size="80"></el-empty>
 				</el-card>
 
 				<!-- 场景说明区域 -->
@@ -30,11 +26,7 @@
 							<p class="item">{{ content }}</p>
 						</div>
 					</div>
-					<el-empty
-						v-else
-						description="暂无场景说明"
-						:image-size="80"
-					></el-empty>
+					<el-empty v-else description="暂无场景说明" :image-size="80"></el-empty>
 				</el-card>
 			</div>
 
@@ -57,20 +49,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import Constants from '../../utils/Constants.js';
-import { addUserScore, getUserInfo } from '../../api/service/user';
-import { contentFindAll } from '../../api/service/content';
-import BimModel from '../../components/bim-model/bim-model.vue';
-import GltfModel from '../../components/gltf-model/index.vue';
+import { ref, computed, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { contentFindAll } from "../../api/service/content";
+import BimModel from "../../components/bim-model/bim-model.vue";
+import GltfModel from "../../components/gltf-model/index.vue";
 
 const store = useStore();
 // 获取用户信息
-const userInfo = computed(() => store.getters['user/userInfo']);
-const legend = ref('');
-const content = ref('');
+const userInfo = computed(() => store.getters["user/userInfo"]);
+const legend = ref("");
+const content = ref("");
 const page = ref({
 	pageNum: 1,
 	pageSize: 20,
@@ -84,14 +76,14 @@ const getContentFindAll = async () => {
 		};
 		const result = await contentFindAll(params);
 		if (result.code === Constants.status.SUCCESS) {
-			legend.value = result.data.list[0]?.content || '';
-			content.value = result.data.list[1]?.content || '';
+			legend.value = result.data.list[0]?.content || "";
+			content.value = result.data.list[1]?.content || "";
 		} else {
 			ElMessage.error(result.msg);
 		}
 	} catch (error) {
-		console.error('获取内容错误:', error);
-		ElMessage.error('获取内容出错，请稍后再试');
+		console.error("获取内容错误:", error);
+		ElMessage.error("获取内容出错，请稍后再试");
 	}
 };
 
@@ -113,7 +105,7 @@ const userAddScore = async () => {
 			}
 		}
 	} catch (error) {
-		console.error('更新分数错误:', error);
+		console.error("更新分数错误:", error);
 	}
 };
 

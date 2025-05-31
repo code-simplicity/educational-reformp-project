@@ -7,8 +7,7 @@
 				<span>制作维护：土木工程学院 计算机与信息工程学院</span>
 			</div>
 			<div class="copyright">
-				&copy; {{ new Date().getFullYear() }} 水运工程仿真实验系统. All rights
-				reserved.
+				&copy; {{ new Date().getFullYear() }} 水运工程仿真实验系统. All rights reserved.
 			</div>
 		</div>
 	</footer>
@@ -16,7 +15,7 @@
 
 <script>
 export default {
-	name: 'AppFooter',
+	name: "AppFooter",
 };
 </script>
 
@@ -30,7 +29,7 @@ export default {
 	align-items: center;
 	box-sizing: border-box;
 	position: fixed;
-	bottom:  0;
+	bottom: 0;
 	left: 0;
 	right: 0;
 	z-index: 100;

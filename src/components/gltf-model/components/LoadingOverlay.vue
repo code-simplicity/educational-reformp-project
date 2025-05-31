@@ -31,11 +31,11 @@ const props = defineProps({
 });
 
 // 定义事件
-const emit = defineEmits(['retry']);
+const emit = defineEmits(["retry"]);
 
 // 重试点击事件
 const onRetry = () => {
-	emit('retry');
+	emit("retry");
 };
 </script>
 
@@ -50,7 +50,7 @@ const onRetry = () => {
 	left: 0;
 	bottom: 0;
 	right: 0;
-	z-index: 100;
+	z-index: 1002;
 	background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
 
 	.loading {

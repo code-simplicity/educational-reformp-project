@@ -5,10 +5,10 @@
 </template>
 
 <script>
-import AppLayout from '@/components/layouts/index.vue';
+import AppLayout from "@/components/layouts/index.vue";
 
 export default {
-	name: 'App',
+	name: "App",
 	components: {
 		AppLayout,
 	},
@@ -68,8 +68,8 @@ export default {
 }
 
 body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		'Helvetica Neue', Arial, sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	line-height: 1.5;
 	color: var(--text-primary);
 	background-color: var(--bg-primary);
@@ -121,8 +121,8 @@ body {
 }
 
 body {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		'Helvetica Neue', Arial, sans-serif;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 	line-height: 1.5;
 	color: var(--text-primary);
 	background-color: var(--bg-primary);

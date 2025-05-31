@@ -3,8 +3,8 @@
  * @returns
  */
 export const getToken = () => {
-  return localStorage.getItem("app_cookie_data");
-}
+	return localStorage.getItem("app_cookie_data");
+};
 
 /**
  *
@@ -14,8 +14,8 @@ export const getToken = () => {
  * @return {*}
  */
 export const setToken = async (token) => {
-  return await localStorage.setItem("app_cookie_data", token);
-}
+	return await localStorage.setItem("app_cookie_data", token);
+};
 
 /**
  *
@@ -24,5 +24,5 @@ export const setToken = async (token) => {
  * @return {*}
  */
 export const removeToken = async () => {
-  return await localStorage.removeItem("app_cookie_data");
-}
+	return await localStorage.removeItem("app_cookie_data");
+};

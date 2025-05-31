@@ -1,108 +1,114 @@
 #app {
-    letter-spacing: 3px;
-    line-height: 1.4;
-    height: 100%;
+	letter-spacing: 3px;
+	line-height: 1.4;
+	height: 100%;
 }
 
 .flex {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .flex-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .flex-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .flex-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .flex-justify-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 }
 
 .flex-row {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
 .flex-nowrap {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    white-space: nowrap;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	white-space: nowrap;
 }
 
 .border {
-    border: 1px solid rgb(228, 228, 228);
-    border-radius: 8px;
+	border: 1px solid rgb(228, 228, 228);
+	border-radius: 8px;
 }
 
 .border-bottom {
-    border-bottom: 1px solid #727272;
+	border-bottom: 1px solid #727272;
 }
 
 .border-radius {
-    border-radius: 8px;
+	border-radius: 8px;
 }
 
 /* 这里是导航栏的样式 */
 .router-link-size {
-    font-size: 18px;
+	font-size: 18px;
 }
 
 .router-link-class {
-    padding: 6px 18px;
-    border-radius: 8px;
+	padding: 6px 18px;
+	border-radius: 8px;
 }
 
 @media screen and (max-width: 1400px) {
-    html, body, #app {
-        overflow: auto;
-        font-size: 12px;
-    }
+	html,
+	body,
+	#app {
+		overflow: auto;
+		font-size: 12px;
+	}
 
-    .router-link-size {
-        font-size: 12px;
-    }
+	.router-link-size {
+		font-size: 12px;
+	}
 
-    .router-link-class {
-        padding: 6px 12px;
-    }
+	.router-link-class {
+		padding: 6px 12px;
+	}
 }
 
 @media screen and (min-width: 1980px) {
-    html, body, #app {
-        overflow: hidden;
-        font-size: 18px;
-    }
+	html,
+	body,
+	#app {
+		overflow: hidden;
+		font-size: 18px;
+	}
 }
 
 @media screen and (min-width: 2400px) {
-    html, body, #app {
-        overflow: hidden;
-        font-size: 22px;
-    }
+	html,
+	body,
+	#app {
+		overflow: hidden;
+		font-size: 22px;
+	}
 
-    .router-link-size {
-        font-size: 22px;
-    }
+	.router-link-size {
+		font-size: 22px;
+	}
 
-    .router-link-class {
-        padding: 6px 22px;
-    }
+	.router-link-class {
+		padding: 6px 22px;
+	}
 }

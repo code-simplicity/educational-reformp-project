@@ -23,10 +23,7 @@
 				</el-form-item>
 
 				<el-form-item label="性别">
-					<el-tag
-						:type="userInfo.sex === '男' ? 'primary' : 'danger'"
-						size="default"
-					>
+					<el-tag :type="userInfo.sex === '男' ? 'primary' : 'danger'" size="default">
 						{{ userInfo.sex }}
 					</el-tag>
 				</el-form-item>
@@ -52,24 +49,24 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
-import { Message } from '@element-plus/icons-vue';
+import { computed, ref } from "vue";
+import { useStore } from "vuex";
+import { Message } from "@element-plus/icons-vue";
 
 export default {
-	name: 'UserInfo',
+	name: "UserInfo",
 	components: { Message },
 	setup() {
 		const store = useStore();
 		const userForm = ref({
-			id: '',
-			user_name: '',
-			sex: '',
-			email: '',
+			id: "",
+			user_name: "",
+			sex: "",
+			email: "",
 		});
 
 		// 获取用户信息
-		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInfo = computed(() => store.getters["user/userInfo"]);
 
 		// 使用新对象，避免引用问题
 		userForm.value = { ...userInfo.value };

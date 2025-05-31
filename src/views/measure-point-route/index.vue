@@ -7,11 +7,7 @@
 					<template #header>
 						<div class="card-header">
 							<span class="header-title">仿真参数设置</span>
-							<el-button
-								type="primary"
-								class="action-button"
-								@click="toMeasurePoint"
-							>
+							<el-button type="primary" class="action-button" @click="toMeasurePoint">
 								<el-icon><DataAnalysis /></el-icon>
 								加载测点数据
 							</el-button>
@@ -83,10 +79,7 @@
 							</div>
 							<el-divider></el-divider>
 							<div class="radio-group-container">
-								<el-radio-group
-									v-model="embank_ment"
-									class="radio-options embank-options"
-								>
+								<el-radio-group v-model="embank_ment" class="radio-options embank-options">
 									<el-radio
 										v-for="item in radioList.slice(7, 11)"
 										:key="item.id"
@@ -108,7 +101,7 @@
 									工况描述
 								</div>
 								<el-tag size="small" :type="content ? 'success' : 'info'">
-									{{ content ? '已加载' : '暂无数据' }}
+									{{ content ? "已加载" : "暂无数据" }}
 								</el-tag>
 							</div>
 							<el-divider></el-divider>
@@ -128,11 +121,7 @@
 									<div class="content-text">{{ content }}</div>
 								</div>
 							</div>
-							<el-empty
-								v-else
-								description="暂无工况说明"
-								:image-size="80"
-							></el-empty>
+							<el-empty v-else description="暂无工况说明" :image-size="80"></el-empty>
 						</div>
 					</div>
 				</el-card>
@@ -143,14 +132,10 @@
 				<el-card class="map-card" shadow="hover">
 					<template #header>
 						<div class="card-header">
-							<span class="header-title">
-								港口平面测点分布
-							</span>
+							<span class="header-title"> 港口平面测点分布 </span>
 							<div class="params-summary">
 								<el-tag size="small" type="primary">{{ water_level }}</el-tag>
-								<el-tag size="small" type="success">{{
-									wave_direction
-								}}</el-tag>
+								<el-tag size="small" type="success">{{ wave_direction }}</el-tag>
 								<el-tag size="small" type="warning">{{ embank_ment }}</el-tag>
 							</div>
 						</div>
@@ -177,9 +162,7 @@
 				<el-card class="data-card" shadow="hover">
 					<template #header>
 						<div class="card-header">
-							<span class="header-title">
-								测点数据分析
-							</span>
+							<span class="header-title"> 测点数据分析 </span>
 							<el-button type="success" size="small" @click="downloadExcel">
 								<el-icon><Download /></el-icon>
 								下载数据
@@ -212,10 +195,7 @@
 						<!-- 波形分析区域 -->
 						<el-tabs type="border-card" class="wave-tabs">
 							<el-tab-pane label="波形图">
-								<div
-									class="wave-container"
-									v-loading="!waveFormsUrl && activeContent !== ''"
-								>
+								<div class="wave-container" v-loading="!waveFormsUrl && activeContent !== ''">
 									<el-image
 										v-if="waveFormsUrl"
 										:src="waveFormsUrl"
@@ -234,10 +214,7 @@
 								</div>
 							</el-tab-pane>
 							<el-tab-pane label="统计分析">
-								<div
-									class="wave-container"
-									v-loading="!waveStatsUrl && activeContent !== ''"
-								>
+								<div class="wave-container" v-loading="!waveStatsUrl && activeContent !== ''">
 									<el-image
 										v-if="waveStatsUrl"
 										:src="waveStatsUrl"
@@ -264,50 +241,50 @@
 </template>
 
 <script>
-import { ElMessage } from 'element-plus';
-import { mapGetters } from 'vuex';
-import Constants from '../../utils/Constants.js';
-import { addUserScore, getUserInfo } from '../../api/service/user';
-import { getChooseFindAll } from '../../api/service/choose';
-import { contentSearchChooseId } from '../../api/service/content';
-import { portPointMapSearchFindOne } from '../../api/service/portpointmap';
-import { getPointByPointMapFindAll } from '../../api/service/point';
-import { getWaveformsSearchPointId } from '../../api/service/waveforms';
-import { getWavestatsSearchPointId } from '../../api/service/wavestats';
-import { getWaveDataExcelByPortMapPointId } from '../../api/service/wavedataexcel';
-import utils from '../../utils/utils';
+import { ElMessage } from "element-plus";
+import { mapGetters } from "vuex";
+import Constants from "../../utils/Constants.js";
+import { addUserScore, getUserInfo } from "../../api/service/user";
+import { getChooseFindAll } from "../../api/service/choose";
+import { contentSearchChooseId } from "../../api/service/content";
+import { portPointMapSearchFindOne } from "../../api/service/portpointmap";
+import { getPointByPointMapFindAll } from "../../api/service/point";
+import { getWaveformsSearchPointId } from "../../api/service/waveforms";
+import { getWavestatsSearchPointId } from "../../api/service/wavestats";
+import { getWaveDataExcelByPortMapPointId } from "../../api/service/wavedataexcel";
+import utils from "../../utils/utils";
 
 export default {
-	name: 'MeasurePointRoute',
+	name: "MeasurePointRoute",
 	data() {
 		return {
-			content: '',
-			imageUrl: '', // 图片的路径
+			content: "",
+			imageUrl: "", // 图片的路径
 			radioList: [],
 			// 选择框的值,分别是水位，波浪方向，堤坝布置
-			water_level: '',
-			wave_direction: '',
-			embank_ment: '',
+			water_level: "",
+			wave_direction: "",
+			embank_ment: "",
 			// 激活内容
-			activeContent: '',
+			activeContent: "",
 			// 展示点位选择列表
 			showPoint: false,
 			pointList: [],
 			// 波形图
-			waveFormsUrl: '',
+			waveFormsUrl: "",
 			// 波形统计图
-			waveStatsUrl: '',
+			waveStatsUrl: "",
 			page: {
 				pageNum: 1,
 				pageSize: 50,
 			},
 			// 港口点位地图的id
-			portPointMapId: '',
+			portPointMapId: "",
 		};
 	},
 	computed: {
-		...mapGetters('user', {
-			userInfo: 'userInfo',
+		...mapGetters("user", {
+			userInfo: "userInfo",
 		}),
 	},
 	watch: {
@@ -330,9 +307,9 @@ export default {
 			this.embank_ment = queryObj.embank_ment;
 			this.getPortPointMapSearch(queryObj);
 		} else {
-			this.water_level = '极端高水位';
-			this.wave_direction = 'SW';
-			this.embank_ment = '无堤';
+			this.water_level = "极端高水位";
+			this.wave_direction = "SW";
+			this.embank_ment = "无堤";
 			const params = {
 				water_level: this.water_level,
 				wave_direction: this.wave_direction,
@@ -345,7 +322,7 @@ export default {
 		// 下载excel
 		async downloadExcel() {
 			if (!this.portPointMapId) {
-				ElMessage.warning('请先加载测点数据');
+				ElMessage.warning("请先加载测点数据");
 				return;
 			}
 
@@ -380,7 +357,7 @@ export default {
 				this.waveFormsUrl = result.data.url;
 			} else {
 				ElMessage.error(result.msg);
-				this.waveFormsUrl = '';
+				this.waveFormsUrl = "";
 			}
 		},
 
@@ -394,7 +371,7 @@ export default {
 				this.waveStatsUrl = result.data.url;
 			} else {
 				ElMessage.error(result.msg);
-				this.waveStatsUrl = '';
+				this.waveStatsUrl = "";
 			}
 		},
 
@@ -430,20 +407,20 @@ export default {
 			if (result.code === Constants.status.SUCCESS) {
 				this.pointList = result.data.list;
 				// 对数据进行排序
-				this.pointList.sort(utils.pointCompare('content'));
+				this.pointList.sort(utils.pointCompare("content"));
 				const { list } = result.data;
 				if (list.length > 0) {
 					this.changeWaveFormsAndStats(list[0].content, list[0].id);
 				} else {
-					this.waveFormsUrl = '';
-					this.waveStatsUrl = '';
-					this.activeContent = '';
-					ElMessage.warning('当前工况无测点数据');
+					this.waveFormsUrl = "";
+					this.waveStatsUrl = "";
+					this.activeContent = "";
+					ElMessage.warning("当前工况无测点数据");
 				}
 			} else {
 				ElMessage.error(result.msg);
 				this.pointList = [];
-				this.activeContent = '';
+				this.activeContent = "";
 			}
 		},
 
@@ -481,10 +458,10 @@ export default {
 				this.getPointSearch(result.data.id);
 			} else {
 				ElMessage.error(result.msg);
-				this.imageUrl = '';
-				this.portPointMapId = '';
+				this.imageUrl = "";
+				this.portPointMapId = "";
 				this.pointList = [];
-				this.activeContent = '';
+				this.activeContent = "";
 			}
 		},
 
@@ -498,7 +475,7 @@ export default {
 				this.content = result.data.content;
 			} else {
 				ElMessage.error(result.msg);
-				this.content = '';
+				this.content = "";
 			}
 		},
 	},
@@ -822,14 +799,14 @@ export default {
 							&:hover {
 								background-color: #d1d5db;
 								transform: translateY(-2px);
-								box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+								box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 							}
 
 							&.active {
 								background-color: #0284c7;
 								color: white;
 								transform: translateY(-2px);
-								box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+								box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 							}
 						}
 					}

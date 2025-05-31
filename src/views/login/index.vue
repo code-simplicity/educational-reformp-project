@@ -89,9 +89,7 @@
 								登录系统
 							</el-button>
 
-							<el-button class="register-button" @click="registerUser">
-								注册账号
-							</el-button>
+							<el-button class="register-button" @click="registerUser"> 注册账号 </el-button>
 						</div>
 
 						<div class="login-tips">
@@ -111,17 +109,17 @@
 </template>
 
 <script>
-import { reactive, ref, onMounted } from 'vue';
-import { UserFilled, Lock, Key, Refresh } from '@element-plus/icons-vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import SparkMD5 from 'spark-md5';
-import { sendCaptcha } from '@/api/service/user';
-import Constants from '@/utils/Constants.js';
+import { reactive, ref, onMounted } from "vue";
+import { UserFilled, Lock, Key, Refresh } from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import SparkMD5 from "spark-md5";
+import { sendCaptcha } from "@/api/service/user";
+import Constants from "@/utils/Constants.js";
 
 export default {
-	name: 'LoginPage',
+	name: "LoginPage",
 	components: {
 		UserFilled,
 		Lock,
@@ -136,9 +134,9 @@ export default {
 
 		// 登录表单
 		const loginForm = reactive({
-			id: '',
-			password: '',
-			captcha: '',
+			id: "",
+			password: "",
+			captcha: "",
 		});
 
 		// 验证规则
@@ -146,28 +144,28 @@ export default {
 			id: [
 				{
 					required: true,
-					message: '请输入学号',
-					trigger: 'blur',
+					message: "请输入学号",
+					trigger: "blur",
 				},
 			],
 			password: [
 				{
 					required: true,
-					message: '请输入密码',
-					trigger: 'blur',
+					message: "请输入密码",
+					trigger: "blur",
 				},
 			],
 			captcha: [
 				{
 					required: true,
-					message: '请输入验证码',
-					trigger: 'blur',
+					message: "请输入验证码",
+					trigger: "blur",
 				},
 			],
 		});
 
 		// 验证码图片
-		const captchaUrl = ref('');
+		const captchaUrl = ref("");
 
 		// 获取验证码
 		const updateCaptchaCode = async () => {
@@ -175,7 +173,7 @@ export default {
 				const data = await sendCaptcha();
 				captchaUrl.value = data;
 			} catch (error) {
-				ElMessage.error('获取验证码失败，请刷新页面重试');
+				ElMessage.error("获取验证码失败，请刷新页面重试");
 			}
 		};
 
@@ -196,13 +194,13 @@ export default {
 						};
 
 						// 调用登录接口
-						const response = await store.dispatch('user/login', params);
+						const response = await store.dispatch("user/login", params);
 
 						if (response.code === Constants.status.SUCCESS) {
-							router.replace({ path: '/home' });
+							router.replace({ path: "/home" });
 						} else {
 							updateCaptchaCode();
-							loginForm.captcha = '';
+							loginForm.captcha = "";
 						}
 					} catch (error) {
 						updateCaptchaCode();
@@ -216,7 +214,7 @@ export default {
 		// 前往注册页面
 		const registerUser = () => {
 			router.push({
-				name: 'register',
+				name: "register",
 			});
 		};
 
@@ -251,13 +249,13 @@ export default {
 	background-color: #f5f7fa;
 
 	&::before {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-image: url('@/assets/images/bg.jpg');
+		background-image: url("@/assets/images/bg.jpg");
 		background-size: cover;
 		background-position: center;
 		opacity: 0.85;

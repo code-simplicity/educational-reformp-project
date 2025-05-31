@@ -18,9 +18,7 @@
 					</div>
 				</div>
 				<div class="user-roles" v-if="userInfo.roles">
-					<el-tag type="success" effect="dark" size="small">{{
-						userInfo.roles
-					}}</el-tag>
+					<el-tag type="success" effect="dark" size="small">{{ userInfo.roles }}</el-tag>
 				</div>
 			</div>
 
@@ -57,17 +55,17 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useStore } from 'vuex';
-import { User } from '@element-plus/icons-vue';
-import { navItems } from '@/json/navItems';
-import UserInfo from './user-info/index.vue';
-import UserUpdate from './user-update/index.vue';
-import UserResetEmail from './user-reset-email/index.vue';
-import UserResetPassword from './user-reset-password/index.vue';
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+import { User } from "@element-plus/icons-vue";
+import { navItems } from "@/json/navItems";
+import UserInfo from "./user-info/index.vue";
+import UserUpdate from "./user-update/index.vue";
+import UserResetEmail from "./user-reset-email/index.vue";
+import UserResetPassword from "./user-reset-password/index.vue";
 
 export default {
-	name: 'UserCenter',
+	name: "UserCenter",
 
 	components: {
 		User,
@@ -80,16 +78,16 @@ export default {
 	setup() {
 		const store = useStore();
 
-		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInfo = computed(() => store.getters["user/userInfo"]);
 		const userInitial = computed(() => {
 			if (userInfo.value && userInfo.value.user_name) {
 				return userInfo.value.user_name.charAt(0).toUpperCase();
 			}
-			return 'U';
+			return "U";
 		});
 
 		// 默认活动标签
-		const activeTab = ref('user-info');
+		const activeTab = ref("user-info");
 
 		return {
 			userInfo,

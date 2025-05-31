@@ -63,24 +63,24 @@
 </template>
 
 <script>
-import { computed, ref, reactive, onMounted } from 'vue';
-import { useStore } from 'vuex';
-import { ElMessage } from 'element-plus';
-import { sendCaptcha, resetPasswordUser } from '@/api/service/user';
-import Constants from '@/utils/Constants';
-import SparkMD5 from 'spark-md5';
+import { computed, ref, reactive, onMounted } from "vue";
+import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+import { sendCaptcha, resetPasswordUser } from "@/api/service/user";
+import Constants from "@/utils/Constants";
+import SparkMD5 from "spark-md5";
 
 export default {
-	name: 'UserResetPassword',
+	name: "UserResetPassword",
 	setup() {
 		const store = useStore();
 		const userFormRef = ref(null);
 		const loading = ref(false);
 
 		const userForm = ref({
-			id: '',
-			password: '',
-			captcha: '',
+			id: "",
+			password: "",
+			captcha: "",
 		});
 
 		// 验证规则
@@ -88,33 +88,33 @@ export default {
 			password: [
 				{
 					required: true,
-					message: '密码不能为空',
-					trigger: 'blur',
+					message: "密码不能为空",
+					trigger: "blur",
 				},
 				{
 					min: 6,
-					message: '密码长度至少为6个字符',
-					trigger: 'blur',
+					message: "密码长度至少为6个字符",
+					trigger: "blur",
 				},
 			],
 			captcha: [
 				{
 					required: true,
-					message: '验证码不能为空',
-					trigger: 'blur',
+					message: "验证码不能为空",
+					trigger: "blur",
 				},
 			],
 		});
 
 		// 获取用户信息
-		const userInfo = computed(() => store.getters['user/userInfo']);
+		const userInfo = computed(() => store.getters["user/userInfo"]);
 
 		// 初始化表单数据
 		onMounted(() => {
 			userForm.value = {
 				id: userInfo.value.id,
-				password: '',
-				captcha: '',
+				password: "",
+				captcha: "",
 			};
 			updateCaptchaCode();
 		});
@@ -128,7 +128,7 @@ export default {
 				const data = await sendCaptcha();
 				captchaUrl.value = data;
 			} catch (error) {
-				ElMessage.error('获取验证码失败，请刷新页面重试');
+				ElMessage.error("获取验证码失败，请刷新页面重试");
 			}
 		};
 
@@ -137,10 +137,7 @@ export default {
 
 		// 验证表单完整性
 		const checkUserValue = () => {
-			if (
-				userForm.value.password.trim() !== '' &&
-				userForm.value.captcha.trim() !== ''
-			) {
+			if (userForm.value.password.trim() !== "" && userForm.value.captcha.trim() !== "") {
 				isDisabled.value = false;
 			} else {
 				isDisabled.value = true;
@@ -165,22 +162,22 @@ export default {
 						const result = await resetPasswordUser(params);
 
 						if (result.code === Constants.status.SUCCESS) {
-							await store.dispatch('user/updateUser', userForm.value.id);
-							ElMessage.success(result.msg || '密码修改成功');
-							userForm.value.password = '';
-							userForm.value.captcha = '';
+							await store.dispatch("user/updateUser", userForm.value.id);
+							ElMessage.success(result.msg || "密码修改成功");
+							userForm.value.password = "";
+							userForm.value.captcha = "";
 							isDisabled.value = true;
 						} else {
-							ElMessage.error(result.msg || '修改失败');
+							ElMessage.error(result.msg || "修改失败");
 						}
 					} catch (error) {
-						ElMessage.error('密码修改失败: ' + error.message || '服务异常');
+						ElMessage.error("密码修改失败: " + error.message || "服务异常");
 					} finally {
 						loading.value = false;
 						updateCaptchaCode();
 					}
 				} else {
-					ElMessage.warning('请正确填写所有必填项');
+					ElMessage.warning("请正确填写所有必填项");
 				}
 			});
 		};

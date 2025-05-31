@@ -1,22 +1,13 @@
-import {
-	getUserInfo,
-	login,
-	logout,
-	updateUserInfo,
-} from '../../api/service/user';
-import {
-	findUserInfo,
-	setUserInfo,
-	removeUserInfo,
-} from '../../utils/userInfo';
+import { getUserInfo, login, logout, updateUserInfo } from "../../api/service/user";
+import { findUserInfo, setUserInfo, removeUserInfo } from "../../utils/userInfo";
 
-import { getToken, setToken, removeToken } from '../../utils/token';
+import { getToken, setToken, removeToken } from "../../utils/token";
 
-import Constants from '../../utils/Constants';
+import Constants from "../../utils/Constants";
 
-import utils from '../../utils/utils';
+import utils from "../../utils/utils";
 
-import { ElMessage } from 'element-plus';
+import { ElMessage } from "element-plus";
 // state
 const state = () => ({
 	// 用户信息
@@ -55,7 +46,7 @@ const mutations = {
 	// 清除用户状态 (新增)
 	clearUserState(state) {
 		state.userInfo = {};
-		state.tokenData = '';
+		state.tokenData = "";
 		removeUserInfo();
 		removeToken();
 		utils.clearAllCookie();
@@ -70,8 +61,8 @@ const actions = {
 			const result = await login(params);
 			if (result.code === Constants.status.SUCCESS) {
 				const { tokenKey, ...data } = result.data;
-				commit('tokenData', tokenKey);
-				commit('infoChange', data);
+				commit("tokenData", tokenKey);
+				commit("infoChange", data);
 				ElMessage.success({
 					message: result.msg,
 				});
@@ -83,17 +74,17 @@ const actions = {
 			return result;
 		} catch (error) {
 			ElMessage.error({
-				message: '登录请求失败',
+				message: "登录请求失败",
 			});
 			return Promise.reject(error);
 		}
 	},
 
 	async getUserInfoById({ commit }, id) {
-    console.log('1', 1)
+		console.log("1", 1);
 		try {
 			const result = await getUserInfo(id);
-			commit('infoChange', result.data);
+			commit("infoChange", result.data);
 			return result;
 		} catch (error) {
 			return Promise.reject(error);
@@ -116,14 +107,14 @@ const actions = {
 			}
 
 			// 无论API调用成功与否，都清除本地用户状态
-			commit('clearUserState');
+			commit("clearUserState");
 
 			return Promise.resolve();
 		} catch (error) {
-			console.error('登出过程发生错误:', error);
+			console.error("登出过程发生错误:", error);
 
 			// 即使发生错误，也清除用户状态
-			commit('clearUserState');
+			commit("clearUserState");
 
 			return Promise.resolve(); // 我们仍然解析promise，因为用户状态已被清除
 		}
@@ -137,14 +128,14 @@ const actions = {
 		try {
 			const result = await updateUserInfo(params);
 			if (result.code === Constants.status.SUCCESS) {
-				await dispatch('getUserInfoById', params.id);
+				await dispatch("getUserInfoById", params.id);
 				ElMessage.success(result.msg);
 			} else {
 				ElMessage.error(result.msg);
 			}
 			return result;
 		} catch (error) {
-			ElMessage.error('更新用户信息失败');
+			ElMessage.error("更新用户信息失败");
 			return Promise.reject(error);
 		}
 	},
@@ -160,7 +151,7 @@ const actions = {
 			// 示例: this.dispatch('getUserInfoById', tokenUserId)
 		} else if (!state.tokenData) {
 			// 如果没有token，确保用户状态被清除
-			commit('clearUserState');
+			commit("clearUserState");
 		}
 		return !!state.tokenData; // 返回登录状态
 	},

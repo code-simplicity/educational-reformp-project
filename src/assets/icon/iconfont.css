@@ -1,41 +1,40 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 2922284 */
-  /* Color fonts */
-  src: 
-       url('iconfont.woff2?t=1650332002289') format('woff2'),
-       url('iconfont.woff?t=1650332002289') format('woff'),
-       url('iconfont.ttf?t=1650332002289') format('truetype');
+	font-family: "iconfont"; /* Project id 2922284 */
+	/* Color fonts */
+	src:
+		url("iconfont.woff2?t=1650332002289") format("woff2"),
+		url("iconfont.woff?t=1650332002289") format("woff"),
+		url("iconfont.ttf?t=1650332002289") format("truetype");
 }
 
 .iconfont {
-  font-family: "iconfont" !important;
-  font-size: 16px;
-  font-style: normal;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .icon-quanping:before {
-  content: "\ec13";
+	content: "\ec13";
 }
 
 .icon-tuichuquanping-02:before {
-  content: "\e636";
+	content: "\e636";
 }
 
 .icon-user_info:before {
-  content: "\e62f";
+	content: "\e62f";
 }
 
 .icon-email:before {
-  content: "\e6eb";
+	content: "\e6eb";
 }
 
 .icon-password:before {
-  content: "\e638";
+	content: "\e638";
 }
 
 .icon-menu_update:before {
-  content: "\e671";
+	content: "\e671";
 }
-

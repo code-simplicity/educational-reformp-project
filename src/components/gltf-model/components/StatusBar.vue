@@ -1,21 +1,8 @@
 <template>
-	<div class="coordinates-display">
-		<div class="coord-value">
-			X: {{ coords.x.toFixed(2) }} Y: {{ coords.y.toFixed(2) }} Z:
-			{{ coords.z.toFixed(2) }}
-		</div>
-		<div v-if="hoveredObject" class="object-info">
-			{{ hoveredObject }}
-		</div>
-	</div>
+	<!-- 底部坐标信息区域已移除 -->
 
 	<div class="mode-indicator" v-if="activeModes.length > 0">
-		<div
-			v-for="mode in activeModes"
-			:key="mode.type"
-			class="mode-badge"
-			:class="mode.type"
-		>
+		<div v-for="mode in activeModes" :key="mode.type" class="mode-badge" :class="mode.type">
 			{{ mode.label }}
 		</div>
 	</div>
@@ -30,7 +17,7 @@ const props = defineProps({
 	},
 	hoveredObject: {
 		type: String,
-		default: '',
+		default: "",
 	},
 	activeModes: {
 		type: Array,
@@ -40,33 +27,7 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
-.coordinates-display {
-	position: absolute;
-	left: 15px;
-	bottom: 15px;
-	background-color: rgba(0, 0, 0, 0.6);
-	color: white;
-	padding: 8px 12px;
-	border-radius: 6px;
-	font-family: monospace;
-	font-size: 14px;
-	z-index: 1001;
-	backdrop-filter: blur(4px);
-
-	.coord-value {
-		margin-bottom: 4px;
-
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-
-	.object-info {
-		font-size: 12px;
-		color: #aaa;
-		margin-top: 4px;
-	}
-}
+/* 底部坐标信息区域已移除 */
 
 .mode-indicator {
 	position: absolute;
@@ -91,7 +52,7 @@ const props = defineProps({
 			background-color: rgba(25, 118, 210, 0.8);
 
 			&::before {
-				content: '📏';
+				content: "📏";
 				margin-right: 6px;
 			}
 		}
@@ -100,18 +61,12 @@ const props = defineProps({
 			background-color: rgba(211, 47, 47, 0.8);
 
 			&::before {
-				content: '💥';
+				content: "💥";
 				margin-right: 6px;
 			}
 		}
 	}
 }
 
-/* 响应式设计 */
-@media (max-width: 768px) {
-	.coordinates-display {
-		left: 10px;
-		bottom: 10px;
-	}
-}
+/* 响应式设计 - 底部坐标信息区域已移除 */
 </style>

@@ -57,12 +57,7 @@ export default {
 			container.style.height = `${SCREEN_HEIGHT - this.top}px`;
 			document.getElementById("indexLizi").appendChild(container);
 
-			camera = new THREE.PerspectiveCamera(
-				75,
-				SCREEN_WIDTH / SCREEN_HEIGHT,
-				1,
-				10000
-			);
+			camera = new THREE.PerspectiveCamera(75, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 10000);
 			camera.position.z = 1000;
 
 			scene = new THREE.Scene();
@@ -85,10 +80,7 @@ export default {
 			}
 
 			const geometry = new THREE.BufferGeometry();
-			geometry.setAttribute(
-				"position",
-				new THREE.BufferAttribute(positions, 3)
-			);
+			geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 			geometry.setAttribute("scale", new THREE.BufferAttribute(scales, 1));
 			// 初始化粒子材质
 			const material = new THREE.ShaderMaterial({
@@ -146,11 +138,9 @@ export default {
 			for (let ix = 0; ix < this.amountX; ix++) {
 				for (let iy = 0; iy < this.amountY; iy++) {
 					positions[i + 1] =
-						Math.sin((ix + count) * 0.3) * 100 +
-						Math.sin((iy + count) * 0.5) * 100;
+						Math.sin((ix + count) * 0.3) * 100 + Math.sin((iy + count) * 0.5) * 100;
 					scales[j] =
-						(Math.sin((ix + count) * 0.3) + 1) * 8 +
-						(Math.sin((iy + count) * 0.5) + 1) * 8;
+						(Math.sin((ix + count) * 0.3) + 1) * 8 + (Math.sin((iy + count) * 0.5) + 1) * 8;
 					i += 3;
 					j++;
 				}

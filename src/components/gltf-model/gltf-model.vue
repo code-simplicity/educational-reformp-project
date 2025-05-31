@@ -12,7 +12,7 @@
 			<h3>模型加载失败</h3>
 			<p>无法加载3D模型，请检查文件格式或网络连接</p>
 			<el-button type="primary" @click="resetAndReload">重试</el-button>
-			</div>
+		</div>
 		<div class="enhanced-control-panel" v-if="!isLoading && !loadingFailed">
 			<div class="panel-header" @click="toggleControlPanel">
 				<span>模型控制面板</span>
@@ -20,9 +20,9 @@
 					<span class="fps-counter">FPS: {{ currentFPS }}</span>
 					<el-icon class="toggle-icon"
 						><ArrowDown v-if="showControlPanel" /><ArrowRight v-else
-				/></el-icon>
+					/></el-icon>
+				</div>
 			</div>
-		</div>
 
 			<div class="panel-content" v-show="showControlPanel">
 				<!-- 性能控制区 -->
@@ -31,11 +31,7 @@
 
 					<div class="control-row quality-selector">
 						<span>渲染质量:</span>
-						<el-radio-group
-							v-model="qualityMode"
-							@change="setQualityMode"
-							size="small"
-						>
+						<el-radio-group v-model="qualityMode" @change="setQualityMode" size="small">
 							<el-radio-button label="auto">自动</el-radio-button>
 							<el-radio-button label="low">低</el-radio-button>
 							<el-radio-button label="medium">中</el-radio-button>
@@ -56,16 +52,10 @@
 					</div>
 
 					<div class="control-actions">
-						<el-checkbox
-							v-model="showWireframe"
-							@change="toggleWireframe"
-							size="small"
+						<el-checkbox v-model="showWireframe" @change="toggleWireframe" size="small"
 							>线框模式</el-checkbox
 						>
-						<el-checkbox
-							v-model="enableAntiAlias"
-							@change="toggleAntiAlias"
-							size="small"
+						<el-checkbox v-model="enableAntiAlias" @change="toggleAntiAlias" size="small"
 							>抗锯齿</el-checkbox
 						>
 					</div>
@@ -77,24 +67,15 @@
 
 					<div class="view-buttons">
 						<el-button-group>
-							<el-button size="small" @click="setCameraView('front')"
-								>正视图</el-button
-							>
-							<el-button size="small" @click="setCameraView('top')"
-								>俯视图</el-button
-							>
-							<el-button size="small" @click="setCameraView('side')"
-								>侧视图</el-button
-							>
+							<el-button size="small" @click="setCameraView('front')">正视图</el-button>
+							<el-button size="small" @click="setCameraView('top')">俯视图</el-button>
+							<el-button size="small" @click="setCameraView('side')">侧视图</el-button>
 							<el-button size="small" @click="resetCamera">重置</el-button>
 						</el-button-group>
 					</div>
 
 					<div class="control-actions">
-						<el-checkbox
-							v-model="autoRotate"
-							@change="toggleAutoRotate"
-							size="small"
+						<el-checkbox v-model="autoRotate" @change="toggleAutoRotate" size="small"
 							>自动旋转</el-checkbox
 						>
 						<el-popover placement="bottom" :width="200" trigger="click">
@@ -146,18 +127,10 @@
 					</div>
 
 					<div class="special-actions">
-						<el-button
-							size="small"
-							@click="captureScreenshot"
-							type="success"
-							icon="camera"
+						<el-button size="small" @click="captureScreenshot" type="success" icon="camera"
 							>截图</el-button
 						>
-						<el-button
-							size="small"
-							@click="toggleFullscreen"
-							type="primary"
-							icon="full-screen"
+						<el-button size="small" @click="toggleFullscreen" type="primary" icon="full-screen"
 							>全屏</el-button
 						>
 					</div>
@@ -187,11 +160,7 @@
 					<div v-if="measureMode" class="measure-result">
 						<span
 							>测量结果:
-							{{
-								measureResult
-									? measureResult.toFixed(2) + ' 单位'
-									: '请选择两点'
-							}}</span
+							{{ measureResult ? measureResult.toFixed(2) + " 单位" : "请选择两点" }}</span
 						>
 					</div>
 
@@ -217,24 +186,14 @@
 				{{ hoveredObjectInfo }}
 			</div>
 		</div>
-		<div
-			class="mode-indicator"
-			v-if="!isLoading && (measureMode || explosionMode)"
-		>
+		<div class="mode-indicator" v-if="!isLoading && (measureMode || explosionMode)">
 			<div v-if="measureMode" class="mode-badge measure">测量模式</div>
 			<div v-if="explosionMode" class="mode-badge explosion">爆炸视图</div>
 		</div>
 	</div>
 </template>
 <script setup name="GltfModel">
-import {
-	onMounted,
-	reactive,
-	ref,
-	toRefs,
-	defineProps,
-	onBeforeUnmount,
-} from 'vue';
+import { onMounted, reactive, ref, toRefs, defineProps, onBeforeUnmount } from "vue";
 import {
 	Color, // 颜色构造器
 	DirectionalLight, // 平行光
@@ -244,15 +203,15 @@ import {
 	PerspectiveCamera, // 透视相机
 	Scene, // 场景构造器
 	WebGLRenderer, // 使用webGl渲染场景
-} from 'three';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; // 对场景进行控制 缩放 平移 旋转 等
-import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js'; // 第一人称
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'; // 3D视觉
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'; // 用于加载3D模型
+} from "three";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // 对场景进行控制 缩放 平移 旋转 等
+import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js"; // 第一人称
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js"; // 3D视觉
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // 用于加载3D模型
 // 正确地导入 DRACOLoader - 检查路径是否与您的 Three.js 版本匹配
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'; // 用于加载3D模型
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js"; // 用于加载3D模型
 import {
 	VideoPause,
 	VideoPlay,
@@ -260,17 +219,17 @@ import {
 	ArrowRight,
 	FullScreen,
 	Camera,
-} from '@element-plus/icons-vue';
-import Stats from 'stats.js'; // 帧率
-import { getBimFindAll } from '../../api/service/bim';
-import Constants from '../../utils/Constants.js';
-import ScreenFull from '../screenfull/index.vue';
-import { ElMessage } from 'element-plus'; // 添加消息组件
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+} from "@element-plus/icons-vue";
+import Stats from "stats.js"; // 帧率
+import { getBimFindAll } from "../../api/service/bim";
+import Constants from "../../utils/Constants.js";
+import ScreenFull from "../screenfull/index.vue";
+import { ElMessage } from "element-plus"; // 添加消息组件
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
 
 const page = ref({
 	pageNum: 1,
@@ -279,23 +238,23 @@ const page = ref({
 // 父组件全屏的容器
 const screenfullRef = ref();
 // 路径
-let gltfUrl = ref('');
+let gltfUrl = ref("");
 // 获取bim模型
 const getBimAll = async () => {
 	try {
-	const params = { ...page.value };
-	const result = await getBimFindAll(params);
-	if (result.code === Constants.status.SUCCESS) {
-		// 模型地址
-		gltfUrl = result.data.list[0].url;
-			console.log('获取到模型URL:', gltfUrl);
-	} else {
-			ElMessage.error(result.msg || '获取模型数据失败');
+		const params = { ...page.value };
+		const result = await getBimFindAll(params);
+		if (result.code === Constants.status.SUCCESS) {
+			// 模型地址
+			gltfUrl = result.data.list[0].url;
+			console.log("获取到模型URL:", gltfUrl);
+		} else {
+			ElMessage.error(result.msg || "获取模型数据失败");
 		}
 		return gltfUrl;
 	} catch (error) {
-		console.error('获取模型数据时出错:', error);
-		ElMessage.error('获取模型数据时出错');
+		console.error("获取模型数据时出错:", error);
+		ElMessage.error("获取模型数据时出错");
 		return null;
 	}
 };
@@ -308,18 +267,18 @@ const createEnhancedLoader = () => {
 		const loader = new GLTFLoader();
 
 		// 检查 DRACOLoader 是否可用
-		if (typeof DRACOLoader !== 'undefined') {
+		if (typeof DRACOLoader !== "undefined") {
 			const dracoLoader = new DRACOLoader();
-			dracoLoader.setDecoderPath('https://www.gstatic.com/draco/v1/decoders/');
+			dracoLoader.setDecoderPath("https://www.gstatic.com/draco/v1/decoders/");
 			loader.setDRACOLoader(dracoLoader);
-			console.log('DRACO 压缩支持已启用');
+			console.log("DRACO 压缩支持已启用");
 		} else {
-			console.warn('DRACO 压缩支持不可用，使用标准 GLTFLoader');
+			console.warn("DRACO 压缩支持不可用，使用标准 GLTFLoader");
 		}
 
 		return loader;
 	} catch (error) {
-		console.error('创建增强加载器失败，使用标准加载器:', error);
+		console.error("创建增强加载器失败，使用标准加载器:", error);
 		return new GLTFLoader();
 	}
 };
@@ -364,11 +323,11 @@ let myCanvas = ref(null);
 // 创建场景
 const setScene = () => {
 	try {
-	scene = new Scene();
+		scene = new Scene();
 		renderer = new WebGLRenderer({
 			antialias: false,
-			powerPreference: 'high-performance',
-			precision: 'mediump',
+			powerPreference: "high-performance",
+			precision: "mediump",
 			alpha: false,
 			stencil: false,
 			depth: true,
@@ -378,9 +337,9 @@ const setScene = () => {
 		renderer.shadowMap.enabled = false;
 		renderer.outputEncoding = THREE.LinearEncoding;
 
-		const canvas = document.querySelector('.myCanvas');
+		const canvas = document.querySelector(".myCanvas");
 		if (!canvas) {
-			console.error('找不到canvas元素');
+			console.error("找不到canvas元素");
 			return;
 		}
 
@@ -393,13 +352,13 @@ const setScene = () => {
 
 		renderer.autoClear = false;
 
-		console.log('场景和渲染器已创建');
+		console.log("场景和渲染器已创建");
 
 		setupStats();
 	} catch (error) {
-		console.error('创建场景时出错:', error);
+		console.error("创建场景时出错:", error);
 		loadingFailed.value = true;
-		ElMessage.error('初始化3D场景失败');
+		ElMessage.error("初始化3D场景失败");
 	}
 };
 // 创建相机
@@ -409,7 +368,7 @@ const setCamera = () => {
 		50,
 		myCanvas.value.clientWidth / myCanvas.value.clientHeight,
 		0.01, // 摄像机视锥体近端面
-		2000 // 摄像机视锥体远端面
+		2000, // 摄像机视锥体远端面
 	);
 	camera.position.set(x, y, z);
 };
@@ -421,7 +380,7 @@ const setControls = () => {
 	controls.autoRotate = false; // 是否自动旋转
 	controls.dampingFactor = 0.2; // 阻尼因子
 	controls.rotateSpeed = 0.25; // 手动旋转速度
-	controls.addEventListener('change', render);
+	controls.addEventListener("change", render);
 };
 //返回坐标信息
 const render = () => {
@@ -430,7 +389,7 @@ const render = () => {
 	map.z = Number.parseInt(camera.position.z);
 };
 // 全局渲染质量控制
-let currentQuality = 'medium'; // 'low', 'medium', 'high'
+let currentQuality = "medium"; // 'low', 'medium', 'high'
 let targetFPS = 30; // 目标帧率
 let accumulatedTime = 0;
 let frameCount = 0;
@@ -448,16 +407,16 @@ const autoAdjustQuality = (fps) => {
 	// 基于FPS自动调整质量
 	if (fps < lowThreshold) {
 		// 性能不足，降低质量
-		if (currentQuality !== 'low') {
-			currentQuality = 'low';
-			ElMessage.info('已自动降低渲染质量以提高性能');
+		if (currentQuality !== "low") {
+			currentQuality = "low";
+			ElMessage.info("已自动降低渲染质量以提高性能");
 		}
 	} else if (fps > highThreshold) {
 		// 性能充足，提高质量
-		if (currentQuality === 'low') {
-			currentQuality = 'medium';
-		} else if (currentQuality === 'medium' && fps > 55) {
-			currentQuality = 'high';
+		if (currentQuality === "low") {
+			currentQuality = "medium";
+		} else if (currentQuality === "medium" && fps > 55) {
+			currentQuality = "high";
 		}
 	}
 	// 如果FPS处于中间范围，保持当前质量级别
@@ -466,7 +425,7 @@ const autoAdjustQuality = (fps) => {
 // 应用不同质量级别
 const applyQuality = (quality) => {
 	switch (quality) {
-		case 'low':
+		case "low":
 			// 低质量模式：性能优先
 			renderer.setPixelRatio(1);
 
@@ -487,7 +446,7 @@ const applyQuality = (quality) => {
 					node.material.flatShading = true;
 
 					// 低精度
-					node.material.precision = 'lowp';
+					node.material.precision = "lowp";
 
 					// 禁用复杂特性
 					node.material.fog = false;
@@ -504,7 +463,7 @@ const applyQuality = (quality) => {
 			});
 			break;
 
-		case 'medium':
+		case "medium":
 			// 中等质量模式：平衡
 			renderer.setPixelRatio(Math.min(1.5, window.devicePixelRatio));
 
@@ -520,7 +479,7 @@ const applyQuality = (quality) => {
 					node.material.flatShading = false;
 
 					// 中等精度
-					node.material.precision = 'mediump';
+					node.material.precision = "mediump";
 
 					// 启用适当的效果
 					node.material.dithering = true;
@@ -537,7 +496,7 @@ const applyQuality = (quality) => {
 			});
 			break;
 
-		case 'high':
+		case "high":
 			// 高质量模式：质量优先
 			renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
 
@@ -572,7 +531,7 @@ let interactionTimeout;
 
 // 添加交互事件监听
 const setupInteractionTracking = () => {
-	const canvas = document.querySelector('.myCanvas');
+	const canvas = document.querySelector(".myCanvas");
 
 	const startInteraction = () => {
 		isUserInteracting = true;
@@ -587,17 +546,17 @@ const setupInteractionTracking = () => {
 	};
 
 	// 鼠标事件
-	canvas.addEventListener('mousedown', startInteraction);
-	canvas.addEventListener('mousemove', startInteraction);
-	canvas.addEventListener('mouseup', endInteraction);
+	canvas.addEventListener("mousedown", startInteraction);
+	canvas.addEventListener("mousemove", startInteraction);
+	canvas.addEventListener("mouseup", endInteraction);
 
 	// 触摸事件
-	canvas.addEventListener('touchstart', startInteraction);
-	canvas.addEventListener('touchmove', startInteraction);
-	canvas.addEventListener('touchend', endInteraction);
+	canvas.addEventListener("touchstart", startInteraction);
+	canvas.addEventListener("touchmove", startInteraction);
+	canvas.addEventListener("touchend", endInteraction);
 
 	// 滚轮事件
-	canvas.addEventListener('wheel', startInteraction, { passive: true });
+	canvas.addEventListener("wheel", startInteraction, { passive: true });
 };
 
 // 更新帧率
@@ -605,7 +564,7 @@ const updateStats = () => {
 	statsjs = new Stats();
 	//设置统计模式
 	statsjs.setMode(0); // 0: fps, 1: ms
-	document.getElementById('stats-panel').appendChild(statsjs.dom);
+	document.getElementById("stats-panel").appendChild(statsjs.dom);
 };
 
 // 动画
@@ -637,7 +596,7 @@ const loadRGBELoaderScene = (url) => {
 
 // 添加到 setup 中的响应式变量
 const isControlPanelVisible = ref(true);
-const qualityLevel = ref('medium');
+const qualityLevel = ref("medium");
 
 // 更改渲染质量
 const changeQuality = (level) => {
@@ -651,13 +610,13 @@ const setView = (viewType) => {
 	let targetPosition;
 
 	switch (viewType) {
-		case 'top':
+		case "top":
 			targetPosition = { x: 0, y: Math.abs(y) * 1.2, z: 0 };
 			break;
-		case 'front':
+		case "front":
 			targetPosition = { x: 0, y: 0, z: Math.abs(z) * 0.5 };
 			break;
-		case 'side':
+		case "side":
 			targetPosition = { x: Math.abs(x) * 1.2, y: 0, z: 0 };
 			break;
 		default:
@@ -700,12 +659,9 @@ const animateCamera = (targetPosition, lookAtPos) => {
 			const easedT = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; // 使用缓动函数
 
 			// 更新相机位置
-			camera.position.x =
-				startPosition.x + (targetPosition.x - startPosition.x) * easedT;
-			camera.position.y =
-				startPosition.y + (targetPosition.y - startPosition.y) * easedT;
-			camera.position.z =
-				startPosition.z + (targetPosition.z - startPosition.z) * easedT;
+			camera.position.x = startPosition.x + (targetPosition.x - startPosition.x) * easedT;
+			camera.position.y = startPosition.y + (targetPosition.y - startPosition.y) * easedT;
+			camera.position.z = startPosition.z + (targetPosition.z - startPosition.z) * easedT;
 
 			// 相机看向指定点
 			if (lookAtPos instanceof THREE.Vector3) {
@@ -770,7 +726,7 @@ const toggleMeasureMode = () => {
 		clearMeasurement();
 	} else {
 		// 显示测量提示
-		ElMessage.info('点击两个点进行测量，右键或ESC清除测量');
+		ElMessage.info("点击两个点进行测量，右键或ESC清除测量");
 	}
 };
 
@@ -815,10 +771,7 @@ const toggleSectionMode = () => {
 // 启用截面模式
 const enableSectionMode = () => {
 	// 创建裁剪平面
-	sectionPlane = new THREE.Plane(
-		new THREE.Vector3(1, 0, 0),
-		sectionPlaneX.value
-	);
+	sectionPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), sectionPlaneX.value);
 
 	// 创建平面辅助对象以便可视化
 	sectionPlaneHelper = new THREE.PlaneHelper(sectionPlane, 500, 0xff0000);
@@ -866,10 +819,7 @@ const updateSectionPlane = () => {
 	}
 
 	// 创建新的裁剪平面
-	sectionPlane = new THREE.Plane(
-		new THREE.Vector3(1, 0, 0),
-		sectionPlaneX.value
-	);
+	sectionPlane = new THREE.Plane(new THREE.Vector3(1, 0, 0), sectionPlaneX.value);
 
 	// 创建新的平面辅助对象以便可视化
 	sectionPlaneHelper = new THREE.PlaneHelper(sectionPlane, 500, 0xff0000);
@@ -895,7 +845,7 @@ const updateSectionPlane = () => {
 
 // 控制面板数据
 const showControlPanel = ref(true);
-const qualityMode = ref('auto');
+const qualityMode = ref("auto");
 const modelOpacity = ref(1);
 const showWireframe = ref(false);
 const showGrid = ref(false);
@@ -912,7 +862,7 @@ const toggleControlPanel = () => {
 const setQualityMode = (mode) => {
 	qualityMode.value = mode;
 
-	if (mode !== 'auto') {
+	if (mode !== "auto") {
 		// 覆盖自动质量控制
 		applyQuality(mode);
 		currentQuality = mode;
@@ -932,13 +882,13 @@ const setCameraView = (view) => {
 		let targetPosition = new THREE.Vector3();
 
 		switch (view) {
-			case 'front':
+			case "front":
 				targetPosition.set(center.x, center.y, center.z + distance);
 				break;
-			case 'top':
+			case "top":
 				targetPosition.set(center.x, center.y + distance, center.z);
 				break;
-			case 'side':
+			case "side":
 				targetPosition.set(center.x + distance, center.y, center.z);
 				break;
 			default:
@@ -948,7 +898,7 @@ const setCameraView = (view) => {
 		// 修正animateCamera调用，使用正确的参数
 		animateCamera(targetPosition);
 	} catch (error) {
-		console.error('相机视角设置失败:', error);
+		console.error("相机视角设置失败:", error);
 	}
 };
 
@@ -962,7 +912,7 @@ const resetCamera = () => {
 			z: defaultMap.z,
 		});
 	} catch (error) {
-		console.error('重置相机失败:', error);
+		console.error("重置相机失败:", error);
 	}
 };
 
@@ -1043,18 +993,18 @@ const updateSceneElements = (deltaTime) => {
 // 修复初始化函数，确保所有必要的组件被正确初始化
 const init = async () => {
 	try {
-		console.log('开始初始化3D场景');
+		console.log("开始初始化3D场景");
 
-		myCanvas.value = document.querySelector('.myCanvas');
+		myCanvas.value = document.querySelector(".myCanvas");
 		if (!myCanvas.value) {
-			throw new Error('找不到Canvas元素');
+			throw new Error("找不到Canvas元素");
 		}
 
 		// 设置场景、相机和渲染器
-	setScene();
-	setCamera();
-	setLight();
-	setControls();
+		setScene();
+		setCamera();
+		setLight();
+		setControls();
 
 		// 设置交互
 		const interactionHandlers = setupObjectInteraction();
@@ -1062,13 +1012,10 @@ const init = async () => {
 
 		// 在组件卸载时清理这些处理器
 		onBeforeUnmount(() => {
-			const canvas = document.querySelector('.myCanvas');
+			const canvas = document.querySelector(".myCanvas");
 			if (canvas && interactionHandlers) {
-				canvas.removeEventListener(
-					'mousemove',
-					interactionHandlers.onMouseMove
-				);
-				canvas.removeEventListener('click', interactionHandlers.onClick);
+				canvas.removeEventListener("mousemove", interactionHandlers.onMouseMove);
+				canvas.removeEventListener("click", interactionHandlers.onClick);
 			}
 			if (keyboardCleanup) keyboardCleanup();
 		});
@@ -1077,24 +1024,24 @@ const init = async () => {
 		setupInteractionTracking();
 
 		// 加载背景和环境
-	loadRGBELoaderScene('scene/cloudySkyBox.jpg');
+		loadRGBELoaderScene("scene/cloudySkyBox.jpg");
 
 		// 获取模型URL
 		const modelUrl = await getBimAll();
-		console.log('模型URL:', modelUrl);
+		console.log("模型URL:", modelUrl);
 
 		if (!modelUrl) {
-			throw new Error('无法获取模型URL');
+			throw new Error("无法获取模型URL");
 		}
 
 		try {
 			// 加载模型
-			console.log('开始加载模型...');
+			console.log("开始加载模型...");
 			const gltf = await loadModel(modelUrl);
 
 			// 添加模型到场景
 			scene.add(gltf.scene);
-			console.log('模型已添加到场景');
+			console.log("模型已添加到场景");
 
 			// 完成加载
 			isLoading.value = false;
@@ -1105,16 +1052,16 @@ const init = async () => {
 			// 开始渲染循环
 			requestAnimationFrame(loop);
 		} catch (modelError) {
-			console.error('加载模型失败:', modelError);
+			console.error("加载模型失败:", modelError);
 			loadingFailed.value = true;
 			isLoading.value = false;
-			ElMessage.error('模型加载失败，请检查网络连接或文件格式');
+			ElMessage.error("模型加载失败，请检查网络连接或文件格式");
 		}
 	} catch (error) {
-		console.error('初始化3D场景时出错:', error);
+		console.error("初始化3D场景时出错:", error);
 		loadingFailed.value = true;
 		isLoading.value = false;
-		ElMessage.error('初始化3D场景失败');
+		ElMessage.error("初始化3D场景失败");
 	}
 };
 
@@ -1139,7 +1086,7 @@ const autoFitCameraToObject = (object) => {
 	camera.position.set(
 		center.x + cameraDistance,
 		center.y + cameraDistance * 0.8,
-		center.z + cameraDistance
+		center.z + cameraDistance,
 	);
 
 	// 让相机看向对象中心
@@ -1211,9 +1158,9 @@ const handleResize = () => {
 
 	// 更新FXAA抗锯齿通道的分辨率
 	if (fxaaPass) {
-		fxaaPass.uniforms['resolution'].value.set(
+		fxaaPass.uniforms["resolution"].value.set(
 			1 / (width * renderer.getPixelRatio()),
-			1 / (height * renderer.getPixelRatio())
+			1 / (height * renderer.getPixelRatio()),
 		);
 	}
 
@@ -1225,33 +1172,33 @@ const handleResize = () => {
 
 // 修改onMounted钩子以正确初始化
 onMounted(() => {
-	console.log('组件已挂载，开始初始化');
+	console.log("组件已挂载，开始初始化");
 
 	// 延迟一帧初始化，确保DOM已完全渲染
 	requestAnimationFrame(() => {
-	init();
-});
+		init();
+	});
 
 	// 添加窗口大小调整事件
-	window.addEventListener('resize', handleResize);
+	window.addEventListener("resize", handleResize);
 
 	// 添加全屏变化事件监听
-	document.addEventListener('fullscreenchange', handleResize);
-	document.addEventListener('webkitfullscreenchange', handleResize);
-	document.addEventListener('mozfullscreenchange', handleResize);
-	document.addEventListener('MSFullscreenChange', handleResize);
+	document.addEventListener("fullscreenchange", handleResize);
+	document.addEventListener("webkitfullscreenchange", handleResize);
+	document.addEventListener("mozfullscreenchange", handleResize);
+	document.addEventListener("MSFullscreenChange", handleResize);
 });
 
 // 组件卸载时的清理
 onBeforeUnmount(() => {
-	console.log('组件卸载，清理资源');
+	console.log("组件卸载，清理资源");
 
 	// 移除事件监听器
-	window.removeEventListener('resize', handleResize);
-	document.removeEventListener('fullscreenchange', handleResize);
-	document.removeEventListener('webkitfullscreenchange', handleResize);
-	document.removeEventListener('mozfullscreenchange', handleResize);
-	document.removeEventListener('MSFullscreenChange', handleResize);
+	window.removeEventListener("resize", handleResize);
+	document.removeEventListener("fullscreenchange", handleResize);
+	document.removeEventListener("webkitfullscreenchange", handleResize);
+	document.removeEventListener("mozfullscreenchange", handleResize);
+	document.removeEventListener("MSFullscreenChange", handleResize);
 
 	// 停止渲染循环
 	if (requestID) {
@@ -1296,7 +1243,7 @@ onBeforeUnmount(() => {
 		controls.dispose();
 	}
 
-	console.log('组件资源已清理');
+	console.log("组件资源已清理");
 });
 
 // 添加到setup中的变量
@@ -1304,7 +1251,7 @@ const enableAntiAlias = ref(false);
 const rotationSpeed = ref(1.0);
 const explosionMode = ref(false);
 const explosionStrength = ref(0);
-const hoveredObjectInfo = ref('');
+const hoveredObjectInfo = ref("");
 let originalPositions = new Map();
 let composer;
 let fxaaPass;
@@ -1320,9 +1267,9 @@ const setupPostProcessing = () => {
 
 	// 添加FXAA抗锯齿通道
 	fxaaPass = new ShaderPass(FXAAShader);
-	fxaaPass.uniforms['resolution'].value.set(
+	fxaaPass.uniforms["resolution"].value.set(
 		1 / (window.innerWidth * renderer.getPixelRatio()),
-		1 / (window.innerHeight * renderer.getPixelRatio())
+		1 / (window.innerHeight * renderer.getPixelRatio()),
 	);
 	fxaaPass.enabled = enableAntiAlias.value;
 	composer.addPass(fxaaPass);
@@ -1364,7 +1311,7 @@ const loop = (time) => {
 			accumulatedTime = 0;
 
 			// 自动调整质量
-			if (qualityMode.value === 'auto') {
+			if (qualityMode.value === "auto") {
 				autoAdjustQuality(currentFPS);
 			}
 		}
@@ -1373,8 +1320,8 @@ const loop = (time) => {
 	// 检查用户是否与场景交互
 	if (isUserInteracting) {
 		// 用户交互时降低质量以保持响应速度
-		applyQuality('low');
-	} else if (qualityMode.value === 'auto') {
+		applyQuality("low");
+	} else if (qualityMode.value === "auto") {
 		// 非交互时使用自动调整的质量
 		applyQuality(currentQuality);
 	}
@@ -1405,23 +1352,23 @@ const setupStats = () => {
 	statsjs.showPanel(0); // 0: FPS, 1: MS, 2: MB
 
 	// 明确设置Stats位置
-	statsjs.dom.style.position = 'absolute';
-	statsjs.dom.style.top = '0px';
-	statsjs.dom.style.left = '0px';
-	statsjs.dom.style.zIndex = '10000';
+	statsjs.dom.style.position = "absolute";
+	statsjs.dom.style.top = "0px";
+	statsjs.dom.style.left = "0px";
+	statsjs.dom.style.zIndex = "10000";
 
 	// 改进Stats样式使其更易读
-	statsjs.dom.style.opacity = '0.8';
+	statsjs.dom.style.opacity = "0.8";
 
-	document.getElementById('stats-panel').innerHTML = ''; // 清除之前的内容
-	document.getElementById('stats-panel').appendChild(statsjs.dom);
-	console.log('Stats面板已设置');
+	document.getElementById("stats-panel").innerHTML = ""; // 清除之前的内容
+	document.getElementById("stats-panel").appendChild(statsjs.dom);
+	console.log("Stats面板已设置");
 };
 
 // 优化模型加载过程
 const loadModel = async (url) => {
 	if (!url) {
-		throw new Error('模型URL不能为空');
+		throw new Error("模型URL不能为空");
 	}
 
 	return new Promise((resolve, reject) => {
@@ -1432,7 +1379,7 @@ const loadModel = async (url) => {
 		loader.load(
 			url,
 			(gltf) => {
-				console.log('模型加载成功');
+				console.log("模型加载成功");
 
 				// 处理模型以提高性能
 				optimizeModel(gltf);
@@ -1448,30 +1395,30 @@ const loadModel = async (url) => {
 				console.log(`加载进度: ${load}%`);
 			},
 			(error) => {
-				console.error('加载模型时出错:', error);
+				console.error("加载模型时出错:", error);
 				reject(error);
-			}
+			},
 		);
 	});
 };
 
 // 优化模型函数
 const optimizeModel = (gltf) => {
-	console.log('正在优化模型...');
+	console.log("正在优化模型...");
 
 	// 遍历所有网格
 	gltf.scene.traverse((node) => {
 		if (node.isMesh) {
 			// 1. 降低几何体精度
 			if (node.geometry.attributes.position.count > 50000) {
-				console.log(`优化高精度网格: ${node.name || 'unnamed'}`);
+				console.log(`优化高精度网格: ${node.name || "unnamed"}`);
 				// 这里可以添加几何体简化代码，但需要额外库如SimplifyModifier
 			}
 
 			// 2. 优化材质
 			if (node.material) {
 				// 使用更高效的着色器
-				node.material.precision = 'lowp';
+				node.material.precision = "lowp";
 
 				// 禁用不必要的功能
 				node.material.fog = false;
@@ -1542,9 +1489,7 @@ const updateExplosionView = (strength) => {
 			const explodeDistance = 50 * strength;
 
 			// 设置新位置
-			node.position
-				.copy(originalPos)
-				.add(direction.multiplyScalar(explodeDistance));
+			node.position.copy(originalPos).add(direction.multiplyScalar(explodeDistance));
 		}
 	});
 };
@@ -1586,10 +1531,10 @@ const captureScreenshot = () => {
 		renderer.render(scene, camera);
 
 		// 获取图像数据
-		const imageData = renderer.domElement.toDataURL('image/png');
+		const imageData = renderer.domElement.toDataURL("image/png");
 
 		// 创建下载链接
-		const link = document.createElement('a');
+		const link = document.createElement("a");
 		link.href = imageData;
 		link.download = `3d-model-screenshot-${Date.now()}.png`;
 		document.body.appendChild(link);
@@ -1599,10 +1544,10 @@ const captureScreenshot = () => {
 		// 恢复原始渲染质量
 		renderer.setPixelRatio(originalPixelRatio);
 
-		ElMessage.success('截图已保存');
+		ElMessage.success("截图已保存");
 	} catch (error) {
-		console.error('截图失败:', error);
-		ElMessage.error('截图失败');
+		console.error("截图失败:", error);
+		ElMessage.error("截图失败");
 	}
 };
 
@@ -1635,8 +1580,8 @@ const toggleFullscreen = () => {
 			handleResize();
 		}, 100);
 	} catch (error) {
-		console.error('切换全屏失败:', error);
-		ElMessage.error('切换全屏失败');
+		console.error("切换全屏失败:", error);
+		ElMessage.error("切换全屏失败");
 	}
 };
 
@@ -1644,7 +1589,7 @@ const toggleFullscreen = () => {
 const setupKeyboardShortcuts = () => {
 	const onKeyDown = (event) => {
 		switch (event.key) {
-			case 'Escape':
+			case "Escape":
 				// ESC键 - 取消测量模式或爆炸视图
 				if (measureMode.value) {
 					toggleMeasureMode();
@@ -1653,37 +1598,37 @@ const setupKeyboardShortcuts = () => {
 				}
 				break;
 
-			case 'p':
-			case 'P':
+			case "p":
+			case "P":
 				// P键 - 截图
 				captureScreenshot();
 				break;
 
-			case 'f':
-			case 'F':
+			case "f":
+			case "F":
 				// F键 - 全屏
 				toggleFullscreen();
 				break;
 
-			case 'r':
-			case 'R':
+			case "r":
+			case "R":
 				// R键 - 重置视图
 				resetCamera();
 				break;
 
-			case 'm':
-			case 'M':
+			case "m":
+			case "M":
 				// M键 - 切换测量模式
 				toggleMeasureMode();
 				break;
 
-			case 'e':
-			case 'E':
+			case "e":
+			case "E":
 				// E键 - 切换爆炸视图
 				toggleExplosionMode();
 				break;
 
-			case ' ':
+			case " ":
 				// 空格键 - 切换自动旋转
 				toggleAutoRotate(!autoRotate.value);
 				break;
@@ -1691,11 +1636,11 @@ const setupKeyboardShortcuts = () => {
 	};
 
 	// 添加键盘事件监听
-	window.addEventListener('keydown', onKeyDown);
+	window.addEventListener("keydown", onKeyDown);
 
 	// 返回清理函数
 	return () => {
-		window.removeEventListener('keydown', onKeyDown);
+		window.removeEventListener("keydown", onKeyDown);
 	};
 };
 
@@ -1705,7 +1650,7 @@ const setupObjectInteraction = () => {
 	const mouse = new THREE.Vector2();
 	let hoveredObject = null;
 
-	const canvas = document.querySelector('.myCanvas');
+	const canvas = document.querySelector(".myCanvas");
 	if (!canvas) return;
 
 	const onMouseMove = (event) => {
@@ -1735,8 +1680,7 @@ const setupObjectInteraction = () => {
 
 				// 保存原始材质
 				if (!hoveredObject.userData.originalMaterial) {
-					hoveredObject.userData.originalMaterial =
-						hoveredObject.material.clone();
+					hoveredObject.userData.originalMaterial = hoveredObject.material.clone();
 				}
 
 				// 创建悬停材质
@@ -1752,11 +1696,10 @@ const setupObjectInteraction = () => {
 
 				// 更新悬停信息
 				hoveredObjectInfo.value =
-					hoveredObject.name ||
-					(hoveredObject.parent ? hoveredObject.parent.name : '未命名对象');
+					hoveredObject.name || (hoveredObject.parent ? hoveredObject.parent.name : "未命名对象");
 
 				// 改变鼠标样式
-				document.body.style.cursor = 'pointer';
+				document.body.style.cursor = "pointer";
 			}
 		} else {
 			// 如果之前有悬停对象，恢复其材质
@@ -1766,10 +1709,10 @@ const setupObjectInteraction = () => {
 				hoveredObject = null;
 
 				// 清除悬停信息
-				hoveredObjectInfo.value = '';
+				hoveredObjectInfo.value = "";
 
 				// 恢复鼠标样式
-				document.body.style.cursor = 'default';
+				document.body.style.cursor = "default";
 			}
 		}
 	};
@@ -1788,16 +1731,15 @@ const setupObjectInteraction = () => {
 
 			// 显示对象信息
 			const objectName =
-				clickedObject.name ||
-				(clickedObject.parent ? clickedObject.parent.name : '未命名对象');
+				clickedObject.name || (clickedObject.parent ? clickedObject.parent.name : "未命名对象");
 			const position = clickedObject.position.clone();
 
 			// 使用Element UI显示详细信息
 			ElMessage({
 				message: `已选择: ${objectName} (位置: ${position.x.toFixed(
-					2
+					2,
 				)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`,
-				type: 'info',
+				type: "info",
 				duration: 3000,
 			});
 
@@ -1806,8 +1748,8 @@ const setupObjectInteraction = () => {
 	};
 
 	// 添加事件监听器
-	canvas.addEventListener('mousemove', onMouseMove);
-	canvas.addEventListener('click', onClick);
+	canvas.addEventListener("mousemove", onMouseMove);
+	canvas.addEventListener("click", onClick);
 
 	// 记录处理函数以便后续清理
 	return { onMouseMove, onClick };
@@ -1846,9 +1788,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 		}
 
 		// 创建线段几何体
-		const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-			measurePoints
-		);
+		const lineGeometry = new THREE.BufferGeometry().setFromPoints(measurePoints);
 		const lineMaterial = new THREE.LineBasicMaterial({
 			color: 0xffff00,
 			linewidth: 2,
@@ -1861,9 +1801,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 		measureResult.value = distance;
 
 		// 添加距离标签
-		const midPoint = new THREE.Vector3()
-			.addVectors(point1, point2)
-			.multiplyScalar(0.5);
+		const midPoint = new THREE.Vector3().addVectors(point1, point2).multiplyScalar(0.5);
 		const labelGeometry = new THREE.SphereGeometry(1, 8, 8);
 		const labelMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 		const label = new THREE.Mesh(labelGeometry, labelMaterial);
@@ -1877,7 +1815,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 		// 显示测量结果
 		ElMessage({
 			message: `测量距离: ${distance.toFixed(2)} 单位`,
-			type: 'success',
+			type: "success",
 			duration: 3000,
 		});
 	}
@@ -1970,9 +1908,9 @@ const handleMeasureClick = (raycaster, mouse) => {
 			color: white;
 			font-weight: 600;
 			font-size: 15px;
-		display: flex;
+			display: flex;
 			justify-content: space-between;
-		align-items: center;
+			align-items: center;
 			cursor: pointer;
 
 			.header-actions {
@@ -2140,7 +2078,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 				background-color: rgba(25, 118, 210, 0.8);
 
 				&::before {
-					content: '📏';
+					content: "📏";
 					margin-right: 6px;
 				}
 			}
@@ -2149,7 +2087,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 				background-color: rgba(211, 47, 47, 0.8);
 
 				&::before {
-					content: '💥';
+					content: "💥";
 					margin-right: 6px;
 				}
 			}
@@ -2190,7 +2128,7 @@ const handleMeasureClick = (raycaster, mouse) => {
 		.enhanced-control-panel {
 			width: 85%;
 			max-width: 300px;
-		right: 10px;
+			right: 10px;
 			top: 10px;
 		}
 

@@ -1,5 +1,5 @@
-/* * @Author: mikey.zhaopeng * @Date: 2025-03-Su 05:35:41 * @Last Modified by:
-mikey.zhaopeng * @Last Modified time: 2025-03-Su 05:35:41 */
+/* * @Author: mikey.zhaopeng * @Date: 2025-03-Su 05:35:41 * @Last Modified by: mikey.zhaopeng *
+@Last Modified time: 2025-03-Su 05:35:41 */
 <template>
 	<div class="gltf-model-container" ref="containerRef">
 		<div class="myCanvas" ref="canvasRef"></div>
@@ -63,33 +63,34 @@ mikey.zhaopeng * @Last Modified time: 2025-03-Su 05:35:41 */
 </template>
 
 <script setup>
-import {
-	ref,
-	reactive,
-	computed,
-	onMounted,
-	onBeforeUnmount,
-	watch,
-} from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import LoadingOverlay from './components/LoadingOverlay.vue';
-import ControlPanel from './components/ControlPanel.vue';
-import StatusBar from './components/StatusBar.vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, onDeactivated } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import LoadingOverlay from "./components/LoadingOverlay.vue";
+import ControlPanel from "./components/ControlPanel.vue";
+import StatusBar from "./components/StatusBar.vue";
+
+// 导入自定义hooks
+import useDynamicDPR from "@/hooks/useDynamicDPR";
+import useThrottleRender from "@/hooks/useThrottleRender";
 
 // 导入 Three.js 相关库
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+// import { CubeTextureLoader } from 'three/examples/jsm/loaders/CubeTextureLoader.js';
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader.js";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { FXAAShader } from "three/examples/jsm/shaders/FXAAShader.js";
+import { TAARenderPass } from "three/examples/jsm/postprocessing/TAARenderPass.js";
 
 // 导入 API
-import { getBimFindAll } from '@/api/service/bim';
-import Constants from '@/utils/Constants.js';
+import { getBimFindAll } from "@/api/service/bim";
+import Constants from "@/utils/Constants.js";
 
 // DOM 引用
 const containerRef = ref(null);
@@ -110,8 +111,8 @@ const state = reactive({
 	// 性能参数
 	currentFPS: 0,
 	targetFPS: 30,
-	currentQuality: 'medium',
-	qualityMode: 'auto',
+	currentQuality: "medium",
+	qualityMode: "auto",
 
 	// 控制参数
 	modelOpacity: 1,
@@ -128,27 +129,32 @@ const state = reactive({
 	measureResult: null,
 	explosionMode: false,
 	explosionStrength: 0,
-	hoveredObjectInfo: '',
+	hoveredObjectInfo: "",
 
 	// 相机信息
 	cameraInfo: null,
 
 	// 全屏状态
 	isFullScreen: false,
+
+	// 背景设置 - 已禁用天空背景切换功能
+	currentSky: "white", // 统一使用纯白背景
 });
 
 // THREE.js 对象
 let scene, camera, renderer, controls;
-let composer, fxaaPass;
+let composer, fxaaPass, taaPass;
 let stats;
-let requestID = null;
-let lastFrameTime = 0;
 let needsRender = true;
-let frameCount = 0;
-let accumulatedTime = 0;
 let cameraAnimation = null;
 let cleanupFunctions = [];
 let directionIndicator = null;
+
+// Hooks实例
+let gltfLoader;
+let loadingManager;
+let dynamicDPR;
+let throttleRender;
 
 // 工具相关变量
 let gridHelper, axesHelper, boundingBoxHelper;
@@ -163,8 +169,8 @@ let interactionTimeout;
 // 计算活动模式
 const activeModes = computed(() => {
 	const modes = [];
-	if (state.measureMode) modes.push({ type: 'measure', label: '测量模式' });
-	if (state.explosionMode) modes.push({ type: 'explosion', label: '爆炸视图' });
+	if (state.measureMode) modes.push({ type: "measure", label: "测量模式" });
+	if (state.explosionMode) modes.push({ type: "explosion", label: "爆炸视图" });
 	return modes;
 });
 
@@ -180,15 +186,15 @@ const modelInfo = {
 // 主初始化函数
 const initializeViewer = async () => {
 	try {
-		console.log('初始化3D查看器');
+		console.log("初始化3D查看器");
 		state.isLoading = true;
 
 		// 确保 canvasRef 有值
 		if (!canvasRef.value) {
-			throw new Error('Canvas引用未找到');
+			throw new Error("Canvas引用未找到");
 		}
 
-		console.log('Canvas引用:', canvasRef.value);
+		console.log("Canvas引用:", canvasRef.value);
 
 		// 初始化场景和相机
 		initScene();
@@ -207,25 +213,100 @@ const initializeViewer = async () => {
 		const cleanupMousePick = setupMousePick();
 
 		// 添加方向指示器
-		const directionIndicator = addDirectionIndicator();
+		directionIndicator = addDirectionIndicator();
 
-		// 启动渲染循环
-		startRenderLoop();
+		// 设置纯白背景
+		setSceneBackground();
 
-		// 加载背景
-		setSceneBackground('scene/cloudySkyBox.jpg');
+		// 初始化动态DPR
+		dynamicDPR = useDynamicDPR({
+			renderer,
+			minFPS: 30,
+			targetFPS: 55,
+			maxDPR: Math.min(window.devicePixelRatio || 1, 2),
+			minDPR: 0.5,
+		});
+
+		// 初始化节流渲染
+		throttleRender = useThrottleRender({
+			renderer,
+			scene,
+			camera,
+			controls,
+			composer,
+			useComposer: state.enableAntiAlias,
+			autoRotate: state.autoRotate,
+			onBeforeRender: () => {
+				// 更新FPS计数
+				dynamicDPR.recordFrame();
+				state.currentFPS = dynamicDPR.currentFPS.value;
+
+				// 根据FPS自动调整质量
+				if (state.qualityMode === "auto" && state.currentFPS < 15) {
+					if (state.currentQuality !== "low") {
+						state.currentQuality = "low";
+						applyQuality("low");
+						console.log(`检测到低帧率(${state.currentFPS})，降低质量`);
+					}
+				}
+			},
+		});
+
+		// 添加相机动画回调
+		throttleRender.addAnimationCallback(() => {
+			// 更新方向指示器
+			if (directionIndicator && typeof directionIndicator.update === "function") {
+				directionIndicator.update();
+			}
+
+			// 更新爆炸视图
+			if (state.explosionMode) {
+				updateExplosionView(state.explosionStrength);
+			}
+
+			// 更新相机动画
+			return updateCameraAnimation();
+		});
+
+		// 初始化加载管理器
+		loadingManager = new THREE.LoadingManager();
+
+		// 设置加载错误回调
+		loadingManager.onError = (url) => {
+			console.error("加载资源失败:", url);
+			ElMessage.error(`加载资源失败: ${url}`);
+		};
+
+		// 初始化模型加载器
+		gltfLoader = createGLTFLoader(loadingManager);
 
 		// 加载模型
 		await loadModel();
 
+		// 设置加载进度回调
+		loadingManager.onProgress = (url, loaded, total) => {
+			const progress = Math.min(Math.round((loaded / total) * 100), 100);
+			state.loadingWidth = progress;
+			console.log(`加载进度: ${progress}%, 已加载: ${loaded}, 总大小: ${total}`);
+		};
+
 		// 添加到清理函数
 		cleanupFunctions.push(cleanupInteraction);
 		cleanupFunctions.push(cleanupMousePick);
+		cleanupFunctions.push(() => {
+			if (dynamicDPR) dynamicDPR.dispose();
+			if (throttleRender) throttleRender.dispose();
+
+			// 清理加载器资源
+			if (gltfLoader && gltfLoader.dracoLoader) {
+				gltfLoader.dracoLoader.dispose();
+			}
+		});
 
 		state.initialized = true;
 		return true;
 	} catch (error) {
-		console.error('初始化3D查看器失败:', error);
+		console.error("初始化3D查看器失败:", error);
 		state.loadingFailed = true;
 		state.isLoading = false;
 		return false;
@@ -240,8 +321,7 @@ const initScene = () => {
 
 // 初始化相机
 const initCamera = () => {
-	const aspect =
-		containerRef.value?.clientWidth / containerRef.value?.clientHeight || 1;
+	const aspect = containerRef.value?.clientWidth / containerRef.value?.clientHeight || 1;
 	camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 20000); // 确保远裁剪面足够远
 
 	// 使用指定的相机位置
@@ -256,7 +336,7 @@ const initCamera = () => {
 	state.lookAtPosition = new THREE.Vector3(0, 0, 0);
 	state.defaultCameraPosition = camera.position.clone();
 
-	console.log('相机初始化完成:', {
+	console.log("相机初始化完成:", {
 		position: camera.position,
 		lookAt: state.lookAtPosition,
 	});
@@ -267,16 +347,16 @@ const initRenderer = () => {
 	// 获取 Canvas 元素
 	const canvasElement = canvasRef.value;
 	if (!canvasElement) {
-		throw new Error('Canvas 元素未找到');
+		throw new Error("Canvas 元素未找到");
 	}
 
-	console.log('初始化渲染器');
+	console.log("初始化渲染器");
 
 	// 渲染器优化配置
 	renderer = new THREE.WebGLRenderer({
 		antialias: false, // 禁用抗锯齿以提高性能
-		powerPreference: 'high-performance',
-		precision: 'lowp', // 使用低精度
+		powerPreference: "high-performance",
+		precision: "lowp", // 使用低精度
 		alpha: false,
 		stencil: false,
 		depth: true,
@@ -294,12 +374,12 @@ const initRenderer = () => {
 	renderer.autoClear = false;
 
 	// 添加到DOM
-	canvasElement.innerHTML = '';
+	canvasElement.innerHTML = "";
 	canvasElement.appendChild(renderer.domElement);
 
 	// 设置样式
-	renderer.domElement.style.width = '100%';
-	renderer.domElement.style.height = '100%';
+	renderer.domElement.style.width = "100%";
+	renderer.domElement.style.height = "100%";
 
 	// 深度测试
 	const gl = renderer.getContext();
@@ -326,10 +406,10 @@ const initLights = () => {
 // 初始化控制器
 const initControls = () => {
 	if (!camera || !renderer) {
-		throw new Error('相机或渲染器未初始化');
+		throw new Error("相机或渲染器未初始化");
 	}
 
-	console.log('初始化控制器');
+	console.log("初始化控制器");
 
 	// 设置性能优化的控制器
 	controls = new OrbitControls(camera, renderer.domElement);
@@ -350,7 +430,7 @@ const initControls = () => {
 	controls.maxPolarAngle = Math.PI - 0.1;
 
 	// 减少事件监听器调用频率
-	controls.addEventListener('change', () => {
+	controls.addEventListener("change", () => {
 		// 使用防抖动更新相机位置
 		if (!controls.updateScheduled) {
 			controls.updateScheduled = true;
@@ -364,12 +444,12 @@ const initControls = () => {
 	});
 
 	// 交互结束时保存相机位置
-	controls.addEventListener('end', () => {
+	controls.addEventListener("end", () => {
 		state.cameraPosition = camera.position.clone();
 		state.lookAtPosition = controls.target.clone();
 	});
 
-	console.log('控制器初始化完成');
+	console.log("控制器初始化完成");
 };
 
 // ============== 模型加载函数 ==============
@@ -382,19 +462,37 @@ const getBimModelUrl = async () => {
 			pageSize: 20,
 		};
 
+		console.log("正在获取模型数据...");
 		const result = await getBimFindAll(params);
 
 		if (result.code === Constants.status.SUCCESS) {
+			if (!result.data || !result.data.list || result.data.list.length === 0) {
+				console.error("API返回的数据不包含模型列表或列表为空");
+				ElMessage.error("没有可用的模型数据");
+				return null;
+			}
+
 			const modelUrl = result.data.list[0].url;
-			console.log('获取到模型URL:', modelUrl);
+			if (!modelUrl) {
+				console.error("模型URL为空");
+				ElMessage.error("模型URL为空");
+				return null;
+			}
+
+			console.log("获取到模型URL:", modelUrl);
 			return modelUrl;
 		} else {
-			ElMessage.error(result.msg || '获取模型数据失败');
+			console.error("API返回错误:", result.msg || "未知错误");
+			ElMessage.error(result.msg || "获取模型数据失败");
 			return null;
 		}
 	} catch (error) {
-		console.error('获取模型数据时出错:', error);
-		ElMessage.error('获取模型数据时出错');
+		console.error("获取模型数据时出错:", error);
+		if (error.response) {
+			console.error("API响应状态:", error.response.status);
+			console.error("API响应数据:", error.response.data);
+		}
+		ElMessage.error("获取模型数据时出错: " + (error.message || "未知错误"));
 		return null;
 	}
 };
@@ -404,58 +502,144 @@ const createGLTFLoader = (manager) => {
 	const loader = new GLTFLoader(manager);
 	const dracoLoader = new DRACOLoader(manager);
 
-	// 设置Draco解码器路径
-	dracoLoader.setDecoderPath('/js/draco/');
+	// 设置Draco解码器路径 - 使用相对路径
+	dracoLoader.setDecoderPath("/assets/draco/");
 	loader.setDRACOLoader(dracoLoader);
+
+	// 启用KTX2加载器（如果需要加载压缩纹理）
+	try {
+		const ktx2Loader = new KTX2Loader(manager);
+		ktx2Loader.setTranscoderPath("/assets/basis/");
+		loader.setKTX2Loader(ktx2Loader);
+	} catch (e) {
+		console.warn("KTX2Loader初始化失败，压缩纹理可能无法加载", e);
+	}
+
+	// 启用MeshoptDecoder（如果需要加载Meshopt压缩模型）
+	try {
+		loader.setMeshoptDecoder(MeshoptDecoder);
+	} catch (e) {
+		console.warn("MeshoptDecoder初始化失败，Meshopt压缩模型可能无法加载", e);
+	}
 
 	return loader;
 };
 
 // 加载模型
 const loadModel = async () => {
-	if (!scene) {
-		throw new Error('场景未初始化');
+	if (!scene || !gltfLoader) {
+		throw new Error("场景或模型加载器未初始化");
 	}
 
 	state.isLoading = true;
 	state.loadingWidth = 0;
+	state.loadingFailed = false;
 
 	try {
+		console.log("开始获取模型URL...");
+		// 获取模型URL
 		const modelUrl = await getBimModelUrl();
 		if (!modelUrl) {
-			throw new Error('未提供模型URL');
+			console.error("获取模型URL失败: 返回值为空");
+			throw new Error("未提供模型URL");
 		}
 
-		console.log('开始加载模型:', modelUrl);
+		// 验证URL格式
+		try {
+			new URL(modelUrl);
+		} catch (e) {
+			console.error("模型URL格式无效:", modelUrl, e);
+			throw new Error(`模型URL格式无效: ${modelUrl}`);
+		}
 
-		// 创建加载管理器
-		const manager = new THREE.LoadingManager();
+		console.log("开始加载模型:", modelUrl);
 
-		manager.onProgress = (url, loaded, total) => {
-			const progress = Math.min(Math.round((loaded / total) * 100), 100);
-			state.loadingWidth = progress;
-		};
-
-		// 创建GLTF加载器
-		const loader = createGLTFLoader(manager);
-
-		// 加载模型
+		// 使用GLTF加载器加载模型
 		const gltf = await new Promise((resolve, reject) => {
-			loader.load(modelUrl, resolve, undefined, reject);
+			// 设置超时处理
+			const timeoutId = setTimeout(() => {
+				console.error("模型加载超时");
+				state.loadingFailed = true;
+				reject(new Error("模型加载超时，请检查网络连接或模型大小"));
+			}, 120000); // 2分钟超时
+
+			gltfLoader.load(
+				modelUrl,
+				// 成功回调
+				(gltf) => {
+					if (timeoutId) {
+						clearTimeout(timeoutId);
+					}
+					console.log("模型加载成功:", gltf);
+
+					// 验证模型数据
+					if (!gltf || !gltf.scene) {
+						console.error("加载的模型数据无效");
+						state.loadingFailed = true;
+						reject(new Error("加载的模型数据无效"));
+						return;
+					}
+
+					resolve(gltf);
+				},
+				// 进度回调 - 直接更新进度，确保实时显示
+				(event) => {
+					if (event.lengthComputable) {
+						const progress = Math.min(Math.round((event.loaded / event.total) * 100), 100);
+
+						// 更新加载进度
+						state.loadingWidth = progress;
+
+						console.log(
+							`模型加载进度: ${progress}%, 已加载: ${(event.loaded / 1024 / 1024).toFixed(2)}MB, 总大小: ${(event.total / 1024 / 1024).toFixed(2)}MB`,
+						);
+
+						// 强制渲染一次，确保进度条更新
+						if (throttleRender) {
+							throttleRender.requestRender();
+						}
+					} else {
+						console.log("模型加载进行中，但无法计算进度");
+					}
+				},
+				// 错误回调
+				(error) => {
+					clearTimeout(timeoutId);
+					console.error("模型加载错误:", error);
+
+					// 设置加载失败状态
+					state.loadingFailed = true;
+					state.isLoading = false;
+
+					// 提供更详细的错误信息
+					let errorMessage = "模型加载失败";
+					if (error.message) {
+						errorMessage += `: ${error.message}`;
+					}
+
+					// 检查常见错误类型
+					if (error.message && error.message.includes("404")) {
+						errorMessage = "模型文件不存在，请检查URL是否正确";
+					} else if (error.message && error.message.includes("401")) {
+						errorMessage = "无权限访问模型文件，请检查认证信息";
+					} else if (error.message && error.message.includes("CORS")) {
+						errorMessage = "跨域请求被拒绝，请检查服务器CORS配置";
+					}
+
+					ElMessage.error(errorMessage);
+					reject(new Error(errorMessage));
+				},
+			);
 		});
 
-		const modelScene = gltf.scene;
-		if (!modelScene) {
-			throw new Error('模型场景为空');
+		if (!gltf || !gltf.scene) {
+			throw new Error("模型加载失败");
 		}
 
-		// 性能优化 - 使用draco解码器后清理缓存
-		if (loader.dracoLoader) {
-			loader.dracoLoader.dispose();
-		}
+		// 获取模型场景
+		model = gltf.scene;
 
-		// 优化并添加到场景
-		model = optimizeModelForPerformance(modelScene);
+		// 添加到场景
 		scene.add(model);
 
 		// 计算包围盒
@@ -463,16 +647,60 @@ const loadModel = async () => {
 		const size = box.getSize(new THREE.Vector3());
 		const center = box.getCenter(new THREE.Vector3());
 
+		console.log("模型尺寸:", size);
+		console.log("模型中心:", center);
+
 		// 保存模型信息
 		modelInfo.size = size;
 		modelInfo.center = center;
 		modelInfo.boundingBox = box;
 
+		// 收集模型统计信息
+		let triangleCount = 0;
+		let meshCount = 0;
+		let materialCount = 0;
+
+		model.traverse((node) => {
+			if (node.isMesh) {
+				meshCount++;
+
+				// 计算三角形数量
+				if (node.geometry) {
+					const geomTriangles = node.geometry.index
+						? node.geometry.index.count / 3
+						: node.geometry.attributes.position.count / 3;
+					triangleCount += geomTriangles;
+				}
+
+				// 计算材质数量
+				if (node.material) {
+					if (Array.isArray(node.material)) {
+						materialCount += node.material.length;
+					} else {
+						materialCount++;
+					}
+				}
+
+				// 设置纹理优化
+				if (node.material) {
+					const materials = Array.isArray(node.material) ? node.material : [node.material];
+					materials.forEach((material) => {
+						// 优化纹理
+						if (material.map) {
+							material.map.generateMipmaps = true;
+							material.map.minFilter = THREE.LinearMipmapLinearFilter;
+							material.map.anisotropy = 4;
+						}
+					});
+				}
+			}
+		});
+
 		// 保存原始位置用于爆炸视图
 		saveOriginalPositions(model);
 
-		// 修正相机位置并记录
-		fixCameraPosition();
+		// 自动调整相机位置以适应模型大小
+		autoFitCameraToObject(model, 1.5);
 
 		// 记录相机位置到控制面板
 		handleRecordCameraPosition();
@@ -480,12 +708,25 @@ const loadModel = async () => {
 		// 完成加载
 		state.isLoading = false;
 		state.loadingWidth = 100;
-		needsRender = true;
+		throttleRender.requestRender();
 
-		ElMessage.success('模型加载成功');
+		// 显示模型信息
+		console.log(`模型信息: ${meshCount}个网格, ${triangleCount}个三角形, ${materialCount}个材质`);
+
+		// 如果模型非常大，提示用户
+		if (triangleCount > 1000000) {
+			ElMessage({
+				message: `大型模型已加载 (${Math.round(triangleCount / 1000000)}M三角形)，已应用性能优化`,
+				type: "warning",
+				duration: 5000,
+			});
+		} else {
+			ElMessage.success("模型加载成功");
+		}
+
 		return model;
 	} catch (error) {
-		console.error('加载模型失败:', error);
+		console.error("加载模型失败:", error);
 		state.loadingFailed = true;
 		state.isLoading = false;
 		ElMessage.error(`加载模型失败: ${error.message || error}`);
@@ -495,7 +736,7 @@ const loadModel = async () => {
 
 // 新的高性能模型优化函数
 const optimizeModelForPerformance = (modelScene) => {
-	console.log('应用性能优化...');
+	console.log("应用性能优化...");
 
 	// 使用更激进的优化策略
 	let triangleCount = 0;
@@ -508,9 +749,7 @@ const optimizeModelForPerformance = (modelScene) => {
 
 			// 计算三角形数量
 			if (node.geometry) {
-				const geomTriangles = node.geometry.index
-					? node.geometry.index.count / 3
-					: 0;
+				const geomTriangles = node.geometry.index ? node.geometry.index.count / 3 : 0;
 				triangleCount += geomTriangles;
 				largestMeshSize = Math.max(largestMeshSize, geomTriangles);
 			}
@@ -523,7 +762,7 @@ const optimizeModelForPerformance = (modelScene) => {
 			// 优化材质
 			if (node.material) {
 				// 基础优化
-				node.material.precision = 'lowp';
+				node.material.precision = "lowp";
 				node.material.fog = false;
 
 				// 移除不必要的属性
@@ -560,7 +799,7 @@ const optimizeModelForPerformance = (modelScene) => {
 	});
 
 	console.log(
-		`模型统计: ${meshCount}个网格, ${triangleCount}个三角形, 最大网格: ${largestMeshSize}个三角形`
+		`模型统计: ${meshCount}个网格, ${triangleCount}个三角形, 最大网格: ${largestMeshSize}个三角形`,
 	);
 	return modelScene;
 };
@@ -586,25 +825,42 @@ const setupPostProcessing = () => {
 	if (!renderer || !scene || !camera) return;
 
 	// 在低帧率下禁用后处理
-	if (state.currentFPS < 30) {
-		console.log('帧率过低，禁用后处理以提高性能');
+	if (state.currentFPS < 15) {
+		console.log("帧率过低，禁用后处理以提高性能");
 		return;
 	}
 
 	try {
 		composer = new EffectComposer(renderer);
-		const renderPass = new RenderPass(scene, camera);
-		composer.addPass(renderPass);
 
-		// 只在高质量模式下添加FXAA
-		if (state.currentQuality === 'high' && state.enableAntiAlias) {
-			fxaaPass = new ShaderPass(FXAAShader);
-			updateShaderResolution();
-			fxaaPass.enabled = true;
-			composer.addPass(fxaaPass);
+		// 根据质量和性能选择抗锯齿方式
+		if (state.enableAntiAlias) {
+			if (state.currentQuality === "high" && state.currentFPS > 30) {
+				// 高质量模式下使用TAA (Temporal Anti-Aliasing)
+				console.log("使用TAA抗锯齿");
+				const taaPass = new TAARenderPass(scene, camera);
+				taaPass.sampleLevel = 1; // 采样级别 (1-2)
+				taaPass.accumulate = true; // 启用帧累积
+				composer.addPass(taaPass);
+			} else {
+				// 中低质量或低帧率下使用FXAA (Fast Approximate Anti-Aliasing)
+				console.log("使用FXAA抗锯齿");
+				const renderPass = new RenderPass(scene, camera);
+				composer.addPass(renderPass);
+
+				fxaaPass = new ShaderPass(FXAAShader);
+				updateShaderResolution();
+				fxaaPass.enabled = true;
+				composer.addPass(fxaaPass);
+			}
+		} else {
+			// 不使用抗锯齿，只添加基本渲染通道
+			const renderPass = new RenderPass(scene, camera);
+			composer.addPass(renderPass);
 		}
 	} catch (e) {
-		console.error('初始化后处理失败:', e);
+		console.error("初始化后处理失败:", e);
+		console.error(e.stack);
 		composer = null;
 		fxaaPass = null;
 	}
@@ -618,151 +874,95 @@ const updateShaderResolution = () => {
 	const width = renderer.domElement.width;
 	const height = renderer.domElement.height;
 
-	fxaaPass.uniforms['resolution'].value.set(
-		1 / (width * pixelRatio),
-		1 / (height * pixelRatio)
-	);
+	fxaaPass.uniforms["resolution"].value.set(1 / (width * pixelRatio), 1 / (height * pixelRatio));
 };
 
-// 优化渲染循环，使用更高效的渲染策略
-const startRenderLoop = () => {
-	let rafId = null;
-	let lastTime = 0;
-	let fpsUpdateTime = 0;
-	let frameCounter = 0;
-
-	// 使用requestIdleCallback来处理非关键任务
-	const scheduleIdleTask = (callback) => {
-		if (window.requestIdleCallback) {
-			window.requestIdleCallback(callback, { timeout: 1000 });
-		} else {
-			setTimeout(callback, 1);
-		}
-	};
-
-	const animate = (time) => {
-		rafId = requestAnimationFrame(animate);
-
-		// 计算delta时间
-		const delta = time - lastTime;
-		lastTime = time;
-
-		// FPS计算 - 简化版本
-		frameCounter++;
-		if (time - fpsUpdateTime > 1000) {
-			state.currentFPS = frameCounter;
-			frameCounter = 0;
-			fpsUpdateTime = time;
-
-			// 在空闲时间调整质量
-			if (state.qualityMode === 'auto') {
-				scheduleIdleTask(() => {
-					if (state.currentFPS < 15) {
-						// 更保守的阈值
-						if (state.currentQuality !== 'low') {
-							state.currentQuality = 'low';
-							applyQuality('low');
-							console.log(`检测到低帧率(${state.currentFPS})，降低质量`);
-						}
-					}
-				});
-			}
-		}
-
-		// 只在必要时更新控制器
-		if (isUserInteracting) {
-			if (controls) controls.update();
-		}
-
-		// 只在必要时渲染
-		if (needsRender || state.autoRotate || isUserInteracting) {
-			if (renderer) {
-				renderer.clear();
-
-				try {
-					if (composer && composer.passes.length > 0 && state.enableAntiAlias) {
-						composer.render();
-					} else {
-						renderer.render(scene, camera);
-					}
-				} catch (e) {
-					console.error('渲染出错:', e);
-				}
-
-				needsRender = false;
-			}
-		}
-
-		// 更新方向指示器（如果存在）
-		if (directionIndicator && typeof directionIndicator.update === 'function') {
-			directionIndicator.update();
-		}
-
-		// 更新爆炸视图
-		if (state.explosionMode) {
-			updateExplosionView(state.explosionStrength);
-		}
-	};
-
-	lastTime = performance.now();
-	animate(lastTime);
-
-	// 返回清理函数
-	return () => {
-		if (rafId) {
-			cancelAnimationFrame(rafId);
-			rafId = null;
-		}
-	};
-};
-
-// 设置用户交互跟踪
+// 设置用户交互跟踪 - 优化版本
 const setupInteractionTracking = () => {
 	if (!renderer) {
-		throw new Error('渲染器未初始化');
+		throw new Error("渲染器未初始化");
 	}
 
 	const canvas = renderer.domElement;
 	let interactionTimer = null;
+	let lastInteractionTime = 0;
+	let mouseMoveThrottleTimer = null;
+	const INTERACTION_TIMEOUT = 300; // 降低交互超时时间以提高响应性
+	const MOUSE_MOVE_THROTTLE = 50; // 鼠标移动事件节流时间（毫秒）
 
+	// 节流函数 - 限制高频事件的触发频率
+	const throttle = (callback, delay) => {
+		let lastCallTime = 0;
+
+		return function (...args) {
+			const now = performance.now();
+			if (now - lastCallTime >= delay) {
+				lastCallTime = now;
+				callback.apply(this, args);
+			}
+		};
+	};
+
+	// 开始交互 - 基础版本，用于mousedown等低频事件
 	const startInteraction = () => {
 		isUserInteracting = true;
-		needsRender = true; // 确保交互时渲染
+		needsRender = true;
+		lastInteractionTime = performance.now();
 
-		// 清除现有定时器
 		clearTimeout(interactionTimer);
 	};
 
-	const endInteraction = () => {
+	// 鼠标移动交互 - 节流版本，减少触发频率
+	const handleMouseMove = throttle(() => {
+		isUserInteracting = true;
+		needsRender = true;
+		lastInteractionTime = performance.now();
+
 		clearTimeout(interactionTimer);
 
-		// 设置新定时器，在交互结束500ms后停止持续渲染
+		// 设置新定时器，在交互结束后停止持续渲染
+		interactionTimer = setTimeout(() => {
+			// 只有在没有新交互的情况下才结束交互状态
+			if (performance.now() - lastInteractionTime >= INTERACTION_TIMEOUT) {
+				isUserInteracting = false;
+				needsRender = true; // 交互结束时再渲染一帧
+			}
+		}, INTERACTION_TIMEOUT);
+	}, MOUSE_MOVE_THROTTLE);
+
+	// 结束交互 - 使用RAF而不是setTimeout来提高性能
+	const endInteraction = () => {
+		// 不立即结束交互状态，而是在短暂延迟后结束
+		// 这样可以实现更平滑的交互体验
+		clearTimeout(interactionTimer);
+
 		interactionTimer = setTimeout(() => {
 			isUserInteracting = false;
-			// 交互结束时再渲染一帧，确保最终状态正确
-			needsRender = true;
-		}, 500);
+			needsRender = true; // 交互结束时再渲染一帧
+		}, INTERACTION_TIMEOUT);
 	};
 
-	// 添加事件监听
-	canvas.addEventListener('mousedown', startInteraction);
-	canvas.addEventListener('mousemove', startInteraction);
-	canvas.addEventListener('mouseup', endInteraction);
-	canvas.addEventListener('touchstart', startInteraction);
-	canvas.addEventListener('touchmove', startInteraction);
-	canvas.addEventListener('touchend', endInteraction);
-	canvas.addEventListener('wheel', startInteraction, { passive: true });
+	// 添加事件监听 - 使用被动事件监听器提高滚动性能
+	canvas.addEventListener("mousedown", startInteraction, { passive: true });
+	canvas.addEventListener("mousemove", handleMouseMove, { passive: true });
+	canvas.addEventListener("mouseup", endInteraction, { passive: true });
+	canvas.addEventListener("touchstart", startInteraction, { passive: true });
+	canvas.addEventListener("touchmove", handleMouseMove, { passive: true });
+	canvas.addEventListener("touchend", endInteraction, { passive: true });
+	canvas.addEventListener("wheel", startInteraction, { passive: true });
 
 	// 返回清理函数
 	return () => {
-		canvas.removeEventListener('mousedown', startInteraction);
-		canvas.removeEventListener('mousemove', startInteraction);
-		canvas.removeEventListener('mouseup', endInteraction);
-		canvas.removeEventListener('touchstart', startInteraction);
-		canvas.removeEventListener('touchmove', startInteraction);
-		canvas.removeEventListener('touchend', endInteraction);
-		canvas.removeEventListener('wheel', startInteraction);
+		canvas.removeEventListener("mousedown", startInteraction);
+		canvas.removeEventListener("mousemove", handleMouseMove);
+		canvas.removeEventListener("mouseup", endInteraction);
+		canvas.removeEventListener("touchstart", startInteraction);
+		canvas.removeEventListener("touchmove", handleMouseMove);
+		canvas.removeEventListener("touchend", endInteraction);
+		canvas.removeEventListener("wheel", startInteraction);
+
 		clearTimeout(interactionTimer);
+		clearTimeout(mouseMoveThrottleTimer);
 	};
 };
 
@@ -814,7 +1014,7 @@ const applyQuality = (quality) => {
 	console.log(`应用${quality}质量设置`);
 
 	switch (quality) {
-		case 'low':
+		case "low":
 			// 极低质量 - 最大化性能
 			renderer.setPixelRatio(0.5);
 
@@ -830,8 +1030,7 @@ const applyQuality = (quality) => {
 			// 使用最基础的材质
 			scene.traverse((node) => {
 				if (node.isMesh) {
-					const color =
-						node.material?.color?.clone() || new THREE.Color(0xcccccc);
+					const color = node.material?.color?.clone() || new THREE.Color(0xcccccc);
 					const basicMaterial = new THREE.MeshBasicMaterial({
 						color: color,
 						wireframe: state.showWireframe,
@@ -863,7 +1062,7 @@ const applyQuality = (quality) => {
 			});
 			break;
 
-		case 'medium':
+		case "medium":
 			// 中等质量 - 平衡性能与质量
 			renderer.setPixelRatio(Math.min(1, window.devicePixelRatio));
 
@@ -884,7 +1083,7 @@ const applyQuality = (quality) => {
 					if (node.userData.originalMaterial) {
 						const material = node.userData.originalMaterial.clone();
 						material.flatShading = true;
-						material.precision = 'lowp';
+						material.precision = "lowp";
 						material.wireframe = state.showWireframe;
 						node.material = material;
 					}
@@ -892,14 +1091,14 @@ const applyQuality = (quality) => {
 			});
 			break;
 
-		case 'high':
+		case "high":
 			// 高质量 - 视觉优先
 			renderer.setPixelRatio(Math.min(1.5, window.devicePixelRatio));
 
 			// 启用所有后处理
 			if (composer) {
 				composer.passes.forEach((pass) => {
-					if (pass.name === 'FXAAPass') {
+					if (pass.name === "FXAAPass") {
 						pass.enabled = state.enableAntiAlias;
 					} else {
 						pass.enabled = true;
@@ -923,25 +1122,24 @@ const applyQuality = (quality) => {
 	needsRender = true;
 };
 
-// 设置场景背景
-const setSceneBackground = (url) => {
+// 设置场景背景 - 统一为纯白色
+const setSceneBackground = () => {
 	if (!scene) return;
 
-	if (/\.hdr$/i.test(url)) {
-		new RGBELoader().load(url, (texture) => {
-			texture.mapping = THREE.EquirectangularReflectionMapping;
-			scene.background = texture;
-			needsRender = true;
-		});
-	} else if (/\.(jpg|jpeg|png|gif|bmp)$/i.test(url)) {
-		new THREE.TextureLoader().load(url, (texture) => {
-			texture.mapping = THREE.EquirectangularReflectionMapping;
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
-			scene.background = texture;
-			needsRender = true;
-		});
-	}
+	console.log("设置场景背景: 纯白色");
+
+	// 设置纯白色背景
+	scene.background = new THREE.Color(0xffffff);
+	scene.environment = null; // 清除环境贴图
+	needsRender = true;
+};
+
+// 设置背景 - 已禁用天空背景切换功能
+const changeBackground = () => {
+	if (!scene) return;
+
+	// 直接调用设置纯白背景的函数
+	setSceneBackground();
 };
 
 // ============== 相机控制函数 ==============
@@ -949,12 +1147,12 @@ const setSceneBackground = (url) => {
 // 自动适应模型
 const autoFitCameraToObject = (object, fitOffset = 1.2) => {
 	if (!camera || !controls || !object) {
-		console.warn('自动适应相机位置：相机、控制器或对象未初始化');
+		console.warn("自动适应相机位置：相机、控制器或对象未初始化");
 		return;
 	}
 
 	try {
-		console.log('自动适应相机到模型...');
+		console.log("自动适应相机到模型...");
 
 		// 计算包围盒
 		const box = new THREE.Box3().setFromObject(object);
@@ -962,13 +1160,13 @@ const autoFitCameraToObject = (object, fitOffset = 1.2) => {
 		const center = box.getCenter(new THREE.Vector3());
 
 		if (size.length() === 0) {
-			console.warn('模型尺寸为零，无法适应相机');
+			console.warn("模型尺寸为零，无法适应相机");
 			return;
 		}
 
 		// 记录模型大小信息
-		console.log('模型尺寸:', size);
-		console.log('模型中心:', center);
+		console.log("模型尺寸:", size);
+		console.log("模型中心:", center);
 
 		// 检查模型是否过大，如果是，使用更合适的缩放系数
 		const isLargeModel = size.length() > 5000;
@@ -979,11 +1177,11 @@ const autoFitCameraToObject = (object, fitOffset = 1.2) => {
 		const targetPosition = new THREE.Vector3(
 			center.x + size.x * 0.5,
 			center.y + size.y * 0.5,
-			center.z - size.z * 0.5
+			center.z - size.z * 0.5,
 		);
 
-		console.log('目标相机位置:', targetPosition);
-		console.log('目标观察中心:', center);
+		console.log("目标相机位置:", targetPosition);
+		console.log("目标观察中心:", center);
 
 		// 设置相机位置
 		animateCamera(targetPosition, center, 1000);
@@ -1001,11 +1199,11 @@ const autoFitCameraToObject = (object, fitOffset = 1.2) => {
 			controls.saveState(); // 保存为重置点
 			needsRender = true;
 
-			console.log('相机位置已更新:', camera.position);
-			console.log('相机目标已更新:', controls.target);
+			console.log("相机位置已更新:", camera.position);
+			console.log("相机目标已更新:", controls.target);
 		}, 1100);
 	} catch (error) {
-		console.error('自动适应相机到模型失败:', error);
+		console.error("自动适应相机到模型失败:", error);
 	}
 };
 
@@ -1024,13 +1222,13 @@ const setCameraView = (view) => {
 		let targetPosition = new THREE.Vector3();
 
 		switch (view) {
-			case 'front':
+			case "front":
 				targetPosition.set(center.x, center.y, center.z + distance);
 				break;
-			case 'top':
+			case "top":
 				targetPosition.set(center.x, center.y + distance, center.z);
 				break;
-			case 'side':
+			case "side":
 				targetPosition.set(center.x + distance, center.y, center.z);
 				break;
 			default:
@@ -1040,7 +1238,7 @@ const setCameraView = (view) => {
 		// 使用平滑动画
 		animateCamera(targetPosition, center);
 	} catch (error) {
-		console.error('设置相机视角失败:', error);
+		console.error("设置相机视角失败:", error);
 	}
 };
 
@@ -1052,35 +1250,22 @@ const resetCamera = () => {
 		if (modelInfo.center) {
 			// 如果有模型信息，则重置到适合查看模型的位置
 			const center = modelInfo.center;
-			const targetPosition = new THREE.Vector3(
-				center.x + 100,
-				center.y + 300,
-				center.z - 300
-			);
+			const targetPosition = new THREE.Vector3(center.x + 100, center.y + 300, center.z - 300);
 
 			animateCamera(targetPosition, center, 1000);
-			console.log('重置相机到模型视图位置');
+			console.log("重置相机到模型视图位置");
 		} else {
 			// 否则重置到默认位置
-			animateCamera(
-				new THREE.Vector3(2500, 800, -1800),
-				new THREE.Vector3(2500, 500, -2000),
-				1000
-			);
-			console.log('重置相机到默认位置');
+			animateCamera(new THREE.Vector3(2500, 800, -1800), new THREE.Vector3(2500, 500, -2000), 1000);
+			console.log("重置相机到默认位置");
 		}
 	} catch (error) {
-		console.error('重置相机失败:', error);
+		console.error("重置相机失败:", error);
 	}
 };
 
 // 相机动画
-const animateCamera = (
-	targetPosition,
-	lookAtPosition,
-	duration = 1000,
-	onComplete
-) => {
+const animateCamera = (targetPosition, lookAtPosition, duration = 1000, onComplete) => {
 	if (!camera || !controls) return;
 
 	const startPosition = camera.position.clone();
@@ -1097,11 +1282,11 @@ const animateCamera = (
 		lookAtPosition instanceof THREE.Vector3
 			? lookAtPosition.clone()
 			: lookAtPosition
-			? new THREE.Vector3(lookAtPosition.x, lookAtPosition.y, targetLookAt.z)
-			: startLookAt.clone();
+				? new THREE.Vector3(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z)
+				: startLookAt.clone();
 
-	console.log('相机动画 - 从:', startPosition, '到:', targetPos);
-	console.log('视线动画 - 从:', startLookAt, '到:', targetLookAt);
+	console.log("相机动画 - 从:", startPosition, "到:", targetPos);
+	console.log("视线动画 - 从:", startLookAt, "到:", targetLookAt);
 
 	cameraAnimation = {
 		startPosition: startPosition,
@@ -1119,8 +1304,7 @@ const animateCamera = (
 
 // 更新渲染循环中的相机动画部分
 const updateCameraAnimation = () => {
-	if (!cameraAnimation || !cameraAnimation.active || !camera || !controls)
-		return false;
+	if (!cameraAnimation || !cameraAnimation.active || !camera || !controls) return false;
 
 	const now = Date.now();
 	const elapsed = now - cameraAnimation.startTime;
@@ -1147,13 +1331,9 @@ const updateCameraAnimation = () => {
 	camera.position.lerpVectors(
 		cameraAnimation.startPosition,
 		cameraAnimation.targetPosition,
-		progress
+		progress,
 	);
-	controls.target.lerpVectors(
-		cameraAnimation.startLookAt,
-		cameraAnimation.targetLookAt,
-		progress
-	);
+	controls.target.lerpVectors(cameraAnimation.startLookAt, cameraAnimation.targetLookAt, progress);
 
 	controls.update();
 	return true;
@@ -1243,7 +1423,7 @@ const toggleAntiAlias = (value) => {
 // 截图功能
 const captureScreenshot = () => {
 	if (!renderer || !scene || !camera) {
-		ElMessage.error('无法捕获截图');
+		ElMessage.error("无法捕获截图");
 		return;
 	}
 
@@ -1256,10 +1436,10 @@ const captureScreenshot = () => {
 		renderer.render(scene, camera);
 
 		// 获取图像数据
-		const imageData = renderer.domElement.toDataURL('image/png');
+		const imageData = renderer.domElement.toDataURL("image/png");
 
 		// 创建下载链接
-		const link = document.createElement('a');
+		const link = document.createElement("a");
 		link.href = imageData;
 		link.download = `3d-model-screenshot-${Date.now()}.png`;
 		document.body.appendChild(link);
@@ -1269,10 +1449,10 @@ const captureScreenshot = () => {
 		// 恢复原始质量
 		renderer.setPixelRatio(originalPixelRatio);
 
-		ElMessage.success('截图已保存');
+		ElMessage.success("截图已保存");
 	} catch (error) {
-		console.error('截图失败:', error);
-		ElMessage.error('截图失败');
+		console.error("截图失败:", error);
+		ElMessage.error("截图失败");
 	}
 };
 
@@ -1306,8 +1486,8 @@ const toggleFullscreen = () => {
 		// 过渡效果：等待尺寸调整
 		setTimeout(handleResize, 100);
 	} catch (error) {
-		console.error('切换全屏失败:', error);
-		ElMessage.error('切换全屏失败');
+		console.error("切换全屏失败:", error);
+		ElMessage.error("切换全屏失败");
 	}
 };
 
@@ -1329,7 +1509,7 @@ const toggleGrid = (value) => {
 			gridHelper.position.y = box.min.y - 1; // 放在模型底部
 			scene.add(gridHelper);
 		} catch (error) {
-			console.error('创建网格辅助失败:', error);
+			console.error("创建网格辅助失败:", error);
 		}
 	} else if (!value && gridHelper) {
 		scene.remove(gridHelper);
@@ -1354,7 +1534,7 @@ const toggleAxes = (value) => {
 			axesHelper = new THREE.AxesHelper(maxSize / 2);
 			scene.add(axesHelper);
 		} catch (error) {
-			console.error('创建坐标轴辅助失败:', error);
+			console.error("创建坐标轴辅助失败:", error);
 		}
 	} else if (!value && axesHelper) {
 		scene.remove(axesHelper);
@@ -1376,7 +1556,7 @@ const toggleBoundingBox = (value) => {
 			boundingBoxHelper = new THREE.Box3Helper(box, 0xffff00);
 			scene.add(boundingBoxHelper);
 		} catch (error) {
-			console.error('创建边界盒辅助失败:', error);
+			console.error("创建边界盒辅助失败:", error);
 		}
 	} else if (!value && boundingBoxHelper) {
 		scene.remove(boundingBoxHelper);
@@ -1395,7 +1575,7 @@ const toggleMeasureMode = () => {
 	if (!state.measureMode) {
 		clearMeasurement();
 	} else {
-		ElMessage.info('点击两点进行测量，右键或ESC清除测量');
+		ElMessage.info("点击两点进行测量，右键或ESC清除测量");
 	}
 };
 
@@ -1464,9 +1644,7 @@ const handleMeasureClick = (event) => {
 		}
 
 		// 创建线段
-		const lineGeometry = new THREE.BufferGeometry().setFromPoints(
-			measurePoints
-		);
+		const lineGeometry = new THREE.BufferGeometry().setFromPoints(measurePoints);
 		const lineMaterial = new THREE.LineBasicMaterial({
 			color: 0xffff00,
 			linewidth: 2,
@@ -1479,9 +1657,7 @@ const handleMeasureClick = (event) => {
 		state.measureResult = distance;
 
 		// 添加中点标记
-		const midPoint = new THREE.Vector3()
-			.addVectors(point1, point2)
-			.multiplyScalar(0.5);
+		const midPoint = new THREE.Vector3().addVectors(point1, point2).multiplyScalar(0.5);
 		const labelGeometry = new THREE.SphereGeometry(1, 8, 8);
 		const labelMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 		const label = new THREE.Mesh(labelGeometry, labelMaterial);
@@ -1495,7 +1671,7 @@ const handleMeasureClick = (event) => {
 		// 显示测量结果
 		ElMessage({
 			message: `测量距离: ${distance.toFixed(2)} 单位`,
-			type: 'success',
+			type: "success",
 			duration: 3000,
 		});
 	}
@@ -1513,26 +1689,26 @@ const handleMeasureRightClick = (event) => {
 
 // 测量键盘处理
 const handleMeasureKeyDown = (event) => {
-	if (event.key === 'Escape' && state.measureMode) {
+	if (event.key === "Escape" && state.measureMode) {
 		clearMeasurement();
 	}
 };
 
 // 设置测量工具监听器
 const setupMeasurementListeners = () => {
-	const canvas = canvasRef.value || document.getElementById('myCanvas');
+	const canvas = canvasRef.value || document.getElementById("myCanvas");
 	if (!canvas) return;
 
 	// 添加事件监听
-	canvas.addEventListener('click', handleMeasureClick);
-	canvas.addEventListener('contextmenu', handleMeasureRightClick);
-	window.addEventListener('keydown', handleMeasureKeyDown);
+	canvas.addEventListener("click", handleMeasureClick);
+	canvas.addEventListener("contextmenu", handleMeasureRightClick);
+	window.addEventListener("keydown", handleMeasureKeyDown);
 
 	// 返回清理函数
 	return () => {
-		canvas.removeEventListener('click', handleMeasureClick);
-		canvas.removeEventListener('contextmenu', handleMeasureRightClick);
-		window.removeEventListener('keydown', handleMeasureKeyDown);
+		canvas.removeEventListener("click", handleMeasureClick);
+		canvas.removeEventListener("contextmenu", handleMeasureRightClick);
+		window.removeEventListener("keydown", handleMeasureKeyDown);
 	};
 };
 
@@ -1571,9 +1747,7 @@ const updateExplosionView = (strength) => {
 			const explodeDistance = 50 * strength;
 
 			// 设置新位置
-			node.position
-				.copy(originalPos)
-				.add(direction.multiplyScalar(explodeDistance));
+			node.position.copy(originalPos).add(direction.multiplyScalar(explodeDistance));
 		}
 	});
 
@@ -1632,7 +1806,7 @@ const handleRetry = () => {
 
 const handleQualityChange = (mode) => {
 	state.qualityMode = mode;
-	if (mode !== 'auto') {
+	if (mode !== "auto") {
 		state.currentQuality = mode;
 		applyQuality(mode);
 	}
@@ -1694,6 +1868,8 @@ const handleScreenshot = () => {
 	captureScreenshot();
 };
 
+// 背景切换处理函数已移除 - 统一使用纯白背景
+
 const handleFullscreen = () => {
 	toggleFullscreen();
 };
@@ -1702,12 +1878,6 @@ const handleFullscreen = () => {
 
 // 清理资源
 const cleanupResources = () => {
-	// 停止渲染循环
-	if (requestID) {
-		cancelAnimationFrame(requestID);
-		requestID = null;
-	}
-
 	// 清理THREE.js资源
 	if (scene) {
 		scene.traverse((object) => {
@@ -1746,10 +1916,10 @@ const cleanupResources = () => {
 
 // 添加键盘控制
 const setupKeyboardControls = () => {
-	window.addEventListener('keydown', handleKeyDown);
+	window.addEventListener("keydown", handleKeyDown);
 
 	return () => {
-		window.removeEventListener('keydown', handleKeyDown);
+		window.removeEventListener("keydown", handleKeyDown);
 	};
 };
 
@@ -1761,32 +1931,32 @@ const handleKeyDown = (event) => {
 	const speed = 0.5; // 移动速度
 
 	// 移动控制
-	if (key === 'w') {
+	if (key === "w") {
 		// 前进
 		camera.position.z -= speed;
 		controls.target.z -= speed;
 		needsRender = true;
-	} else if (key === 's') {
+	} else if (key === "s") {
 		// 后退
 		camera.position.z += speed;
 		controls.target.z += speed;
 		needsRender = true;
-	} else if (key === 'a') {
+	} else if (key === "a") {
 		// 左移
 		camera.position.x -= speed;
 		controls.target.x -= speed;
 		needsRender = true;
-	} else if (key === 'd') {
+	} else if (key === "d") {
 		// 右移
 		camera.position.x += speed;
 		controls.target.x += speed;
 		needsRender = true;
-	} else if (key === 'q') {
+	} else if (key === "q") {
 		// 上升
 		camera.position.y += speed;
 		controls.target.y += speed;
 		needsRender = true;
-	} else if (key === 'e') {
+	} else if (key === "e") {
 		// 下降
 		camera.position.y -= speed;
 		controls.target.y -= speed;
@@ -1794,25 +1964,25 @@ const handleKeyDown = (event) => {
 	}
 
 	// 视图控制
-	if (key === '1') {
-		setCameraView('front');
-	} else if (key === '2') {
-		setCameraView('top');
-	} else if (key === '3') {
-		setCameraView('side');
-	} else if (key === '4') {
-		setCameraView('bottom');
-	} else if (key === '5') {
-		setCameraView('back');
-	} else if (key === 'r') {
+	if (key === "1") {
+		setCameraView("front");
+	} else if (key === "2") {
+		setCameraView("top");
+	} else if (key === "3") {
+		setCameraView("side");
+	} else if (key === "4") {
+		setCameraView("bottom");
+	} else if (key === "5") {
+		setCameraView("back");
+	} else if (key === "r") {
 		resetCamera();
 	}
 
 	// 特殊功能
-	if (key === 'f') {
+	if (key === "f") {
 		// 拟合视图
 		autoFitCameraToObject(model, 1.5);
-	} else if (key === 'h') {
+	} else if (key === "h") {
 		// 隐藏/显示控制面板
 		state.showControls = !state.showControls;
 	}
@@ -1824,27 +1994,27 @@ const handleKeyDown = (event) => {
 // 添加一个辅助函数，帮助找出理想的相机位置
 const setupCameraDebug = () => {
 	// 只在开发环境添加调试功能
-	if (process.env.NODE_ENV !== 'development') return;
+	if (process.env.NODE_ENV !== "development") return;
 
 	// 创建调试按钮和面板
-	const debugContainer = document.createElement('div');
-	debugContainer.style.position = 'absolute';
-	debugContainer.style.top = '10px';
-	debugContainer.style.right = '10px';
-	debugContainer.style.zIndex = '9999';
-	debugContainer.style.background = 'rgba(0,0,0,0.7)';
-	debugContainer.style.color = 'white';
-	debugContainer.style.padding = '10px';
-	debugContainer.style.borderRadius = '5px';
-	debugContainer.style.fontFamily = 'monospace';
-	debugContainer.style.fontSize = '12px';
-	debugContainer.style.maxWidth = '300px';
+	const debugContainer = document.createElement("div");
+	debugContainer.style.position = "absolute";
+	debugContainer.style.top = "10px";
+	debugContainer.style.right = "10px";
+	debugContainer.style.zIndex = "9999";
+	debugContainer.style.background = "rgba(0,0,0,0.7)";
+	debugContainer.style.color = "white";
+	debugContainer.style.padding = "10px";
+	debugContainer.style.borderRadius = "5px";
+	debugContainer.style.fontFamily = "monospace";
+	debugContainer.style.fontSize = "12px";
+	debugContainer.style.maxWidth = "300px";
 
 	// 添加一个按钮来记录当前相机位置
-	const logButton = document.createElement('button');
-	logButton.textContent = '记录相机位置';
-	logButton.style.marginRight = '10px';
-	logButton.style.padding = '5px';
+	const logButton = document.createElement("button");
+	logButton.textContent = "记录相机位置";
+	logButton.style.marginRight = "10px";
+	logButton.style.padding = "5px";
 
 	logButton.onclick = () => {
 		if (!camera || !controls) return;
@@ -1854,45 +2024,45 @@ const setupCameraDebug = () => {
 
 		console.log(
 			`相机位置: new THREE.Vector3(${position.x.toFixed(
-				2
-			)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`
+				2,
+			)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})`,
 		);
 		console.log(
 			`相机目标: new THREE.Vector3(${target.x.toFixed(2)}, ${target.y.toFixed(
-				2
-			)}, ${target.z.toFixed(2)})`
+				2,
+			)}, ${target.z.toFixed(2)})`,
 		);
 
 		positionInfo.textContent = `位置: x=${position.x.toFixed(
-			2
+			2,
 		)}, y=${position.y.toFixed(2)}, z=${position.z.toFixed(2)}`;
 		targetInfo.textContent = `目标: x=${target.x.toFixed(
-			2
+			2,
 		)}, y=${target.y.toFixed(2)}, z=${target.z.toFixed(2)}`;
 
 		// 复制到剪贴板
 		const text = `position: [${position.x.toFixed(2)}, ${position.y.toFixed(
-			2
+			2,
 		)}, ${position.z.toFixed(2)}], lookAt: [${target.x.toFixed(
-			2
+			2,
 		)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)}]`;
 		navigator.clipboard
 			.writeText(text)
 			.then(() => {
-				copyStatus.textContent = '已复制到剪贴板!';
+				copyStatus.textContent = "已复制到剪贴板!";
 				setTimeout(() => {
-					copyStatus.textContent = '';
+					copyStatus.textContent = "";
 				}, 2000);
 			})
 			.catch((err) => {
-				copyStatus.textContent = '复制失败: ' + err;
+				copyStatus.textContent = "复制失败: " + err;
 			});
 	};
 
 	// 添加一个按钮设置相机到模型中心
-	const centerButton = document.createElement('button');
-	centerButton.textContent = '移动到模型中心';
-	centerButton.style.padding = '5px';
+	const centerButton = document.createElement("button");
+	centerButton.textContent = "移动到模型中心";
+	centerButton.style.padding = "5px";
 
 	centerButton.onclick = () => {
 		if (!camera || !controls || !model) return;
@@ -1910,25 +2080,25 @@ const setupCameraDebug = () => {
 		controls.update();
 
 		positionInfo.textContent = `位置: x=${position.x.toFixed(
-			2
+			2,
 		)}, y=${position.y.toFixed(2)}, z=${position.z.toFixed(2)}`;
 		targetInfo.textContent = `目标: x=${center.x.toFixed(
-			2
+			2,
 		)}, y=${center.y.toFixed(2)}, z=${center.z.toFixed(2)}`;
 
 		needsRender = true;
 	};
 
 	// 添加信息显示区域
-	const positionInfo = document.createElement('div');
-	positionInfo.style.marginTop = '10px';
+	const positionInfo = document.createElement("div");
+	positionInfo.style.marginTop = "10px";
 
-	const targetInfo = document.createElement('div');
-	targetInfo.style.marginTop = '5px';
+	const targetInfo = document.createElement("div");
+	targetInfo.style.marginTop = "5px";
 
-	const copyStatus = document.createElement('div');
-	copyStatus.style.marginTop = '5px';
-	copyStatus.style.color = '#aaffaa';
+	const copyStatus = document.createElement("div");
+	copyStatus.style.marginTop = "5px";
+	copyStatus.style.color = "#aaffaa";
 
 	// 添加所有元素到容器
 	debugContainer.appendChild(logButton);
@@ -2003,18 +2173,18 @@ const setupMousePick = () => {
 			// 显示点击点坐标
 			ElMessage({
 				message: `选中点: X=${point.x.toFixed(2)}, Y=${point.y.toFixed(
-					2
+					2,
 				)}, Z=${point.z.toFixed(2)}`,
-				type: 'success',
+				type: "success",
 				duration: 2000,
 			});
 		}
 	};
 
-	renderer.domElement.addEventListener('dblclick', onDoubleClick);
+	renderer.domElement.addEventListener("dblclick", onDoubleClick);
 
 	return () => {
-		renderer.domElement.removeEventListener('dblclick', onDoubleClick);
+		renderer.domElement.removeEventListener("dblclick", onDoubleClick);
 	};
 };
 
@@ -2034,13 +2204,13 @@ const addDirectionIndicator = () => {
 
 	// 添加标签
 	const createLabel = (text, position, color) => {
-		const canvas = document.createElement('canvas');
+		const canvas = document.createElement("canvas");
 		canvas.width = 64;
 		canvas.height = 32;
 
-		const ctx = canvas.getContext('2d');
+		const ctx = canvas.getContext("2d");
 		ctx.fillStyle = color;
-		ctx.font = '24px Arial';
+		ctx.font = "24px Arial";
 		ctx.fillText(text, 10, 20);
 
 		const texture = new THREE.CanvasTexture(canvas);
@@ -2058,9 +2228,9 @@ const addDirectionIndicator = () => {
 	};
 
 	// 添加X、Y、Z标签
-	const xLabel = createLabel('X', new THREE.Vector3(-3.7, -3, -4), 'red');
-	const yLabel = createLabel('Y', new THREE.Vector3(-4, -2.7, -4), 'green');
-	const zLabel = createLabel('Z', new THREE.Vector3(-4, -3, -3.7), 'blue');
+	const xLabel = createLabel("X", new THREE.Vector3(-3.7, -3, -4), "red");
+	const yLabel = createLabel("Y", new THREE.Vector3(-4, -2.7, -4), "green");
+	const zLabel = createLabel("Z", new THREE.Vector3(-4, -3, -3.7), "blue");
 
 	scene.add(xLabel);
 	scene.add(yLabel);
@@ -2084,7 +2254,7 @@ const handleGotoModelCenter = () => {
 	if (!camera || !controls || !model) return;
 
 	try {
-		console.log('移动到模型中心...');
+		console.log("移动到模型中心...");
 
 		// 计算模型包围盒和中心
 		const box = new THREE.Box3().setFromObject(model);
@@ -2097,9 +2267,7 @@ const handleGotoModelCenter = () => {
 
 		// 固定方向向量 - 与调试工具一致
 		const direction = new THREE.Vector3(1, 0.5, -1).normalize();
-		const targetPosition = center
-			.clone()
-			.add(direction.multiplyScalar(distance));
+		const targetPosition = center.clone().add(direction.multiplyScalar(distance));
 
 		// 保存当前的damping状态
 		const wasDampingEnabled = controls.enableDamping;
@@ -2137,10 +2305,10 @@ const handleGotoModelCenter = () => {
 			needsRender = true;
 		}, 50);
 
-		ElMessage.success('已移动到模型中心');
+		ElMessage.success("已移动到模型中心");
 	} catch (error) {
-		console.error('移动到模型中心失败:', error);
-		ElMessage.error('移动到模型中心失败');
+		console.error("移动到模型中心失败:", error);
+		ElMessage.error("移动到模型中心失败");
 	}
 };
 
@@ -2154,34 +2322,26 @@ const handleCopyCameraPosition = () => {
 
 	const text = `
 相机位置:
-new THREE.Vector3(${position.x.toFixed(2)}, ${position.y.toFixed(
-		2
-	)}, ${position.z.toFixed(2)})
+new THREE.Vector3(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)})
 
 相机目标:
-new THREE.Vector3(${target.x.toFixed(2)}, ${target.y.toFixed(
-		2
-	)}, ${target.z.toFixed(2)})
+new THREE.Vector3(${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)})
 
 // 代码片段:
-camera.position.set(${position.x.toFixed(2)}, ${position.y.toFixed(
-		2
-	)}, ${position.z.toFixed(2)});
-controls.target.set(${target.x.toFixed(2)}, ${target.y.toFixed(
-		2
-	)}, ${target.z.toFixed(2)});
+camera.position.set(${position.x.toFixed(2)}, ${position.y.toFixed(2)}, ${position.z.toFixed(2)});
+controls.target.set(${target.x.toFixed(2)}, ${target.y.toFixed(2)}, ${target.z.toFixed(2)});
 controls.update();
 `;
 
 	try {
 		navigator.clipboard.writeText(text).then(() => {
-			ElMessage.success('相机位置信息已复制到剪贴板');
+			ElMessage.success("相机位置信息已复制到剪贴板");
 		});
 	} catch (e) {
-		console.error('复制到剪贴板失败:', e);
+		console.error("复制到剪贴板失败:", e);
 		// 显示备用对话框
-		ElMessageBox.alert(text, '相机位置信息', {
-			confirmButtonText: '关闭',
+		ElMessageBox.alert(text, "相机位置信息", {
+			confirmButtonText: "关闭",
 		});
 	}
 };
@@ -2200,42 +2360,36 @@ const handleGotoPreset = (preset) => {
 	let targetPosition = new THREE.Vector3();
 
 	switch (preset) {
-		case 'default':
+		case "default":
 			// 使用初始相机位置
 			targetPosition.set(1914.12, 2012.22, -3766.58);
 			animateCamera(targetPosition, center, 1000);
 			break;
 
-		case 'front':
+		case "front":
 			targetPosition.copy(center).add(new THREE.Vector3(0, 0, distance));
 			animateCamera(targetPosition, center, 1000);
 			break;
 
-		case 'top':
+		case "top":
 			targetPosition.copy(center).add(new THREE.Vector3(0, distance, 0));
 			animateCamera(targetPosition, center, 1000);
 			break;
 
-		case 'side':
+		case "side":
 			targetPosition.copy(center).add(new THREE.Vector3(distance, 0, 0));
 			animateCamera(targetPosition, center, 1000);
 			break;
 
 		default:
-			console.warn('未知的预设视图:', preset);
+			console.warn("未知的预设视图:", preset);
 			return;
 	}
 
 	ElMessage.success(
 		`已切换到${
-			preset === 'default'
-				? '默认'
-				: preset === 'front'
-				? '前'
-				: preset === 'top'
-				? '顶'
-				: '侧'
-		}视图`
+			preset === "default" ? "默认" : preset === "front" ? "前" : preset === "top" ? "顶" : "侧"
+		}视图`,
 	);
 };
 
@@ -2252,12 +2406,12 @@ const handleRecordCameraPosition = () => {
 		target: target,
 	};
 
-	console.log('记录相机位置:', {
+	console.log("记录相机位置:", {
 		position: position,
 		target: target,
 	});
 
-	ElMessage.success('相机位置已记录');
+	ElMessage.success("相机位置已记录");
 };
 
 // 确保初始化时记录相机位置
@@ -2265,7 +2419,7 @@ const fixCameraPosition = () => {
 	if (!camera || !controls || !model) return;
 
 	try {
-		console.log('调整相机位置...');
+		console.log("调整相机位置...");
 
 		// 首先计算模型包围盒
 		const box = new THREE.Box3().setFromObject(model);
@@ -2283,93 +2437,93 @@ const fixCameraPosition = () => {
 
 		needsRender = true;
 
-		console.log('相机位置已调整:', {
+		console.log("相机位置已调整:", {
 			position: camera.position,
 			target: controls.target,
 		});
 	} catch (error) {
-		console.error('调整相机位置失败:', error);
+		console.error("调整相机位置失败:", error);
 	}
 };
 
 onMounted(() => {
-	console.log('GLTF模型组件已挂载');
-	console.log('Canvas引用 (挂载时):', canvasRef.value);
-	console.log('Container引用 (挂载时):', containerRef.value);
+	console.log("GLTF模型组件已挂载");
+	console.log("Canvas引用 (挂载时):", canvasRef.value);
+	console.log("Container引用 (挂载时):", containerRef.value);
 
 	// 延迟初始化以确保DOM已完全渲染
 	setTimeout(async () => {
-		console.log('延迟后的Canvas引用:', canvasRef.value);
+		console.log("延迟后的Canvas引用:", canvasRef.value);
 
 		if (canvasRef.value) {
 			try {
 				// 检查WebGL支持
-				const canvas = document.createElement('canvas');
-				const gl =
-					canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+				const canvas = document.createElement("canvas");
+				const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 				if (!gl) {
-					throw new Error('您的浏览器不支持WebGL');
+					throw new Error("您的浏览器不支持WebGL");
 				}
 
 				// 初始化Three.js
 				await initializeViewer();
 
 				// 添加窗口调整事件监听
-				window.addEventListener('resize', handleResize);
+				window.addEventListener("resize", handleResize);
 
 				// 添加键盘控制
 				const cleanupKeyboard = setupKeyboardControls();
 
 				// 添加到清理函数列表
 				cleanupFunctions.push(() => {
-					window.removeEventListener('resize', handleResize);
+					window.removeEventListener("resize", handleResize);
 					cleanupKeyboard();
 				});
 			} catch (error) {
-				console.error('初始化失败:', error);
+				console.error("初始化失败:", error);
 				state.loadingFailed = true;
-				ElMessage.error(error.message || '初始化3D场景失败');
+				ElMessage.error(error.message || "初始化3D场景失败");
 			}
 		} else {
-			console.error('Canvas元素在延迟后仍未找到');
+			console.error("Canvas元素在延迟后仍未找到");
 			state.loadingFailed = true;
-			ElMessage.error('无法找到Canvas元素');
+			ElMessage.error("无法找到Canvas元素");
 		}
 	}, 100);
 
 	// 处理全屏状态变化
 	const handleFullscreenChange = () => {
-		state.isFullScreen = !!document.fullscreenElement || 
-							 !!document.webkitFullscreenElement || 
-							 !!document.mozFullscreenElement;
-		console.log('全屏状态已更新:', state.isFullScreen);
+		state.isFullScreen =
+			!!document.fullscreenElement ||
+			!!document.webkitFullscreenElement ||
+			!!document.mozFullscreenElement;
+		console.log("全屏状态已更新:", state.isFullScreen);
 		// 确保渲染一帧以响应全屏变化
 		needsRender = true;
 	};
 
 	// 添加事件监听
-	document.addEventListener('fullscreenchange', handleFullscreenChange);
-	document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-	document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-	
+	document.addEventListener("fullscreenchange", handleFullscreenChange);
+	document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+	document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+
 	// 将事件清理添加到清理函数列表
 	cleanupFunctions.push(() => {
-		document.removeEventListener('fullscreenchange', handleFullscreenChange);
-		document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-		document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+		document.removeEventListener("fullscreenchange", handleFullscreenChange);
+		document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+		document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
 	});
 });
 
 onBeforeUnmount(() => {
-	console.log('组件卸载，清理资源');
+	console.log("组件卸载，清理资源");
 
 	// 执行所有清理函数
 	cleanupFunctions.forEach((cleanup) => {
-		if (typeof cleanup === 'function') {
+		if (typeof cleanup === "function") {
 			try {
 				cleanup();
 			} catch (error) {
-				console.error('执行清理函数时出错:', error);
+				console.error("执行清理函数时出错:", error);
 			}
 		}
 	});
@@ -2378,9 +2532,9 @@ onBeforeUnmount(() => {
 	cleanupResources();
 
 	// 移除全屏事件监听
-	document.removeEventListener('fullscreenchange', () => {});
-	document.removeEventListener('webkitfullscreenchange', () => {});
-	document.removeEventListener('mozfullscreenchange', () => {});
+	document.removeEventListener("fullscreenchange", () => {});
+	document.removeEventListener("webkitfullscreenchange", () => {});
+	document.removeEventListener("mozfullscreenchange", () => {});
 });
 </script>
 

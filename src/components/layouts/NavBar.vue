@@ -10,12 +10,7 @@
 
 			<!-- 桌面端导航菜单 -->
 			<div class="navbar-menu" v-show="!isMobile">
-				<router-link
-					v-for="item in menuItems"
-					:key="item.path"
-					:to="item.path"
-					class="nav-item"
-				>
+				<router-link v-for="item in menuItems" :key="item.path" :to="item.path" class="nav-item">
 					{{ item.name }}
 				</router-link>
 			</div>
@@ -44,9 +39,7 @@
 				</template>
 				<template v-else>
 					<router-link to="/login" class="btn btn-login">登录</router-link>
-					<router-link to="/register" class="btn btn-register"
-						>注册</router-link
-					>
+					<router-link to="/register" class="btn btn-register">注册</router-link>
 				</template>
 			</div>
 
@@ -75,10 +68,10 @@
 
 <script>
 // 在顶部引入图片
-import userAvatarImg from '@/assets/default-avatar.png'
+import userAvatarImg from "@/assets/default-avatar.png";
 
 export default {
-	name: 'NavBar',
+	name: "NavBar",
 	data() {
 		return {
 			scrolled: false,
@@ -86,24 +79,24 @@ export default {
 			mobileMenuOpen: false,
 			showUserMenu: false,
 			menuItems: [
-				{ name: '工程场景', path: '/engineering' },
-				{ name: '工况选配', path: '/conditions' },
-				{ name: '现象观察', path: '/observation' },
-				{ name: '测点数据', path: '/data' }
+				{ name: "工程场景", path: "/engineering" },
+				{ name: "工况选配", path: "/conditions" },
+				{ name: "现象观察", path: "/observation" },
+				{ name: "测点数据", path: "/data" },
 			],
 			isLoggedIn: false,
-			userName: '用户名',
-			userAvatar: userAvatarImg // 使用导入的图片
+			userName: "用户名",
+			userAvatar: userAvatarImg, // 使用导入的图片
 		};
 	},
 	created() {
 		this.checkMobile();
-		window.addEventListener('resize', this.checkMobile);
-		window.addEventListener('scroll', this.handleScroll);
+		window.addEventListener("resize", this.checkMobile);
+		window.addEventListener("scroll", this.handleScroll);
 	},
 	destroyed() {
-		window.removeEventListener('resize', this.checkMobile);
-		window.removeEventListener('scroll', this.handleScroll);
+		window.removeEventListener("resize", this.checkMobile);
+		window.removeEventListener("scroll", this.handleScroll);
 	},
 	methods: {
 		checkMobile() {
@@ -114,11 +107,11 @@ export default {
 		},
 		toggleMobileMenu() {
 			this.mobileMenuOpen = !this.mobileMenuOpen;
-			document.body.style.overflow = this.mobileMenuOpen ? 'hidden' : '';
+			document.body.style.overflow = this.mobileMenuOpen ? "hidden" : "";
 		},
 		closeMobileMenu() {
 			this.mobileMenuOpen = false;
-			document.body.style.overflow = '';
+			document.body.style.overflow = "";
 		},
 		toggleUserMenu() {
 			this.showUserMenu = !this.showUserMenu;

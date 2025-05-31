@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import HeaderComponent from './header/index.vue';
-import MainComponent from './main/index.vue';
-import FooterComponent from './footer/index.vue';
+import HeaderComponent from "./header/index.vue";
+import MainComponent from "./main/index.vue";
+import FooterComponent from "./footer/index.vue";
 
 export default {
-	name: 'AppLayout',
+	name: "AppLayout",
 	components: {
 		HeaderComponent,
 		MainComponent,
